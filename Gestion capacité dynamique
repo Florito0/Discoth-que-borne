@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestion Capacité d'Accueil</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Roboto', sans-serif;
+    }
+    
+    body {
+      background-color: #121212;
+      color: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      background-color: #1e1e1e;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 600px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+    
+    .header {
+      background-color: #2c2c2c;
+      padding: 20px;
+      text-align: center;
+      border-bottom: 1px solid #333;
+    }
+    
+    h1 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #fff;
+    }
+    
+    .subtitle {
+      font-size: 16px;
+      color: #b3b3b3;
+    }
+    
+    .capacity-display {
+      padding: 20px;
+      text-align: center;
+    }
+    
+    .current-capacity {
+      font-size: 48px;
+      font-weight: 700;
+      margin: 20px 0;
+    }
+    
+    .capacity-bar {
+      width: 80%;
+      height: 20px;
+      background-color: #333;
+      border-radius: 10px;
+      margin: 20px auto;
+      overflow: hidden;
+    }
+    
+    .capacity-fill {
+      height: 100%;
+      background: linear-gradient(to right, #9733EE, #DA22FF);
+      transition: width 0.3s ease;
+    }
+    
+    .capacity-controls {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    
+    .input-group {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .input-group label {
+      font-size: 18px;
+      font-weight: 500;
+    }
+    
+    .input-group input {
+      width: 100px;
+      padding: 8px;
+      background-color: #333;
+      border: none;
+      color: white;
+      border-radius: 4px;
+      text-align: center;
+    }
+    
+    .control-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+    
+    .control-btn {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border: none;
+      background-color: #333;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: background-color 0.2s;
+    }
+    
+    .control-btn:hover {
+      background-color: #444;
+    }
+    
+    .control-btn:active {
+      background-color: #555;
+    }
+    
+    .update-btn {
+      padding: 15px;
+      background: linear-gradient(to right, #9733EE, #DA22FF);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      margin: 20px;
+    }
+    
+    .update-btn:hover {
+      opacity: 0.9;
+    }
+    
+    .update-btn:active {
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>GESTION CAPACITÉ</h1>
+      <div class="subtitle">Affichage dynamique de la capacité actuelle</div>
+    </div>
+    
+    <div class="capacity-display">
+      <div class="current-capacity" id="current-capacity">0</div>
+      <div class="capacity-bar">
+        <div class="capacity-fill" id="capacity-fill" style="width: 0%"></div>
+      </div>
+      <div id="capacity-text">0 / 0</div>
+    </div>
+    
+    <div class="capacity-controls">
+      <div class="input-group">
+        <label>Capacité Maximum</label>
+        <input type="number" id="max-capacity" min="0" value="100">
+      </div>
+      <div class="input-group">
+        <label>Nombre Actuel</label>
+        <input type="number" id="current-count" min="0" value="0">
+      </div>
+      <div class="control-buttons">
+        <button class="control-btn" onclick="updateCount(-1)">-</button>
+        <button class="control-btn" onclick="updateCount(1)">+</button>
+      </div>
+      <button class="update-btn" onclick="updateCapacity()">Mettre à jour</button>
+    </div>
+  </div>
+
+  <script>
+    let maxCapacity = 100;
+    let currentCount = 0;
+
+    function updateDisplay() {
+      const currentCapacityEl = document.getElementById('current-capacity');
+      const capacityFillEl = document.getElementById('capacity-fill');
+      const capacityTextEl = document.getElementById('capacity-text');
+      
+      currentCapacityEl.textContent = currentCount;
+      const percentage = (currentCount / maxCapacity) * 100;
+      capacityFillEl.style.width = `${percentage}%`;
+      capacityTextEl.textContent = `${currentCount} / ${maxCapacity}`;
+    }
+
+    function updateCount(change) {
+      const currentInput = document.getElementById('current-count');
+      let newCount = parseInt(currentInput.value) + change;
+      
+      if (newCount < 0) newCount = 0;
+      if (newCount > maxCapacity) newCount = maxCapacity;
+      
+      currentInput.value = newCount;
+      currentCount = newCount;
+      updateDisplay();
+    }
+
+    function updateCapacity() {
+      const maxInput = document.getElementById('max-capacity');
+      const currentInput = document.getElementById('current-count');
+      
+      maxCapacity = parseInt(maxInput.value) || 0;
+      currentCount = parseInt(currentInput.value) || 0;
+      
+      if (currentCount > maxCapacity) {
+        currentCount = maxCapacity;
+        currentInput.value = maxCapacity;
+      }
+      
+      if (maxCapacity < 0) maxCapacity = 0;
+      if (currentCount < 0) currentCount = 0;
+      
+      updateDisplay();
+    }
+
+    // Initialisation
+    document.getElementById('max-capacity').value = maxCapacity;
+    document.getElementById('current-count').value = currentCount;
+    updateDisplay();
+  </script>
+</body>
+</html>
