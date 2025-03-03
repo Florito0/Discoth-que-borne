@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Tickets - Discothèque</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            background-color: #1e1e1e;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 1000px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        .header {
+            background-color: #2c2c2c;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid #333;
+        }
+        
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .subtitle {
+            font-size: 16px;
+            color: #b3b3b3;
+        }
+        
+        .tickets-section {
+            padding: 20px;
+        }
+        
+        .current-prestations {
+            margin-bottom: 30px;
+            padding: 15px;
+            background: linear-gradient(135deg, #1c2526 0%, #2a3b4c 100%);
+            border-radius: 8px;
+        }
+        
+        .day-filter {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+        
+        .day-btn {
+            padding: 5px 10px;
+            background: #444;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .day-btn.active {
+            background: linear-gradient(to right, #9733EE, #DA22FF);
+        }
+        
+        .prestation-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #444;
+            cursor: move;
+            user-select: none;
+        }
+        
+        .prestation-item.dragging {
+            opacity: 0.5;
+        }
+        
+        .prestation-item:last-child {
+            border-bottom: none;
+        }
+        
+        .delete-btn {
+            width: 32px;
+            height: 32px;
+            background-color: #ff4444;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s, background-color 0.2s;
+            margin-left: 10px;
+        }
+        
+        .delete-btn:hover {
+            background-color: #ff6666;
+            transform: scale(1.1);
+        }
+        
+        .delete-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .edit-btn {
+            width: 32px;
+            height: 32px;
+            background-color: #9733EE;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s, background-color 0.2s;
+        }
+        
+        .edit-btn:hover {
+            background-color: #DA22FF;
+            transform: scale(1.1);
+        }
+        
+        .edit-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .ticket-form {
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        input, select {
+            padding: 8px;
+            background-color: #333;
+            border: none;
+            color: white;
+            border-radius: 4px;
+            width: 100%;
+            max-width: 300px;
+        }
+        
+        .days-checkboxes {
+            display: flex;
+            gap: 15px;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+        }
+        
+        .days-checkboxes label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+        }
+        
+        .options-container {
+            margin-top: 15px;
+            padding-left: 20px;
+        }
+        
+        .options-header {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+        
+        .options-header span {
+            flex: 1;
+            max-width: 150px;
+            text-align: center;
+        }
+        
+        .option-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+            cursor: move;
+        }
+        
+        .option-row.dragging {
+            opacity: 0.5;
+        }
+        
+        .option-row input {
+            max-width: 150px;
+        }
+        
+        .option-delete-btn {
+            width: 24px;
+            height: 24px;
+            background-color: #ff4444;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+        
+        .option-delete-btn:hover {
+            background-color: #ff6666;
+            transform: scale(1.1);
+        }
+        
+        .option-delete-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .add-option-btn {
+            background: #444;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        .save-btn {
+            padding: 15px;
+            background: linear-gradient(to right, #9733EE, #DA22FF);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            margin: 20px 0;
+            width: 100%;
+        }
+        
+        .save-btn:hover {
+            opacity: 0.9;
+        }
+        
+        @media (max-width: 768px) {
+            .option-row {
+                flex-direction: column;
+            }
+            input, select {
+                max-width: 100%;
+            }
+            .day-filter {
+                gap: 5px;
+            }
+            .days-checkboxes {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Gestion des Tickets</h1>
+            <div class="subtitle">Configurez vos formules d'entrée</div>
+        </div>
+        
+        <div class="tickets-section">
+            <div class="current-prestations">
+                <h2>Prestations actuelles</h2>
+                <div class="day-filter" id="day-filter">
+                    <button class="day-btn" onclick="filterByDay('Lundi')">Lundi</button>
+                    <button class="day-btn" onclick="filterByDay('Mardi')">Mardi</button>
+                    <button class="day-btn" onclick="filterByDay('Mercredi')">Mercredi</button>
+                    <button class="day-btn" onclick="filterByDay('Jeudi')">Jeudi</button>
+                    <button class="day-btn" onclick="filterByDay('Vendredi')">Vendredi</button>
+                    <button class="day-btn" onclick="filterByDay('Samedi')">Samedi</button>
+                    <button class="day-btn" onclick="filterByDay('Dimanche')">Dimanche</button>
+                </div>
+                <div id="prestations-list">
+                    <!-- Les prestations enregistrées apparaîtront ici -->
+                </div>
+            </div>
+            
+            <div class="ticket-form">
+                <div class="form-group">
+                    <label>Jour(s)</label>
+                    <div class="days-checkboxes">
+                        <label><input type="checkbox" name="days" value="Lundi"> Lundi</label>
+                        <label><input type="checkbox" name="days" value="Mardi"> Mardi</label>
+                        <label><input type="checkbox" name="days" value="Mercredi"> Mercredi</label>
+                        <label><input type="checkbox" name="days" value="Jeudi"> Jeudi</label>
+                        <label><input type="checkbox" name="days" value="Vendredi"> Vendredi</label>
+                        <label><input type="checkbox" name="days" value="Samedi"> Samedi</label>
+                        <label><input type="checkbox" name="days" value="Dimanche"> Dimanche</label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Présentation du ticket heure creuse</label>
+                    <input type="text" placeholder="Ex: Entrée Gratuit" id="ticket-presentation-low">
+                </div>
+                
+                <div class="form-group">
+                    <label>Présentation du ticket normal</label>
+                    <input type="text" placeholder="Ex: Entrée avec boisson" id="ticket-presentation-normal">
+                </div>
+                
+                <div class="form-group">
+                    <label>Sexe</label>
+                    <select id="ticket-sex">
+                        <option value="Femme">Femme</option>
+                        <option value="Homme">Homme</option>
+                        <option value="Les deux" selected>Les deux</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Prix de base (€)</label>
+                    <input type="number" step="0.01" min="0" id="ticket-price">
+                </div>
+                
+                <div class="form-group">
+                    <label>Jauge maximum d'entrées</label>
+                    <input type="number" min="1" id="ticket-max">
+                </div>
+                
+                <div class="form-group">
+                    <label>Options supplémentaires</label>
+                    <div class="options-header">
+                        <span>Nom</span>
+                        <span>Quantité</span>
+                        <span>Prix</span>
+                        <span>Max personnes</span>
+                    </div>
+                    <div class="options-container" id="options-container">
+                        <!-- Les options seront ajoutées dynamiquement ici -->
+                    </div>
+                    <div class="add-option-btn" onclick="addOption()">+ Ajouter une option</div>
+                </div>
+            </div>
+            
+            <button class="save-btn" onclick="savePrestation()">Enregistrer les modifications</button>
+        </div>
+    </div>
+
+    <script>
+        let prestations = [];
+        let selectedDayFilter = null;
+
+        function addOption() {
+            const container = document.getElementById('options-container');
+            const optionDiv = document.createElement('div');
+            optionDiv.className = 'option-row';
+            optionDiv.draggable = true;
+            optionDiv.innerHTML = `
+                <input type="text" placeholder="Nom (ex: Bouteille)" class="option-name">
+                <input type="number" min="1" placeholder="Quantité" class="option-qty">
+                <input type="number" step="0.01" min="0" placeholder="Prix (€)" class="option-price">
+                <input type="number" min="1" placeholder="Max personnes" class="option-max-persons">
+                <button class="option-delete-btn" onclick="deleteOption(this)">🗑️</button>
+            `;
+            container.appendChild(optionDiv);
+            addDragEvents(optionDiv);
+        }
+
+        function deleteOption(button) {
+            button.parentElement.remove();
+        }
+
+        function addDragEvents(optionDiv) {
+            optionDiv.addEventListener('dragstart', handleOptionDragStart);
+            optionDiv.addEventListener('dragover', handleOptionDragOver);
+            optionDiv.addEventListener('drop', handleOptionDrop);
+            optionDiv.addEventListener('dragend', handleOptionDragEnd);
+        }
+
+        let draggedOption = null;
+
+        function handleOptionDragStart(e) {
+            draggedOption = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', this.innerHTML);
+        }
+
+        function handleOptionDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        }
+
+        function handleOptionDrop(e) {
+            e.preventDefault();
+            if (draggedOption !== this) {
+                const allOptions = [...document.querySelectorAll('.option-row')];
+                const draggedIndex = allOptions.indexOf(draggedOption);
+                const droppedIndex = allOptions.indexOf(this);
+                const container = document.getElementById('options-container');
+                const optionsArray = Array.from(container.children);
+
+                const [movedOption] = optionsArray.splice(draggedIndex, 1);
+                optionsArray.splice(droppedIndex, 0, movedOption);
+
+                container.innerHTML = '';
+                optionsArray.forEach(option => {
+                    container.appendChild(option);
+                    addDragEvents(option);
+                });
+            }
+        }
+
+        function handleOptionDragEnd() {
+            this.classList.remove('dragging');
+            draggedOption = null;
+        }
+
+        function savePrestation() {
+            const days = Array.from(document.querySelectorAll('input[name="days"]:checked')).map(checkbox => checkbox.value);
+            const presentationLow = document.getElementById('ticket-presentation-low').value;
+            const presentationNormal = document.getElementById('ticket-presentation-normal').value;
+            const sex = document.getElementById('ticket-sex').value;
+            const price = document.getElementById('ticket-price').value || '';
+            const maxEntries = document.getElementById('ticket-max').value || '';
+            const options = Array.from(document.querySelectorAll('.option-row')).map(row => ({
+                name: row.querySelector('.option-name').value,
+                qty: row.querySelector('.option-qty').value,
+                price: row.querySelector('.option-price').value,
+                maxPersons: row.querySelector('.option-max-persons').value
+            }));
+
+            if (!presentationLow && !presentationNormal) {
+                alert('Veuillez remplir au moins une présentation (heure creuse ou normale)');
+                return;
+            }
+            if (days.length === 0) {
+                alert('Veuillez sélectionner au moins un jour');
+                return;
+            }
+
+            const prestation = { days, presentationLow, presentationNormal, sex, price, maxEntries, options };
+            prestations.push(prestation);
+            renderPrestations();
+            resetForm();
+        }
+
+        function resetForm() {
+            document.querySelectorAll('input[name="days"]').forEach(checkbox => checkbox.checked = false);
+            document.getElementById('ticket-presentation-low').value = '';
+            document.getElementById('ticket-presentation-normal').value = '';
+            document.getElementById('ticket-sex').value = 'Les deux';
+            document.getElementById('ticket-price').value = '';
+            document.getElementById('ticket-max').value = '';
+            document.getElementById('options-container').innerHTML = '';
+        }
+
+        function renderPrestations() {
+            const list = document.getElementById('prestations-list');
+            list.innerHTML = '';
+            const filteredPrestations = selectedDayFilter 
+                ? prestations.filter(p => p.days.includes(selectedDayFilter))
+                : [...prestations];
+
+            filteredPrestations.forEach((prestation, index) => {
+                const item = document.createElement('div');
+                item.className = 'prestation-item';
+                item.draggable = true;
+                item.dataset.index = index;
+                let optionsText = '';
+                if (prestation.options.length > 0) {
+                    optionsText = ' - Options: ' + prestation.options.map(opt => 
+                        `${opt.name} (Qté: ${opt.qty}, Prix: ${opt.price}€, Max: ${opt.maxPersons})`
+                    ).join(', ');
+                }
+                const presentationText = [
+                    prestation.presentationLow ? `Heure creuse: ${prestation.presentationLow}` : '',
+                    prestation.presentationNormal ? `Normal: ${prestation.presentationNormal}` : ''
+                ].filter(Boolean).join(' / ');
+                const maxEntriesText = prestation.maxEntries ? ` (${prestation.maxEntries})` : '';
+                item.innerHTML = `
+                    <span>${presentationText} - ${prestation.sex} - ${prestation.price}€${maxEntriesText} ${prestation.days.join(', ')}${optionsText}</span>
+                    <div>
+                        <button class="edit-btn" onclick="editPrestation(${index})">✏️</button>
+                        <button class="delete-btn" onclick="deletePrestation(${index})">🗑️</button>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+
+            const items = list.querySelectorAll('.prestation-item');
+            items.forEach(item => {
+                item.addEventListener('dragstart', handleDragStart);
+                item.addEventListener('dragover', handleDragOver);
+                item.addEventListener('drop', handleDrop);
+                item.addEventListener('dragend', handleDragEnd);
+            });
+        }
+
+        let draggedItem = null;
+
+        function handleDragStart(e) {
+            draggedItem = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', this.innerHTML);
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            if (draggedItem !== this) {
+                const allItems = [...document.querySelectorAll('.prestation-item')];
+                const draggedIndex = parseInt(draggedItem.dataset.index);
+                const droppedIndex = parseInt(this.dataset.index);
+                const filteredPrestations = selectedDayFilter 
+                    ? prestations.filter(p => p.days.includes(selectedDayFilter))
+                    : [...prestations];
+                
+                const [movedItem] = filteredPrestations.splice(draggedIndex, 1);
+                filteredPrestations.splice(droppedIndex, 0, movedItem);
+
+                if (!selectedDayFilter) {
+                    prestations = filteredPrestations;
+                } else {
+                    const originalIndices = allItems.map(item => parseInt(item.dataset.index));
+                    const newPrestations = [];
+                    filteredPrestations.forEach((item, i) => {
+                        const origIndex = originalIndices[draggedIndex] === originalIndices[droppedIndex] 
+                            ? originalIndices[droppedIndex] 
+                            : originalIndices[i];
+                        newPrestations[origIndex] = item;
+                    });
+                    prestations = newPrestations.filter(Boolean);
+                }
+                renderPrestations();
+            }
+        }
+
+        function handleDragEnd() {
+            this.classList.remove('dragging');
+            draggedItem = null;
+        }
+
+        function filterByDay(day) {
+            const buttons = document.querySelectorAll('.day-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            if (selectedDayFilter === day) {
+                selectedDayFilter = null;
+            } else {
+                selectedDayFilter = day;
+                document.querySelector(`button[onclick="filterByDay('${day}')"]`).classList.add('active');
+            }
+            renderPrestations();
+        }
+
+        function deletePrestation(index) {
+            const filteredIndex = prestations.findIndex((_, i) => i === index && (!selectedDayFilter || prestations[i].days.includes(selectedDayFilter)));
+            prestations.splice(filteredIndex, 1);
+            renderPrestations();
+        }
+
+        function editPrestation(index) {
+            const filteredIndex = prestations.findIndex((_, i) => i === index && (!selectedDayFilter || prestations[i].days.includes(selectedDayFilter)));
+            const prestation = prestations[filteredIndex];
+
+            document.querySelectorAll('input[name="days"]').forEach(checkbox => {
+                checkbox.checked = prestation.days.includes(checkbox.value);
+            });
+            document.getElementById('ticket-presentation-low').value = prestation.presentationLow || '';
+            document.getElementById('ticket-presentation-normal').value = prestation.presentationNormal || '';
+            document.getElementById('ticket-sex').value = prestation.sex;
+            document.getElementById('ticket-price').value = prestation.price || '';
+            document.getElementById('ticket-max').value = prestation.maxEntries || '';
+            
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+            prestation.options.forEach(opt => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option-row';
+                optionDiv.draggable = true;
+                optionDiv.innerHTML = `
+                    <input type="text" value="${opt.name}" class="option-name">
+                    <input type="number" min="1" value="${opt.qty}" class="option-qty">
+                    <input type="number" step="0.01" min="0" value="${opt.price}" class="option-price">
+                    <input type="number" min="1" value="${opt.maxPersons}" class="option-max-persons">
+                    <button class="option-delete-btn" onclick="deleteOption(this)">🗑️</button>
+                `;
+                optionsContainer.appendChild(optionDiv);
+                addDragEvents(optionDiv);
+            });
+
+            prestations.splice(filteredIndex, 1);
+            renderPrestations();
+        }
+    </script>
+</body>
+</html>
