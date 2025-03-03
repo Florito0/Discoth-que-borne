@@ -67,7 +67,7 @@
             margin-bottom: 15px;
         }
         
-        .day-btn {
+        .day-btn, .preview-btn {
             padding: 5px 10px;
             background: #444;
             border: none;
@@ -75,14 +75,17 @@
             cursor: pointer;
         }
         
-        .day-btn.active {
+        .day-btn.active, .preview-btn.active {
             background: linear-gradient(to right, #9733EE, #DA22FF);
+        }
+        
+        .preview-btn:hover {
+            background: #555;
         }
         
         .prestation-item {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
             padding: 10px;
             border-bottom: 1px solid #444;
             cursor: move;
@@ -95,6 +98,21 @@
         
         .prestation-item:last-child {
             border-bottom: none;
+        }
+        
+        .prestation-details {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr 1fr 2fr 1fr;
+            gap: 5px;
+        }
+        
+        .prestation-details div {
+            padding: 2px;
+        }
+        
+        .prestation-options {
+            display: flex;
+            flex-direction: column;
         }
         
         .delete-btn {
@@ -177,6 +195,12 @@
             gap: 15px;
             flex-wrap: nowrap;
             overflow-x: auto;
+            padding: 5px;
+        }
+        
+        .days-checkboxes.error {
+            border: 2px solid #ff4444;
+            border-radius: 4px;
         }
         
         .days-checkboxes label {
@@ -186,16 +210,21 @@
             white-space: nowrap;
         }
         
+        .error input {
+            border: 2px solid #ff4444;
+        }
+        
         .options-container {
             margin-top: 15px;
             padding-left: 20px;
         }
         
         .options-header {
-            display: flex;
+            display: none;
             gap: 10px;
             margin-bottom: 10px;
-            font-weight: 500;
+            font-style: italic;
+            font-size: 12px;
         }
         
         .options-header span {
@@ -221,10 +250,9 @@
             max-width: 150px;
         }
         
-        .option-delete-btn {
+        .option-delete-btn, .option-duplicate-btn {
             width: 24px;
             height: 24px;
-            background-color: #ff4444;
             border: none;
             border-radius: 50%;
             color: white;
@@ -236,12 +264,26 @@
             transition: transform 0.2s, background-color 0.2s;
         }
         
+        .option-delete-btn {
+            background-color: #ff4444;
+        }
+        
+        .option-duplicate-btn {
+            background-color: #4CAF50;
+            margin-left: 5px;
+        }
+        
         .option-delete-btn:hover {
             background-color: #ff6666;
             transform: scale(1.1);
         }
         
-        .option-delete-btn:active {
+        .option-duplicate-btn:hover {
+            background-color: #66BB6A;
+            transform: scale(1.1);
+        }
+        
+        .option-delete-btn:active, .option-duplicate-btn:active {
             transform: scale(0.95);
         }
         
@@ -271,6 +313,49 @@
             opacity: 0.9;
         }
         
+        .preview-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background: linear-gradient(135deg, #2a3435 0%, #3b4c5d 100%);
+        }
+        
+        .preview-table th, .preview-table td {
+            padding: 10px;
+            border: 1px solid #555;
+            text-align: left;
+        }
+        
+        .preview-table th {
+            background-color: #444;
+            font-weight: 700;
+        }
+        
+        .preview-table td {
+            vertical-align: top;
+        }
+        
+        .preview-table .day-cell {
+            cursor: pointer;
+        }
+        
+        .preview-table .day-cell:hover {
+            background-color: #444;
+        }
+        
+        .preview-table .day-lundi,
+        .preview-table .day-mercredi,
+        .preview-table .day-vendredi,
+        .preview-table .day-dimanche {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        .preview-table .day-mardi,
+        .preview-table .day-jeudi,
+        .preview-table .day-samedi {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+        
         @media (max-width: 768px) {
             .option-row {
                 flex-direction: column;
@@ -284,6 +369,9 @@
             .days-checkboxes {
                 flex-wrap: nowrap;
                 overflow-x: auto;
+            }
+            .prestation-details {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -306,16 +394,18 @@
                     <button class="day-btn" onclick="filterByDay('Vendredi')">Vendredi</button>
                     <button class="day-btn" onclick="filterByDay('Samedi')">Samedi</button>
                     <button class="day-btn" onclick="filterByDay('Dimanche')">Dimanche</button>
+                    <button class="preview-btn" onclick="showPreview()">Aperçu</button>
                 </div>
                 <div id="prestations-list">
                     <!-- Les prestations enregistrées apparaîtront ici -->
                 </div>
+                <div id="preview-section" style="display: none;"></div>
             </div>
             
-            <div class="ticket-form">
+            <div class="ticket-form" id="ticket-form">
                 <div class="form-group">
                     <label>Jour(s)</label>
-                    <div class="days-checkboxes">
+                    <div class="days-checkboxes" id="days-checkboxes">
                         <label><input type="checkbox" name="days" value="Lundi"> Lundi</label>
                         <label><input type="checkbox" name="days" value="Mardi"> Mardi</label>
                         <label><input type="checkbox" name="days" value="Mercredi"> Mercredi</label>
@@ -337,6 +427,11 @@
                 </div>
                 
                 <div class="form-group">
+                    <label>Prix (€)</label>
+                    <input type="number" step="0.01" min="0" id="ticket-price">
+                </div>
+                
+                <div class="form-group">
                     <label>Sexe</label>
                     <select id="ticket-sex">
                         <option value="Femme">Femme</option>
@@ -346,22 +441,17 @@
                 </div>
                 
                 <div class="form-group">
-                    <label>Prix de base (€)</label>
-                    <input type="number" step="0.01" min="0" id="ticket-price">
-                </div>
-                
-                <div class="form-group">
-                    <label>Jauge maximum d'entrées</label>
+                    <label>Entrées max. par ticket</label>
                     <input type="number" min="1" id="ticket-max">
                 </div>
                 
                 <div class="form-group">
                     <label>Options supplémentaires</label>
-                    <div class="options-header">
+                    <div class="options-header" id="options-header">
                         <span>Nom</span>
                         <span>Quantité</span>
                         <span>Prix</span>
-                        <span>Max personnes</span>
+                        <span>Max. personnes</span>
                     </div>
                     <div class="options-container" id="options-container">
                         <!-- Les options seront ajoutées dynamiquement ici -->
@@ -377,9 +467,12 @@
     <script>
         let prestations = [];
         let selectedDayFilter = null;
+        let isPreviewActive = false;
 
         function addOption() {
             const container = document.getElementById('options-container');
+            const header = document.getElementById('options-header');
+            header.style.display = 'flex';
             const optionDiv = document.createElement('div');
             optionDiv.className = 'option-row';
             optionDiv.draggable = true;
@@ -387,15 +480,30 @@
                 <input type="text" placeholder="Nom (ex: Bouteille)" class="option-name">
                 <input type="number" min="1" placeholder="Quantité" class="option-qty">
                 <input type="number" step="0.01" min="0" placeholder="Prix (€)" class="option-price">
-                <input type="number" min="1" placeholder="Max personnes" class="option-max-persons">
+                <input type="number" min="1" placeholder="Max. personnes" class="option-max-persons">
+                <button class="option-duplicate-btn" onclick="duplicateOption(this)">📋</button>
                 <button class="option-delete-btn" onclick="deleteOption(this)">🗑️</button>
             `;
             container.appendChild(optionDiv);
             addDragEvents(optionDiv);
         }
 
+        function duplicateOption(button) {
+            const container = document.getElementById('options-container');
+            const originalRow = button.parentElement;
+            const newRow = originalRow.cloneNode(true);
+            newRow.querySelector('.option-duplicate-btn').onclick = () => duplicateOption(newRow.querySelector('.option-duplicate-btn'));
+            newRow.querySelector('.option-delete-btn').onclick = () => deleteOption(newRow.querySelector('.option-delete-btn'));
+            container.appendChild(newRow);
+            addDragEvents(newRow);
+        }
+
         function deleteOption(button) {
+            const container = document.getElementById('options-container');
             button.parentElement.remove();
+            if (container.children.length === 0) {
+                document.getElementById('options-header').style.display = 'none';
+            }
         }
 
         function addDragEvents(optionDiv) {
@@ -446,8 +554,8 @@
 
         function savePrestation() {
             const days = Array.from(document.querySelectorAll('input[name="days"]:checked')).map(checkbox => checkbox.value);
-            const presentationLow = document.getElementById('ticket-presentation-low').value;
-            const presentationNormal = document.getElementById('ticket-presentation-normal').value;
+            const presentationLow = document.getElementById('ticket-presentation-low').value.trim();
+            const presentationNormal = document.getElementById('ticket-presentation-normal').value.trim();
             const sex = document.getElementById('ticket-sex').value;
             const price = document.getElementById('ticket-price').value || '';
             const maxEntries = document.getElementById('ticket-max').value || '';
@@ -458,12 +566,30 @@
                 maxPersons: row.querySelector('.option-max-persons').value
             }));
 
-            if (!presentationLow && !presentationNormal) {
-                alert('Veuillez remplir au moins une présentation (heure creuse ou normale)');
-                return;
-            }
+            let errors = [];
+            const daysCheckboxes = document.getElementById('days-checkboxes');
+            const lowInput = document.getElementById('ticket-presentation-low');
+            const normalInput = document.getElementById('ticket-presentation-normal');
+
+            daysCheckboxes.classList.remove('error');
+            lowInput.classList.remove('error');
+            normalInput.classList.remove('error');
+
             if (days.length === 0) {
-                alert('Veuillez sélectionner au moins un jour');
+                errors.push('Veuillez sélectionner au moins un jour dans "Jour(s)".');
+                daysCheckboxes.classList.add('error');
+            }
+            if (!presentationLow && !presentationNormal) {
+                errors.push('Veuillez remplir au moins un champ parmi "Présentation du ticket heure creuse" ou "Présentation du ticket normal".');
+                lowInput.classList.add('error');
+                normalInput.classList.add('error');
+            }
+            if (presentationLow && presentationNormal) {
+                errors.push('Veuillez remplir uniquement un champ entre "Présentation du ticket heure creuse" ou "Présentation du ticket normal".');
+            }
+
+            if (errors.length > 0) {
+                alert(errors.join('\n'));
                 return;
             }
 
@@ -481,10 +607,23 @@
             document.getElementById('ticket-price').value = '';
             document.getElementById('ticket-max').value = '';
             document.getElementById('options-container').innerHTML = '';
+            document.getElementById('options-header').style.display = 'none';
+            document.getElementById('days-checkboxes').classList.remove('error');
+            document.getElementById('ticket-presentation-low').classList.remove('error');
+            document.getElementById('ticket-presentation-normal').classList.remove('error');
         }
 
         function renderPrestations() {
             const list = document.getElementById('prestations-list');
+            const previewSection = document.getElementById('preview-section');
+            const ticketForm = document.getElementById('ticket-form');
+            const previewBtn = document.querySelector('.preview-btn');
+            list.style.display = 'block';
+            previewSection.style.display = 'none';
+            ticketForm.style.display = 'block';
+            previewBtn.classList.remove('active');
+            isPreviewActive = false;
+
             list.innerHTML = '';
             const filteredPrestations = selectedDayFilter 
                 ? prestations.filter(p => p.days.includes(selectedDayFilter))
@@ -495,22 +634,44 @@
                 item.className = 'prestation-item';
                 item.draggable = true;
                 item.dataset.index = index;
-                let optionsText = '';
-                if (prestation.options.length > 0) {
-                    optionsText = ' - Options: ' + prestation.options.map(opt => 
-                        `${opt.name} (Qté: ${opt.qty}, Prix: ${opt.price}€, Max: ${opt.maxPersons})`
-                    ).join(', ');
-                }
+
                 const presentationText = [
                     prestation.presentationLow ? `Heure creuse: ${prestation.presentationLow}` : '',
                     prestation.presentationNormal ? `Normal: ${prestation.presentationNormal}` : ''
                 ].filter(Boolean).join(' / ');
+                const ticketText = presentationText.split(' / ')[0].split(': ')[0] || '';
+                const prestationText = presentationText.split(': ')[1] || '';
                 const maxEntriesText = prestation.maxEntries ? ` (${prestation.maxEntries})` : '';
+                let optionsHtml = '';
+                if (prestation.options.length > 0) {
+                    optionsHtml = prestation.options.map(opt => 
+                        `<div>${opt.name} (Qté: ${opt.qty}, Prix: ${opt.price}€, Max: ${opt.maxPersons})</div>`
+                    ).join('');
+                } else {
+                    optionsHtml = '<div>Aucune</div>';
+                }
+
+                const labels = index === 0 ? `
+                    <div>Ticket:<br>${ticketText}</div>
+                    <div>Prestation:<br>${prestationText}</div>
+                    <div>Prix:<br>${prestation.price}€${maxEntriesText}</div>
+                    <div>Sexe:<br>${prestation.sex}</div>
+                    <div class="prestation-options">Options:<br>${optionsHtml}</div>
+                ` : `
+                    <div>${ticketText}</div>
+                    <div>${prestationText}</div>
+                    <div>${prestation.price}€${maxEntriesText}</div>
+                    <div>${prestation.sex}</div>
+                    <div class="prestation-options">${optionsHtml}</div>
+                `;
+
                 item.innerHTML = `
-                    <span>${presentationText} - ${prestation.sex} - ${prestation.price}€${maxEntriesText} ${prestation.days.join(', ')}${optionsText}</span>
-                    <div>
-                        <button class="edit-btn" onclick="editPrestation(${index})">✏️</button>
-                        <button class="delete-btn" onclick="deletePrestation(${index})">🗑️</button>
+                    <div class="prestation-details">
+                        ${labels}
+                        <div>
+                            <button class="edit-btn" onclick="editPrestation(${index})">✏️</button>
+                            <button class="delete-btn" onclick="deletePrestation(${index})">🗑️</button>
+                        </div>
                     </div>
                 `;
                 list.appendChild(item);
@@ -576,13 +737,16 @@
 
         function filterByDay(day) {
             const buttons = document.querySelectorAll('.day-btn');
+            const previewBtn = document.querySelector('.preview-btn');
             buttons.forEach(btn => btn.classList.remove('active'));
+            previewBtn.classList.remove('active');
             if (selectedDayFilter === day) {
                 selectedDayFilter = null;
             } else {
                 selectedDayFilter = day;
                 document.querySelector(`button[onclick="filterByDay('${day}')"]`).classList.add('active');
             }
+            isPreviewActive = false;
             renderPrestations();
         }
 
@@ -607,6 +771,8 @@
             
             const optionsContainer = document.getElementById('options-container');
             optionsContainer.innerHTML = '';
+            const header = document.getElementById('options-header');
+            header.style.display = prestation.options.length > 0 ? 'flex' : 'none';
             prestation.options.forEach(opt => {
                 const optionDiv = document.createElement('div');
                 optionDiv.className = 'option-row';
@@ -616,6 +782,7 @@
                     <input type="number" min="1" value="${opt.qty}" class="option-qty">
                     <input type="number" step="0.01" min="0" value="${opt.price}" class="option-price">
                     <input type="number" min="1" value="${opt.maxPersons}" class="option-max-persons">
+                    <button class="option-duplicate-btn" onclick="duplicateOption(this)">📋</button>
                     <button class="option-delete-btn" onclick="deleteOption(this)">🗑️</button>
                 `;
                 optionsContainer.appendChild(optionDiv);
@@ -624,6 +791,63 @@
 
             prestations.splice(filteredIndex, 1);
             renderPrestations();
+        }
+
+        function showPreview() {
+            const previewSection = document.getElementById('preview-section');
+            const list = document.getElementById('prestations-list');
+            const ticketForm = document.getElementById('ticket-form');
+            const previewBtn = document.querySelector('.preview-btn');
+            const buttons = document.querySelectorAll('.day-btn');
+
+            list.style.display = 'none';
+            ticketForm.style.display = 'none';
+            previewSection.style.display = 'block';
+            previewBtn.classList.add('active');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            selectedDayFilter = null;
+            isPreviewActive = true;
+
+            const daysOrder = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
+            let html = '<table class="preview-table"><tr><th>Jour</th><th>Ticket</th><th>Prestation</th><th>Prix</th><th>Sexe</th><th>Options</th></tr>';
+            
+            daysOrder.forEach((day, dayIndex) => {
+                const dayPrestations = prestations.filter(p => p.days.includes(day));
+                const dayClass = `day-${day.toLowerCase()}`;
+                if (dayPrestations.length > 0) {
+                    dayPrestations.forEach((prestation, index) => {
+                        const presentationText = [
+                            prestation.presentationLow ? `Heure creuse: ${prestation.presentationLow}` : '',
+                            prestation.presentationNormal ? `Normal: ${prestation.presentationNormal}` : ''
+                        ].filter(Boolean).join(' / ');
+                        const ticketText = presentationText.split(' / ')[0].split(': ')[0] || '';
+                        const prestationText = presentationText.split(': ')[1] || '';
+                        let optionsHtml = '';
+                        if (prestation.options.length > 0) {
+                            optionsHtml = prestation.options.map(opt => 
+                                `${opt.name} (Qté: ${opt.qty}, Prix: ${opt.price}€, Max: ${opt.maxPersons})`
+                            ).join('<br>');
+                        } else {
+                            optionsHtml = 'Aucune';
+                        }
+                        html += `
+                            <tr class="${dayClass}">
+                                ${index === 0 ? `<td class="day-cell" onclick="filterByDay('${day}')">${day}</td>` : '<td></td>'}
+                                <td>${ticketText}</td>
+                                <td>${prestationText}</td>
+                                <td>${prestation.price}€${prestation.maxEntries ? ` (${prestation.maxEntries})` : ''}</td>
+                                <td>${prestation.sex}</td>
+                                <td>${optionsHtml}</td>
+                            </tr>
+                        `;
+                    });
+                } else {
+                    html += `<tr class="${dayClass}"><td class="day-cell" onclick="filterByDay('${day}')">${day}</td><td colspan="5">Aucune prestation</td></tr>`;
+                }
+            });
+            
+            html += '</table>';
+            previewSection.innerHTML = html;
         }
     </script>
 </body>
