@@ -81,7 +81,8 @@
         input[type="text"],
         input[type="number"],
         input[type="date"],
-        input[type="time"] {
+        input[type="time"],
+        textarea {
             padding: 8px;
             background-color: #333;
             border: 1px solid #333;
@@ -91,10 +92,16 @@
             transition: background-color 0.3s, box-shadow 0.3s;
         }
         
-        input:hover, input:focus {
+        input:hover, input:focus,
+        textarea:hover, textarea:focus {
             background-color: #444;
             box-shadow: 0 0 5px #00D4FF;
             outline: none;
+        }
+        
+        textarea {
+            resize: vertical; /* Permet de redimensionner verticalement */
+            min-height: 60px; /* Hauteur minimale pour plusieurs lignes */
         }
         
         .date-time-group {
@@ -146,12 +153,52 @@
             padding: 10px;
             border: 1px solid #555;
             text-align: left;
+            white-space: normal;
+            word-wrap: break-word;
         }
         
         .reservation-table th {
             background-color: #444;
             font-weight: 700;
             border-bottom: 2px solid #00D4FF;
+            padding: 12px;
+            font-size: 14px;
+        }
+        
+        .reservation-table th:nth-child(1), .reservation-table td:nth-child(1) { /* Checkbox */
+            width: 30px;
+        }
+        
+        .reservation-table th:nth-child(2), .reservation-table td:nth-child(2) { /* Nom du client */
+            width: 150px;
+        }
+        
+        .reservation-table th:nth-child(3), .reservation-table td:nth-child(3) { /* Numéro de téléphone */
+            width: 110px;
+        }
+        
+        .reservation-table th:nth-child(4), .reservation-table td:nth-child(4) { /* Code de réservation */
+            width: 90px;
+        }
+        
+        .reservation-table th:nth-child(5), .reservation-table td:nth-child(5) { /* Nombre de places */
+            width: 70px;
+            text-align: center;
+        }
+        
+        .reservation-table th:nth-child(6), .reservation-table td:nth-child(6) { /* Date et heure */
+            width: 180px;
+        }
+        
+        .reservation-table th:nth-child(7), .reservation-table td:nth-child(7) { /* Divers */
+            width: 200px;
+            white-space: pre-wrap; /* Conserve les retours à la ligne saisis */
+            word-wrap: break-word;
+        }
+        
+        .reservation-table th:nth-child(8), .reservation-table td:nth-child(8) { /* Actions */
+            width: 100px;
+            text-align: center;
         }
         
         .edit-btn, .delete-btn {
@@ -190,7 +237,7 @@
             margin-top: 15px;
         }
         
-        .select-all-btn, .delete-selected-btn {
+        .select-all-btn {
             padding: 10px;
             background: #444;
             border: 1px solid #333;
@@ -199,7 +246,7 @@
             transition: background-color 0.3s;
         }
         
-        .select-all-btn:hover, .delete-selected-btn:hover {
+        .select-all-btn:hover {
             background: #555;
         }
         
@@ -222,6 +269,9 @@
                 width: 28px;
                 height: 28px;
                 font-size: 14px;
+            }
+            .reservation-table th, .reservation-table td {
+                width: auto;
             }
         }
     </style>
@@ -256,8 +306,15 @@
                     </div>
                     <div class="form-item">
                         <label for="phone">Numéro de téléphone</label>
-                        <input type="text" id="phone" placeholder="Ex: 06 12 34 56 78" required>
+                        <input type="text" id="phone" placeholder="Ex: 06 12 34 56 78">
                         <span class="error" id="phone-error">Format invalide</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="form-item">
+                        <label for="misc">Divers</label>
+                        <textarea id="misc" placeholder="Ex:&#10;- 1 bouteille Vodka 3L&#10;- 2 bouteilles Whisky 1.5L"></textarea>
                     </div>
                 </div>
                 
@@ -298,6 +355,7 @@
                             <th>Code de réservation</th>
                             <th>Nombre de places</th>
                             <th>Date et heure</th>
+                            <th>Divers</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -305,7 +363,6 @@
                 </table>
                 <div class="action-buttons">
                     <button class="select-all-btn" onclick="selectAllReservations()">Tout sélectionner</button>
-                    <button class="delete-selected-btn" onclick="deleteSelectedReservations()">Supprimer la sélection</button>
                 </div>
             </div>
             
@@ -328,7 +385,13 @@
                     </div>
                     <div class="form-item">
                         <label for="edit-phone">Numéro de téléphone</label>
-                        <input type="text" id="edit-phone" required>
+                        <input type="text" id="edit-phone">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="form-item">
+                        <label for="edit-misc">Divers</label>
+                        <textarea id="edit-misc" placeholder="Ex:&#10;- 1 bouteille Vodka 3L&#10;- 2 bouteilles Whisky 1.5L"></textarea>
                     </div>
                 </div>
                 <div class="form-group">
@@ -377,13 +440,13 @@
             const places = document.getElementById('places').value;
             const name = document.getElementById('client-name').value;
             const phone = document.getElementById('phone').value;
+            const misc = document.getElementById('misc').value;
             const startDate = document.getElementById('start-date').value;
             const startTime = document.getElementById('start-time').value;
             const endDate = document.getElementById('end-date').value;
             const endTime = document.getElementById('end-time').value;
 
             const codeRegex = /^[A-Za-z0-9]{6}$/;
-            const phoneRegex = /^(0[1-9])[0-9]{8}$/;
             if (!codeRegex.test(code)) {
                 document.getElementById('code-error').style.display = 'block';
                 return;
@@ -396,7 +459,8 @@
                 document.getElementById('name-error').style.display = 'block';
                 return;
             }
-            if (!phoneRegex.test(phone)) {
+            const phoneRegex = /^(0[1-9])[0-9]{8}$/;
+            if (phone && !phoneRegex.test(phone)) {
                 document.getElementById('phone-error').style.display = 'block';
                 return;
             }
@@ -413,7 +477,8 @@
                 code,
                 places: parseInt(places),
                 name,
-                phone,
+                phone: phone || '',
+                misc: misc || '',
                 start: formatDateTime(startDate, startTime),
                 end: formatDateTime(endDate, endTime)
             });
@@ -428,6 +493,7 @@
             document.getElementById('places').value = '';
             document.getElementById('client-name').value = '';
             document.getElementById('phone').value = '';
+            document.getElementById('misc').value = '';
             document.getElementById('start-date').value = '';
             document.getElementById('start-time').value = '';
             document.getElementById('end-date').value = '';
@@ -435,71 +501,49 @@
         }
 
         function renderReservations() {
-            const now = new Date();
             const list = document.getElementById('reservation-list');
             list.innerHTML = '';
-
-            reservations = reservations.filter(res => {
-                const endTime = parseDateTime(res.end);
-                return endTime > now || (now - endTime) < 30 * 60 * 1000;
-            });
 
             reservations.sort((a, b) => parseDateTime(a.start) - parseDateTime(b.start));
 
             reservations.forEach((res, index) => {
-                const startTime = parseDateTime(res.start);
-                if (startTime > now) {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td><input type="checkbox" class="reservation-checkbox" data-index="${index}"></td>
-                        <td>${res.name}</td>
-                        <td>${res.phone}</td>
-                        <td>${res.code}</td>
-                        <td>${res.places}</td>
-                        <td>Début: ${res.start}<br>Fin: ${res.end}</td>
-                        <td>
-                            <button class="edit-btn" onclick="editReservation(${index})">✏️</button>
-                            <button class="delete-btn" onclick="deleteReservation(${index})">🗑️</button>
-                        </td>
-                    `;
-                    list.appendChild(row);
-                }
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><input type="checkbox" class="reservation-checkbox" data-index="${index}"></td>
+                    <td>${res.name}</td>
+                    <td>${res.phone || 'Non fourni'}</td>
+                    <td>${res.code}</td>
+                    <td>${res.places}</td>
+                    <td>Début: ${res.start}<br>Fin: ${res.end}</td>
+                    <td>${res.misc || 'Aucune info'}</td>
+                    <td>
+                        <button class="edit-btn" onclick="editReservation(${index})">✏️</button>
+                        <button class="delete-btn" onclick="deleteReservation(${index})">🗑️</button>
+                    </td>
+                `;
+                list.appendChild(row);
             });
-
-            checkAutoDelete();
         }
 
-        function checkAutoDelete() {
+        function autoDeleteExpiredReservations() {
             const now = new Date();
             const initialLength = reservations.length;
+
             reservations = reservations.filter(res => {
                 const endTime = parseDateTime(res.end);
-                return (now - endTime) < 30 * 60 * 1000;
+                return endTime > now;
             });
+
             if (reservations.length < initialLength) {
                 renderReservations();
             }
-            setTimeout(checkAutoDelete, 60000);
+
+            setTimeout(autoDeleteExpiredReservations, 60000);
         }
 
         function deleteReservation(index) {
-            const res = reservations[index];
-            if (confirm(`Voulez-vous supprimer la réservation de ${res.name} pour le ${res.start} ?`)) {
-                reservations.splice(index, 1);
-                renderReservations();
-                alert('La réservation a bien été supprimée.');
-            }
-        }
-
-        function deleteSelectedReservations() {
-            const checkboxes = document.querySelectorAll('.reservation-checkbox:checked');
-            if (checkboxes.length === 0) return;
-            if (confirm(`Voulez-vous supprimer ${checkboxes.length} réservation(s) sélectionnée(s) ?`)) {
-                const indices = Array.from(checkboxes).map(cb => parseInt(cb.dataset.index)).sort((a, b) => b - a);
-                indices.forEach(index => reservations.splice(index, 1));
-                renderReservations();
-                alert('Les réservations ont bien été supprimées.');
-            }
+            reservations.splice(index, 1);
+            renderReservations();
         }
 
         function toggleSelectAll() {
@@ -518,7 +562,8 @@
             document.getElementById('edit-code').value = res.code;
             document.getElementById('edit-places').value = res.places;
             document.getElementById('edit-name').value = res.name;
-            document.getElementById('edit-phone').value = res.phone;
+            document.getElementById('edit-phone').value = res.phone || '';
+            document.getElementById('edit-misc').value = res.misc || '';
             const [startDate, , startTime] = res.start.split(' ');
             const [startDay, startMonth, startYear] = startDate.split('/');
             document.getElementById('edit-start-date').value = `${startYear}-${startMonth}-${startDay}`;
@@ -536,15 +581,34 @@
             const places = document.getElementById('edit-places').value;
             const name = document.getElementById('edit-name').value;
             const phone = document.getElementById('edit-phone').value;
+            const misc = document.getElementById('edit-misc').value;
             const startDate = document.getElementById('edit-start-date').value;
             const startTime = document.getElementById('edit-start-time').value;
             const endDate = document.getElementById('edit-end-date').value;
             const endTime = document.getElementById('edit-end-time').value;
 
             const codeRegex = /^[A-Za-z0-9]{6}$/;
+            if (!codeRegex.test(code)) {
+                alert('Le code doit être alphanumérique (6 caractères).');
+                return;
+            }
+            if (places < 1 || isNaN(places)) {
+                alert('Le nombre de places doit être supérieur à 0.');
+                return;
+            }
+            if (name.trim() === '') {
+                alert('Le nom du client est requis.');
+                return;
+            }
             const phoneRegex = /^(0[1-9])[0-9]{8}$/;
-            if (!codeRegex.test(code) || places < 1 || name.trim() === '' || !phoneRegex.test(phone) || new Date(`${startDate}T${startTime}`) >= new Date(`${endDate}T${endTime}`)) {
-                alert('Veuillez corriger les champs invalides.');
+            if (phone && !phoneRegex.test(phone)) {
+                alert('Format de téléphone invalide.');
+                return;
+            }
+            const startDateTime = new Date(`${startDate}T${startTime}`);
+            const endDateTime = new Date(`${endDate}T${endTime}`);
+            if (startDateTime >= endDateTime) {
+                alert('La date de début doit être antérieure à la date de fin.');
                 return;
             }
 
@@ -552,7 +616,8 @@
                 code,
                 places: parseInt(places),
                 name,
-                phone,
+                phone: phone || '',
+                misc: misc || '',
                 start: formatDateTime(startDate, startTime),
                 end: formatDateTime(endDate, endTime)
             };
@@ -560,7 +625,9 @@
             renderReservations();
         }
 
-        window.onload = () => checkAutoDelete();
+        window.onload = () => {
+            autoDeleteExpiredReservations();
+        };
     </script>
 </body>
 </html>
