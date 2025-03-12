@@ -1856,7 +1856,7 @@ if (prestation.pureItems.length > 0) {
             const rowClass = detailIndex % 2 === 0 ? 'even-row' : 'odd-row';
             return `
                 <div class="pure-detail-row ${rowClass}" data-detail-index="${detailIndex}">
-                    <div class="prestation-label">Les entrées avec bouteille:</div>
+                    <div class="prestation-label">Entrée bouteille:</div>
                     <div class="prestation-value">${detail.category || 'Aucune'}</div>
                     <div class="prestation-value">${detail.name}</div>
                     <div class="prestation-qty">${detail.qty}</div>
