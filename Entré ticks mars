@@ -1764,146 +1764,146 @@
             addPure();
         }
 
-        function renderPrestations() {
-            const accessList = document.getElementById('access-prestations-list');
-            const pureList = document.getElementById('pure-prestations-list');
-            const separatorLine = document.getElementById('separator-line');
-            const previewSection = document.getElementById('preview-section');
-            const accessForm = document.getElementById('access-form');
-            const previewBtn = document.querySelector('.preview-btn');
-            accessList.style.display = 'block';
-            pureList.style.display = 'block';
-            previewSection.style.display = 'none';
-            accessForm.style.display = 'block';
-            previewBtn.classList.remove('active');
-            isPreviewActive = false;
+function renderPrestations() {
+    const accessList = document.getElementById('access-prestations-list');
+    const pureList = document.getElementById('pure-prestations-list');
+    const separatorLine = document.getElementById('separator-line');
+    const previewSection = document.getElementById('preview-section');
+    const accessForm = document.getElementById('access-form');
+    const previewBtn = document.querySelector('.preview-btn');
+    accessList.style.display = 'block';
+    pureList.style.display = 'block';
+    previewSection.style.display = 'none';
+    accessForm.style.display = 'block';
+    previewBtn.classList.remove('active');
+    isPreviewActive = false;
 
-            accessList.innerHTML = '';
-            pureList.innerHTML = '';
-            const filteredPrestations = selectedDayFilter 
-                ? prestations.filter(p => p.days.includes(selectedDayFilter))
-                : [...prestations];
+    accessList.innerHTML = '';
+    pureList.innerHTML = '';
+    const filteredPrestations = selectedDayFilter 
+        ? prestations.filter(p => p.days.includes(selectedDayFilter))
+        : [...prestations];
 
-            let hasAccess = false;
-            let hasPure = false;
+    let hasAccess = false;
+    let hasPure = false;
 
-            filteredPrestations.forEach((prestation, index) => {
-                if (prestation.presentationLow || prestation.presentationNormal || prestation.price) {
-                    hasAccess = true;
-                    const accessItem = document.createElement('div');
-                    accessItem.className = 'prestation-item';
-                    accessItem.draggable = true;
-                    accessItem.dataset.index = index;
+    // Ajouter les en-têtes pour "Les entrées avec bouteille" une seule fois si nécessaire
+    const hasPureItems = filteredPrestations.some(prestation => prestation.pureItems.length > 0);
+    if (hasPureItems) {
+        const headerRow = `
+            <div class="pure-header-row">
+                <div class="prestation-label">Type:</div>
+                <div class="prestation-label">Catégorie:</div>
+                <div class="prestation-label">Nom:</div>
+                <div class="prestation-label">Qt:</div>
+                <div class="prestation-label">Prix:</div>
+                <div class="prestation-label">Max. Entrée:</div>
+                <div class="prestation-label">Réduc. Suppl.:</div>
+                <div class="button-container"></div>
+            </div>
+        `;
+        pureList.innerHTML = headerRow;
+    }
 
-                    const presentationText = [
-                        prestation.presentationLow ? `Heure creuse: ${prestation.presentationLow}` : '',
-                        prestation.presentationNormal ? `Normal: ${prestation.presentationNormal}` : ''
-                    ].filter(Boolean).join(' / ');
-                    const accessText = presentationText.split(' / ')[0].split(': ')[0] || '';
-                    const prestationText = presentationText.split(': ')[1] || '';
+    filteredPrestations.forEach((prestation, index) => {
+        if (prestation.presentationLow || prestation.presentationNormal || prestation.price) {
+            hasAccess = true;
+            const accessItem = document.createElement('div');
+            accessItem.className = 'prestation-item';
+            accessItem.draggable = true;
+            accessItem.dataset.index = index;
 
-                    const accessLabels = !accessList.hasChildNodes() ? `
-                        <div>Les entrées:<br>${accessText}</div>
-                        <div>Prestation:<br>${prestationText}</div>
-                        <div>Prix:<br>${prestation.price}€</div>
-                        <div>Sexe:<br>${prestation.sex}</div>
-                    ` : `
-                        <div>${accessText}</div>
-                        <div>${prestationText}</div>
-                        <div>${prestation.price}€</div>
-                        <div>${prestation.sex}</div>
-                    `;
+            const presentationText = [
+                prestation.presentationLow ? `Heure creuse: ${prestation.presentationLow}` : '',
+                prestation.presentationNormal ? `Normal: ${prestation.presentationNormal}` : ''
+            ].filter(Boolean).join(' / ');
+            const accessText = presentationText.split(' / ')[0].split(': ')[0] || '';
+            const prestationText = presentationText.split(': ')[1] || '';
 
-                    accessItem.innerHTML = `
-                        <div class="prestation-details">
-                            ${accessLabels}
-                            <div class="button-container">
-                                <button class="edit-btn" onclick="editPrestation(${index})">✏️</button>
-                                <button class="delete-btn" onclick="deletePrestation(${index})">🗑️</button>
-                            </div>
-                        </div>
-                    `;
-                    accessList.appendChild(accessItem);
-                }
-
-if (prestation.pureItems.length > 0) {
-    hasPure = true;
-    prestation.pureItems.forEach((pure, pureIndex) => {
-        const pureItem = document.createElement('div');
-        pureItem.className = 'prestation-item pure-item grid-support';
-        pureItem.draggable = true;
-        pureItem.dataset.index = index;
-
-        // Add header labels for "Les entrées avec bouteille" if it's the first pure item
-        if (pureIndex === 0) {
-            const headerRow = `
-                <div class="pure-header-row">
-                    <div class="prestation-label">Type:</div>
-                    <div class="prestation-label">Catégorie:</div>
-                    <div class="prestation-label">Nom:</div>
-                    <div class="prestation-label">Qt:</div>
-                    <div class="prestation-label">Prix:</div>
-                    <div class="prestation-label">Max. Entrée:</div>
-                    <div class="prestation-label">Réduc. Suppl.:</div>
-                    <div class="button-container"></div>
-                </div>
+            const accessLabels = !accessList.hasChildNodes() ? `
+                <div>Les entrées:<br>${accessText}</div>
+                <div>Prestation:<br>${prestationText}</div>
+                <div>Prix:<br>${prestation.price}€</div>
+                <div>Sexe:<br>${prestation.sex}</div>
+            ` : `
+                <div>${accessText}</div>
+                <div>${prestationText}</div>
+                <div>${prestation.price}€</div>
+                <div>${prestation.sex}</div>
             `;
-            pureList.innerHTML += headerRow;
-        }
 
-        // Generate the content for each detail
-        const detailRows = pure.details.map((detail, detailIndex) => {
-            const rowClass = detailIndex % 2 === 0 ? 'even-row' : 'odd-row';
-            return `
-                <div class="pure-detail-row ${rowClass}" data-detail-index="${detailIndex}">
-                    <div class="prestation-label">Entrée bouteille:</div>
-                    <div class="prestation-value">${detail.category || 'Aucune'}</div>
-                    <div class="prestation-value">${detail.name}</div>
-                    <div class="prestation-qty">${detail.qty}</div>
-                    <div class="prestation-price">${detail.price}€</div>
-                    <div class="prestation-max">${detail.maxEntries}</div>
-                    <div class="prestation-discount">${detail.discount ? `${detail.discount}€` : '-'}</div>
+            accessItem.innerHTML = `
+                <div class="prestation-details">
+                    ${accessLabels}
                     <div class="button-container">
                         <button class="edit-btn" onclick="editPrestation(${index})">✏️</button>
                         <button class="delete-btn" onclick="deletePrestation(${index})">🗑️</button>
                     </div>
                 </div>
             `;
-        }).join('');
-
-        pureItem.innerHTML = detailRows;
-        pureList.appendChild(pureItem);
-
-        pureItem.addEventListener('dragstart', handleDragStart);
-        pureItem.addEventListener('dragover', handleDragOver);
-        pureItem.addEventListener('drop', handleDrop);
-        pureItem.addEventListener('dragend', handleDragEnd);
-    });
-}
-            });
-
-            accessList.style.display = hasAccess ? 'block' : 'none';
-            pureList.style.display = hasPure ? 'block' : 'none';
-            separatorLine.style.display = (hasAccess && hasPure) ? 'block' : 'none';
-
-            const accessItems = accessList.querySelectorAll('.prestation-item');
-            const pureItems = pureList.querySelectorAll('.prestation-item');
-
-            accessItems.forEach(item => {
-                item.addEventListener('dragstart', handleDragStart);
-                item.addEventListener('dragover', handleDragOver);
-                item.addEventListener('drop', handleDrop);
-                item.addEventListener('dragend', handleDragEnd);
-            });
-
-            pureItems.forEach(item => {
-                item.addEventListener('dragstart', handleDragStart);
-                item.addEventListener('dragover', handleDragOver);
-                item.addEventListener('drop', handleDrop);
-                item.addEventListener('dragend', handleDragEnd);
-            });
+            accessList.appendChild(accessItem);
         }
 
+        if (prestation.pureItems.length > 0) {
+            hasPure = true;
+            prestation.pureItems.forEach((pure, pureIndex) => {
+                const pureItem = document.createElement('div');
+                pureItem.className = 'prestation-item pure-item grid-support';
+                pureItem.draggable = true;
+                pureItem.dataset.index = index;
+
+                // Générer le contenu pour chaque détail sans en-têtes répétés
+                const detailRows = pure.details.map((detail, detailIndex) => {
+                    const rowClass = detailIndex % 2 === 0 ? 'even-row' : 'odd-row';
+                    return `
+                        <div class="pure-detail-row ${rowClass}" data-detail-index="${detailIndex}">
+                            <div class="prestation-label">Entrée bouteille:</div>
+                            <div class="prestation-value">${detail.category || 'Aucune'}</div>
+                            <div class="prestation-value">${detail.name}</div>
+                            <div class="prestation-qty">${detail.qty}</div>
+                            <div class="prestation-price">${detail.price}€</div>
+                            <div class="prestation-max">${detail.maxEntries}</div>
+                            <div class="prestation-discount">${detail.discount ? `${detail.discount}€` : '-'}</div>
+                            <div class="button-container">
+                                <button class="edit-btn" onclick="editPrestation(${index})">✏️</button>
+                                <button class="delete-btn" onclick="deletePrestation(${index})">🗑️</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                pureItem.innerHTML = detailRows;
+                pureList.appendChild(pureItem);
+
+                pureItem.addEventListener('dragstart', handleDragStart);
+                pureItem.addEventListener('dragover', handleDragOver);
+                pureItem.addEventListener('drop', handleDrop);
+                pureItem.addEventListener('dragend', handleDragEnd);
+            });
+        }
+    });
+
+    accessList.style.display = hasAccess ? 'block' : 'none';
+    pureList.style.display = hasPure ? 'block' : 'none';
+    separatorLine.style.display = (hasAccess && hasPure) ? 'block' : 'none';
+
+    const accessItems = accessList.querySelectorAll('.prestation-item');
+    const pureItems = pureList.querySelectorAll('.prestation-item');
+
+    accessItems.forEach(item => {
+        item.addEventListener('dragstart', handleDragStart);
+        item.addEventListener('dragover', handleDragOver);
+        item.addEventListener('drop', handleDrop);
+        item.addEventListener('dragend', handleDragEnd);
+    });
+
+    pureItems.forEach(item => {
+        item.addEventListener('dragstart', handleDragStart);
+        item.addEventListener('dragover', handleDragOver);
+        item.addEventListener('drop', handleDrop);
+        item.addEventListener('dragend', handleDragEnd);
+    });
+}
         let draggedItem = null;
 
         function handleDragStart(e) {
