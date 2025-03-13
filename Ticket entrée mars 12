@@ -708,6 +708,12 @@
     gap: 5px;
 }
 
+.kiosk-item-name,
+.kiosk-item-price {
+    flex: 1;
+    text-align: left;
+}
+
 @media (max-width: 768px) {
     .kiosk-item-row {
         flex-direction: column;
@@ -1041,6 +1047,9 @@
         align-items: flex-start;
     }
 
+    .kiosk-item-price {
+        text-align: left;
+    }
 
     .kiosk-quantity-control {
         width: 100%;
@@ -2373,41 +2382,48 @@ const detailRows = presentationRows.map((row, rowIndex) => {
             let hasPure = false;
 
             todayPrestations.forEach((prestation, prestationIndex) => {
-if (presentationLow) {
-    const id = `access-low-${prestationIndex}`;
-    kioskItems[id] = { name: presentationLow, price, qty: 0, maxQty: presentationLow === "Entrée Gratuit" ? 1 : Infinity };
-    accessContainer.innerHTML += `
-        <div class="kiosk-item">
-            <div class="kiosk-item-row">
-                <div class="kiosk-item-name">${presentationLow}</div>
-                <div class="kiosk-item-price">${price}€</div>
-                <div class="kiosk-quantity-control">
-                    <button class="kiosk-qty-btn" data-id="${id}" data-action="decrease">-</button>
-                    <div id="${id}-qty" class="kiosk-qty-value">0</div>
-                    <button class="kiosk-qty-btn" data-id="${id}" data-action="increase">+</button>
+               if (prestation.presentationLow || prestation.presentationNormal) {
+    hasAccess = true;
+    const presentationLow = prestation.presentationLow || '';
+    const presentationNormal = prestation.presentationNormal || '';
+    const price = parseFloat(prestation.price) || 0;
+
+    if (presentationLow) {
+        const id = `access-low-${prestationIndex}`;
+        kioskItems[id] = { name: presentationLow, price, qty: 0, maxQty: presentationLow === "Entrée Gratuit" ? 1 : Infinity };
+        accessContainer.innerHTML += `
+            <div class="kiosk-item">
+                <div class="kiosk-item-row">
+                    <div class="kiosk-item-name">${presentationLow}</div>
+                    <div class="kiosk-item-price">${price}€</div>
+                    <div class="kiosk-quantity-control">
+                        <button class="kiosk-qty-btn" data-id="${id}" data-action="decrease">-</button>
+                        <div id="${id}-qty" class="kiosk-qty-value">0</div>
+                        <button class="kiosk-qty-btn" data-id="${id}" data-action="increase">+</button>
+                    </div>
                 </div>
             </div>
-        </div>
-    `;
-}
-if (presentationNormal) {
-    const id = `access-normal-${prestationIndex}`;
-    kioskItems[id] = { name: presentationNormal, price, qty: 0, maxQty: Infinity };
-    accessContainer.innerHTML += `
-        <div class="kiosk-item">
-            <div class="kiosk-item-row">
-                <div class="kiosk-item-name">${presentationNormal}</div>
-                <div class="kiosk-item-price">${price}€</div>
-                <div class="kiosk-quantity-control">
-                    <button class="kiosk-qty-btn" data-id="${id}" data-action="decrease">-</button>
-                    <div id="${id}-qty" class="kiosk-qty-value">0</div>
-                    <button class="kiosk-qty-btn" data-id="${id}" data-action="increase">+</button>
+        `;
+    }
+    if (presentationNormal) {
+        const id = `access-normal-${prestationIndex}`;
+        kioskItems[id] = { name: presentationNormal, price, qty: 0, maxQty: Infinity };
+        accessContainer.innerHTML += `
+            <div class="kiosk-item">
+                <div class="kiosk-item-row">
+                    <div class="kiosk-item-name">${presentationNormal}</div>
+                    <div class="kiosk-item-price">${price}€</div>
+                    <div class="kiosk-quantity-control">
+                        <button class="kiosk-qty-btn" data-id="${id}" data-action="decrease">-</button>
+                        <div id="${id}-qty" class="kiosk-qty-value">0</div>
+                        <button class="kiosk-qty-btn" data-id="${id}" data-action="increase">+</button>
+                    </div>
                 </div>
             </div>
-        </div>
-    `;
+        `;
+    }
 }
-                                     
+
 if (prestation.pureItems.length > 0) {
     hasPure = true;
     prestation.pureItems.forEach((pure, pureIndex) => {
