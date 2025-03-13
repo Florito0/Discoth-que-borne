@@ -1199,6 +1199,10 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
+      /* Surcharge pour rendre "Entrée bouteille:" en blanc dans .pure-detail-row */
+.pure-detail-row .prestation-label:nth-child(1) {
+    color: #ffffff; /* Couleur blanche pour "Entrée bouteille:" */
+}
 
 /* Specific alignments for header labels */
 .access-header-row .prestation-label:nth-child(1),
