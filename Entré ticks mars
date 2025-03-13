@@ -1176,41 +1176,94 @@
 }
 
 /* Ajuster l'alignement pour .pure-header-row et .pure-detail-row */
+/* Ajuster l'alignement pour .pure-header-row et .pure-detail-row */
+/* Ajuster l'alignement pour .pure-header-row et .pure-detail-row */
 .pure-header-row,
 .pure-detail-row {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 0.5fr 0.5fr 0.8fr 1fr auto;
     gap: 10px;
     padding: 5px 0;
-    align-items: center; /* Déjà présent, mais pour confirmation */
+    align-items: center;
     width: 100%;
     box-sizing: border-box;
+    min-height: 30px;
 }
 
-/* Modifier la règle pour l'en-tête "Prix" (5e colonne) pour alignement à gauche */
+.pure-header-row {
+    border-bottom: 2px solid #00D4FF;
+    margin-bottom: 5px;
+}
+
+.pure-detail-row {
+    border-bottom: 1px solid #444;
+    white-space: nowrap;
+    overflow-x: auto;
+}
+
+/* Centrer l'en-tête "Prix" (5e colonne) */
 .pure-header-row .prestation-label:nth-child(5) {
-    text-align: left;
+    text-align: center;
     display: flex;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: center;
+    padding: 0 5px;
+    font-size: 16px;
+    line-height: 1.2;
 }
 
-/* Ajuster .prestation-label pour cohérence */
+/* Centrer l'en-tête "Max. Entrée:" (6e colonne) */
+.pure-header-row .prestation-label:nth-child(6) {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 5px;
+    font-size: 16px;
+    line-height: 1.2;
+}
+
+/* Centrer l'en-tête "Réduc. Suppl.:" (7e colonne) */
+.pure-header-row .prestation-label:nth-child(7) {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 5px;
+    font-size: 16px;
+    line-height: 1.2;
+}
+
 .prestation-label {
     font-weight: 500;
     color: #00D4FF;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    font-size: 16px;
+    line-height: 1.2;
 }
 
-/* Surcharge pour "Entrée bouteille:" */
 .pure-detail-row .prestation-label:nth-child(1) {
     color: #ffffff;
 }
 
-/* Modifier l'alignement de la valeur "Prix" dans les lignes de détail pour alignement à gauche */
+/* Centrer la valeur "1€" sous "Prix" */
 .pure-detail-row .prestation-price {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    color: #e0e0e0;
+    white-space: nowrap;
+    padding: 0 5px;
+    min-height: 20px;
+    line-height: 1.2;
+}
+
+/* Conserver l'alignement à gauche pour "Qt" */
+.pure-detail-row .prestation-qty {
     text-align: left;
     display: flex;
     justify-content: flex-start;
@@ -1218,6 +1271,46 @@
     font-size: 16px;
     color: #e0e0e0;
     white-space: nowrap;
+    padding: 0 5px;
+    min-height: 20px;
+    line-height: 1.2;
+}
+
+/* Centrer la valeur "1" sous "Max. Entrée:" */
+.pure-detail-row .prestation-max {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    color: #e0e0e0;
+    white-space: nowrap;
+    padding: 0 5px;
+    min-height: 20px;
+    line-height: 1.2;
+}
+
+/* Centrer la valeur "1€" sous "Réduc. Suppl.:" */
+.pure-detail-row .prestation-discount {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    color: #e0e0e0;
+    white-space: nowrap;
+    padding: 0 5px;
+    min-height: 20px;
+    line-height: 1.2;
+}
+
+.pure-detail-row .prestation-value,
+.pure-detail-row .prestation-price,
+.pure-detail-row .prestation-qty,
+.pure-detail-row .prestation-max,
+.pure-detail-row .prestation-discount {
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
       /* Surcharge pour rendre "Entrée bouteille:" en blanc dans .pure-detail-row */
 .pure-detail-row .prestation-label:nth-child(1) {
