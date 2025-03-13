@@ -114,12 +114,25 @@
             border-bottom: none;
         }
         
-        .prestation-details {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr 1fr auto;
-            gap: 5px;
-            align-items: center;
-        }
+.prestation-details {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr) auto; /* Four columns for label-value pairs, one for buttons */
+    gap: 10px;
+    align-items: start; /* Align items to the top */
+}
+
+.prestation-details div.label-value-pair {
+    display: flex;
+    flex-direction: column; /* Stack label and value vertically */
+    gap: 5px; /* Space between label and value */
+}
+
+.prestation-details .button-container {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    justify-content: flex-end;
+}
         
         .prestation-details div {
             padding: 2px;
@@ -1820,27 +1833,34 @@ function renderPrestations() {
             const accessText = presentationText.split(' / ')[0].split(': ')[0] || '';
             const prestationText = presentationText.split(': ')[1] || '';
 
-            const accessLabels = !accessList.hasChildNodes() ? `
-                <div>Les entrées:<br>${accessText}</div>
-                <div>Prestation:<br>${prestationText}</div>
-                <div>Prix:<br>${prestation.price}€</div>
-                <div>Sexe:<br>${prestation.sex}</div>
-            ` : `
-                <div>${accessText}</div>
-                <div>${prestationText}</div>
-                <div>${prestation.price}€</div>
-                <div>${prestation.sex}</div>
-            `;
+const accessLabels = `
+    <div class="label-value-pair">
+        <div class="prestation-label">Les entrées:</div>
+        <div>${accessText || '-'}</div>
+    </div>
+    <div class="label-value-pair">
+        <div class="prestation-label">Prestation:</div>
+        <div>${prestationText || '-'}</div>
+    </div>
+    <div class="label-value-pair">
+        <div class="prestation-label">Prix:</div>
+        <div>${prestation.price}€</div>
+    </div>
+    <div class="label-value-pair">
+        <div class="prestation-label">Sexe:</div>
+        <div>${prestation.sex}</div>
+    </div>
+`;
 
-            accessItem.innerHTML = `
-                <div class="prestation-details">
-                    ${accessLabels}
-                    <div class="button-container">
-                        <button class="edit-btn" onclick="editPrestation(${index})">✏️</button>
-                        <button class="delete-btn" onclick="deletePrestation(${index})">🗑️</button>
-                    </div>
-                </div>
-            `;
+accessItem.innerHTML = `
+    <div class="prestation-details">
+        ${accessLabels}
+        <div class="button-container">
+            <button class="edit-btn" onclick="editPrestation(${index})">✏️</button>
+            <button class="delete-btn" onclick="deletePrestation(${index})">🗑️</button>
+        </div>
+    </div>
+`;
             accessList.appendChild(accessItem);
         }
 
