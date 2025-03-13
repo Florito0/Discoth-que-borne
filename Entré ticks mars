@@ -114,26 +114,6 @@
             border-bottom: none;
         }
         
-.prestation-details {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr) auto; /* Four columns for label-value pairs, one for buttons */
-    gap: 10px;
-    align-items: start; /* Align items to the top */
-}
-
-.prestation-details div.label-value-pair {
-    display: flex;
-    flex-direction: column; /* Stack label and value vertically */
-    gap: 5px; /* Space between label and value */
-}
-
-.prestation-details .button-container {
-    display: flex;
-    gap: 5px;
-    align-items: center;
-    justify-content: flex-end;
-}
-        
         .prestation-details div {
             padding: 2px;
         }
@@ -938,6 +918,43 @@
         .toggle-btn:hover {
             background: #555;
         }
+.access-header-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 0.5fr 0.5fr auto; /* Matches the original .prestation-details */
+    gap: 10px;
+    padding: 5px 0;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+    border-bottom: 2px solid #00D4FF;
+    margin-bottom: 5px;
+}
+
+.access-detail-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 0.5fr 0.5fr auto;
+    gap: 10px;
+    padding: 5px 0;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+    border-bottom: 1px solid #444;
+    white-space: nowrap;
+    overflow-x: auto;
+}
+
+.access-detail-row:last-child {
+    border-bottom: none;
+}
+
+@media (max-width: 768px) {
+    .access-header-row,
+    .access-detail-row {
+        grid-template-columns: 1fr; /* Stack vertically on mobile */
+        gap: 5px;
+        padding: 5px 0;
+    }
+}
 /* Styles corrigés pour "Les entrées avec bouteille" */
 .pure-item {
     width: 100%;
@@ -1818,6 +1835,21 @@ function renderPrestations() {
         pureList.innerHTML = headerRow;
     }
 
+    // Ajouter un en-tête unique pour "Les entrées" si des prestations existent
+    const hasAccessItems = filteredPrestations.some(prestation => prestation.presentationLow || prestation.presentationNormal || prestation.price);
+    if (hasAccessItems) {
+        const headerRow = `
+            <div class="access-header-row">
+                <div class="prestation-label">Les entrées:</div>
+                <div class="prestation-label">Prestation:</div>
+                <div class="prestation-label">Prix:</div>
+                <div class="prestation-label">Sexe:</div>
+                <div class="button-container"></div>
+            </div>
+        `;
+        accessList.innerHTML = headerRow;
+    }
+
     filteredPrestations.forEach((prestation, index) => {
         if (prestation.presentationLow || prestation.presentationNormal || prestation.price) {
             hasAccess = true;
@@ -1833,34 +1865,21 @@ function renderPrestations() {
             const accessText = presentationText.split(' / ')[0].split(': ')[0] || '';
             const prestationText = presentationText.split(': ')[1] || '';
 
-const accessLabels = `
-    <div class="label-value-pair">
-        <div class="prestation-label">Les entrées:</div>
-        <div>${accessText || '-'}</div>
-    </div>
-    <div class="label-value-pair">
-        <div class="prestation-label">Prestation:</div>
-        <div>${prestationText || '-'}</div>
-    </div>
-    <div class="label-value-pair">
-        <div class="prestation-label">Prix:</div>
-        <div>${prestation.price}€</div>
-    </div>
-    <div class="label-value-pair">
-        <div class="prestation-label">Sexe:</div>
-        <div>${prestation.sex}</div>
-    </div>
-`;
+            // Rendre uniquement les valeurs sans les étiquettes, dans une grille alignée avec l'en-tête
+            const accessValues = `
+                <div class="access-detail-row">
+                    <div class="prestation-value">${accessText || '-'}</div>
+                    <div class="prestation-value">${prestationText || '-'}</div>
+                    <div class="prestation-price">${prestation.price}€</div>
+                    <div class="prestation-value">${prestation.sex}</div>
+                    <div class="button-container">
+                        <button class="edit-btn" onclick="editPrestation(${index})">✏️</button>
+                        <button class="delete-btn" onclick="deletePrestation(${index})">🗑️</button>
+                    </div>
+                </div>
+            `;
 
-accessItem.innerHTML = `
-    <div class="prestation-details">
-        ${accessLabels}
-        <div class="button-container">
-            <button class="edit-btn" onclick="editPrestation(${index})">✏️</button>
-            <button class="delete-btn" onclick="deletePrestation(${index})">🗑️</button>
-        </div>
-    </div>
-`;
+            accessItem.innerHTML = accessValues;
             accessList.appendChild(accessItem);
         }
 
