@@ -1175,41 +1175,49 @@
     box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
 }
 
-.pure-header-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 0.5fr 0.5fr 0.8fr 1fr auto; /* Match .pure-detail-row */
-    gap: 10px;
-    padding: 5px 0;
-    align-items: center;
-    width: 100%;
-    box-sizing: border-box;
-    border-bottom: 2px solid #00D4FF; /* Distinct separator for header */
-    margin-bottom: 5px;
-}
-
+/* Ajuster l'alignement pour .pure-header-row et .pure-detail-row */
+.pure-header-row,
 .pure-detail-row {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 0.5fr 0.5fr 0.8fr 1fr auto; /* Align with .prestation-details */
+    grid-template-columns: 1fr 1fr 1fr 0.5fr 0.5fr 0.8fr 1fr auto;
     gap: 10px;
     padding: 5px 0;
-    align-items: center;
+    align-items: center; /* Déjà présent, mais pour confirmation */
     width: 100%;
     box-sizing: border-box;
-    border-bottom: 1px solid #444;
-    white-space: nowrap; /* Prevent wrapping */
-    overflow-x: auto; /* Allow horizontal scrolling if needed */
 }
 
-.pure-detail-row:last-child {
-    border-bottom: none;
+/* Modifier la règle pour l'en-tête "Prix" (5e colonne) pour alignement à gauche */
+.pure-header-row .prestation-label:nth-child(5) {
+    text-align: left;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
 }
 
+/* Ajuster .prestation-label pour cohérence */
 .prestation-label {
     font-weight: 500;
     color: #00D4FF;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+/* Surcharge pour "Entrée bouteille:" */
+.pure-detail-row .prestation-label:nth-child(1) {
+    color: #ffffff;
+}
+
+/* Modifier l'alignement de la valeur "Prix" dans les lignes de détail pour alignement à gauche */
+.pure-detail-row .prestation-price {
+    text-align: left;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    font-size: 16px;
+    color: #e0e0e0;
+    white-space: nowrap;
 }
       /* Surcharge pour rendre "Entrée bouteille:" en blanc dans .pure-detail-row */
 .pure-detail-row .prestation-label:nth-child(1) {
