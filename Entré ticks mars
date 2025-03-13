@@ -1850,78 +1850,91 @@ function renderPrestations() {
         accessList.innerHTML = headerRow;
     }
 
-    filteredPrestations.forEach((prestation, index) => {
-        if (prestation.presentationLow || prestation.presentationNormal || prestation.price) {
-            hasAccess = true;
-            const accessItem = document.createElement('div');
-            accessItem.className = 'prestation-item';
-            accessItem.draggable = true;
-            accessItem.dataset.index = index;
+filteredPrestations.forEach((prestation, index) => {
+    if (prestation.presentationLow || prestation.presentationNormal || prestation.price) {
+        hasAccess = true;
+        const accessItem = document.createElement('div');
+        accessItem.className = 'prestation-item';
+        accessItem.draggable = true;
+        accessItem.dataset.index = index;
 
-            const presentationText = [
-                prestation.presentationLow ? `Heure creuse: ${prestation.presentationLow}` : '',
-                prestation.presentationNormal ? `Normal: ${prestation.presentationNormal}` : ''
-            ].filter(Boolean).join(' / ');
-            const accessText = presentationText.split(' / ')[0].split(': ')[0] || '';
-            const prestationText = presentationText.split(': ')[1] || '';
+        const presentationRows = [];
+        if (prestation.presentationLow) {
+            presentationRows.push({
+                access: 'Heure creuse',
+                prestation: prestation.presentationLow,
+                price: prestation.price,
+                sex: prestation.sex
+            });
+        }
+        if (prestation.presentationNormal) {
+            presentationRows.push({
+                access: 'Normal',
+                prestation: prestation.presentationNormal,
+                price: prestation.price,
+                sex: prestation.sex
+            });
+        }
 
-            // Rendre uniquement les valeurs sans les étiquettes, dans une grille alignée avec l'en-tête
-            const accessValues = `
-                <div class="access-detail-row">
-                    <div class="prestation-value">${accessText || '-'}</div>
-                    <div class="prestation-value">${prestationText || '-'}</div>
-                    <div class="prestation-price">${prestation.price}€</div>
-                    <div class="prestation-value">${prestation.sex}</div>
+        // Render each row with alternating colors using a 5-column grid
+        const detailRows = presentationRows.map((row, rowIndex) => {
+            const rowClass = rowIndex % 2 === 0 ? 'even-row' : 'odd-row';
+            return `
+                <div class="access-detail-row ${rowClass}" data-detail-index="${rowIndex}">
+                    <div class="prestation-value">${row.access || '-'}</div>
+                    <div class="prestation-value">${row.prestation || '-'}</div>
+                    <div class="prestation-price">${row.price}€</div>
+                    <div class="prestation-value">${row.sex}</div>
                     <div class="button-container">
                         <button class="edit-btn" onclick="editPrestation(${index})">✏️</button>
                         <button class="delete-btn" onclick="deletePrestation(${index})">🗑️</button>
                     </div>
                 </div>
             `;
+        }).join('');
 
-            accessItem.innerHTML = accessValues;
-            accessList.appendChild(accessItem);
-        }
+        accessItem.innerHTML = detailRows;
+        accessList.appendChild(accessItem);
+    }
 
-        if (prestation.pureItems.length > 0) {
-            hasPure = true;
-            prestation.pureItems.forEach((pure, pureIndex) => {
-                const pureItem = document.createElement('div');
-                pureItem.className = 'prestation-item pure-item grid-support';
-                pureItem.draggable = true;
-                pureItem.dataset.index = index;
+    if (prestation.pureItems.length > 0) {
+        hasPure = true;
+        prestation.pureItems.forEach((pure, pureIndex) => {
+            const pureItem = document.createElement('div');
+            pureItem.className = 'prestation-item pure-item grid-support';
+            pureItem.draggable = true;
+            pureItem.dataset.index = index;
 
-                // Générer le contenu pour chaque détail sans en-têtes répétés
-                const detailRows = pure.details.map((detail, detailIndex) => {
-                    const rowClass = detailIndex % 2 === 0 ? 'even-row' : 'odd-row';
-                    return `
-                        <div class="pure-detail-row ${rowClass}" data-detail-index="${detailIndex}">
-                            <div class="prestation-label">Entrée bouteille:</div>
-                            <div class="prestation-value">${detail.category || 'Aucune'}</div>
-                            <div class="prestation-value">${detail.name}</div>
-                            <div class="prestation-qty">${detail.qty}</div>
-                            <div class="prestation-price">${detail.price}€</div>
-                            <div class="prestation-max">${detail.maxEntries}</div>
-                            <div class="prestation-discount">${detail.discount ? `${detail.discount}€` : '-'}</div>
-                            <div class="button-container">
-                                <button class="edit-btn" onclick="editPrestation(${index})">✏️</button>
-                                <button class="delete-btn" onclick="deletePrestation(${index})">🗑️</button>
-                            </div>
+            // Générer le contenu pour chaque détail sans en-têtes répétés (unchanged)
+            const detailRows = pure.details.map((detail, detailIndex) => {
+                const rowClass = detailIndex % 2 === 0 ? 'even-row' : 'odd-row';
+                return `
+                    <div class="pure-detail-row ${rowClass}" data-detail-index="${detailIndex}">
+                        <div class="prestation-label">Entrée bouteille:</div>
+                        <div class="prestation-value">${detail.category || 'Aucune'}</div>
+                        <div class="prestation-value">${detail.name}</div>
+                        <div class="prestation-qty">${detail.qty}</div>
+                        <div class="prestation-price">${detail.price}€</div>
+                        <div class="prestation-max">${detail.maxEntries}</div>
+                        <div class="prestation-discount">${detail.discount ? `${detail.discount}€` : '-'}</div>
+                        <div class="button-container">
+                            <button class="edit-btn" onclick="editPrestation(${index})">✏️</button>
+                            <button class="delete-btn" onclick="deletePrestation(${index})">🗑️</button>
                         </div>
-                    `;
-                }).join('');
+                    </div>
+                `;
+            }).join('');
 
-                pureItem.innerHTML = detailRows;
-                pureList.appendChild(pureItem);
+            pureItem.innerHTML = detailRows;
+            pureList.appendChild(pureItem);
 
-                pureItem.addEventListener('dragstart', handleDragStart);
-                pureItem.addEventListener('dragover', handleDragOver);
-                pureItem.addEventListener('drop', handleDrop);
-                pureItem.addEventListener('dragend', handleDragEnd);
-            });
-        }
-    });
-
+            pureItem.addEventListener('dragstart', handleDragStart);
+            pureItem.addEventListener('dragover', handleDragOver);
+            pureItem.addEventListener('drop', handleDrop);
+            pureItem.addEventListener('dragend', handleDragEnd);
+        });
+    }
+});
     accessList.style.display = hasAccess ? 'block' : 'none';
     pureList.style.display = hasPure ? 'block' : 'none';
     separatorLine.style.display = (hasAccess && hasPure) ? 'block' : 'none';
