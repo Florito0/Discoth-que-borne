@@ -93,33 +93,38 @@
         
         .separator-line {
             height: 2px;
-            background-color: #00D4FF;
+            background-color: #333;
             margin: 10px 0;
         }
         
-        .prestation-item {
-            display: flex;
-            flex-direction: column;
-            padding: 10px;
-            border-bottom: 1px solid #444;
-            cursor: move;
-            user-select: none;
-        }
-        
-        .prestation-item.dragging {
-            opacity: 0.5;
-        }
-        
-        .prestation-item:last-child {
-            border-bottom: none;
-        }
-        
-        .prestation-details {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr 1fr auto;
-            gap: 5px;
-            align-items: center;
-        }
+.prestation-item {
+    display: flex;
+    flex-direction: column;
+    cursor: move;
+    user-select: none;
+}
+
+.prestation-item.dragging {
+    opacity: 0.5;
+}
+
+/* Styles spécifiques pour "Les entrées" dans #access-prestations-list */
+#access-prestations-list .prestation-item {
+    background-color: #2a3435; /* Même fond que .pure-item */
+    border-radius: 8px; /* Bordure arrondie comme .pure-item */
+    margin-bottom: 10px; /* Espacement comme .pure-item */
+    padding: 10px; /* Padding interne comme .pure-item */
+    transition: box-shadow 0.3s; /* Transition pour l'effet hover */
+}
+
+#access-prestations-list .prestation-item:hover {
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.5); /* Même effet que .pure-item:hover */
+}
+
+/* Supprimer la bordure du dernier élément pour cohérence */
+#access-prestations-list .access-detail-row:last-child {
+    border-bottom: none;
+}
         
         .prestation-details div {
             padding: 2px;
@@ -703,12 +708,6 @@
     gap: 5px;
 }
 
-.kiosk-item-name,
-.kiosk-item-price {
-    flex: 1;
-    text-align: left;
-}
-
 @media (max-width: 768px) {
     .kiosk-item-row {
         flex-direction: column;
@@ -925,6 +924,52 @@
         .toggle-btn:hover {
             background: #555;
         }
+.access-header-row {
+    display: grid;
+    grid-template-columns: minmax(120px, 1fr) minmax(150px, 1fr) minmax(80px, 0.8fr) minmax(80px, 1fr) 80px; /* Adjusted with minmax and fixed button width */
+    gap: 10px;
+    padding: 5px 0;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+    border-bottom: 2px solid #00D4FF;
+    margin-bottom: 5px;
+}
+
+.access-detail-row {
+    display: grid;
+    grid-template-columns: minmax(120px, 1fr) minmax(150px, 1fr) minmax(80px, 0.8fr) minmax(80px, 1fr) 80px; /* Match header */
+    gap: 10px;
+    padding: 5px 0;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+    border-bottom: 1px solid #444;
+    white-space: nowrap;
+    overflow-x: auto;
+}
+
+.access-detail-row:last-child {
+    border-bottom: none;
+}
+
+.button-container {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    justify-content: flex-end;
+    white-space: nowrap;
+    width: 80px; /* Match the grid column width */
+}
+
+@media (max-width: 768px) {
+    .access-header-row,
+    .access-detail-row {
+        grid-template-columns: 1fr; /* Stack vertically on mobile */
+        gap: 5px;
+        padding: 5px 0;
+    }
+}
 /* Styles corrigés pour "Les entrées avec bouteille" */
 .pure-item {
     width: 100%;
@@ -934,254 +979,6 @@
 .pure-details {
     width: 100%;
 }
-
-.pure-detail-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 0.8fr 0.8fr 1fr 1.2fr 0.5fr;
-    gap: 5px;
-    padding: 10px 0;
-    align-items: center;
-    width: 100%;
-    box-sizing: border-box;
-    border-bottom: 1px solid #444;
-}
-
-.pure-detail-row:last-child {
-    border-bottom: none;
-}
-
-.prestation-label {
-    font-weight: 500;
-    color: #00D4FF;
-    text-align: left;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.prestation-value {
-    font-size: 16px;
-    color: #fff;
-    text-align: left;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.prestation-qty {
-    font-size: 16px;
-    color: #e0e0e0;
-    text-align: center;
-    white-space: nowrap;
-}
-
-.prestation-price {
-    font-size: 16px;
-    color: #e0e0e0;
-    text-align: center;
-    min-width: 60px; /* Alignement avec le prix de "Les entrées" */
-    white-space: nowrap;
-}
-
-.prestation-max,
-.prestation-discount {
-    font-size: 14px;
-    color: #e0e0e0;
-    text-align: center;
-    white-space: nowrap;
-}
-
-.button-container {
-    display: flex;
-    gap: 5px;
-    align-items: center;
-    justify-content: flex-end;
-    white-space: nowrap;
-}
-
-.even-row {
-    background-color: rgba(255, 255, 255, 0.05);
-}
-
-.odd-row {
-    background-color: rgba(0, 0, 0, 0.1);
-}
-
-@media (max-width: 768px) {
-    .pure-detail-row {
-        grid-template-columns: 1fr;
-        gap: 5px;
-        padding: 10px 0;
-    }
-
-    .prestation-label,
-    .prestation-value,
-    .prestation-qty,
-    .prestation-price,
-    .prestation-max,
-    .prestation-discount {
-        text-align: left;
-    }
-}      
-/* Styles pour aligner "Les entrées avec bouteille" sur 8 colonnes */
-.pure-detail-row {
-    display: grid;
-    grid-template-columns: 1.5fr 1.5fr 1.5fr 0.8fr 1fr 1.2fr 1.5fr auto;
-    gap: 5px;
-    padding: 10px 0;
-    align-items: center;
-    border-bottom: 1px solid #444;
-}
-
-.pure-detail-row:last-child {
-    border-bottom: none;
-}
-
-.prestation-label {
-    font-weight: 500;
-    color: #00D4FF;
-    text-align: left;
-}
-
-.prestation-value {
-    font-size: 16px;
-    color: #fff;
-    text-align: left;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.prestation-qty {
-    font-size: 16px;
-    color: #e0e0e0;
-    text-align: center;
-    max-width: 60px; /* Optimisation de la taille de la cellule Qt */
-}
-
-.prestation-price {
-    font-size: 16px;
-    color: #e0e0e0;
-    text-align: center;
-    min-width: 60px; /* Alignement avec le prix de "Les entrées" */
-    margin-left: 150px; /* Décalage pour commencer au même emplacement que "Les entrées" */
-}
-
-.prestation-max,
-.prestation-discount {
-    font-size: 14px;
-    color: #e0e0e0;
-    text-align: center;
-}
-
-.button-container {
-    display: flex;
-    gap: 5px;
-    align-items: center;
-    margin-left: 10px; /* Alignement avec les icônes de "Les entrées" */
-}
-
-.even-row {
-    background-color: rgba(255, 255, 255, 0.05);
-}
-
-.odd-row {
-    background-color: rgba(0, 0, 0, 0.1);
-}
-
-@media (max-width: 768px) {
-    .pure-detail-row {
-        grid-template-columns: 1fr;
-        gap: 5px;
-        padding: 10px 0;
-    }
-
-    .prestation-label,
-    .prestation-value,
-    .prestation-qty,
-    .prestation-price,
-    .prestation-max,
-    .prestation-discount {
-        text-align: left;
-    }
-
-    .prestation-price {
-        margin-left: 0;
-    }
-
-    .button-container {
-        margin-left: 0;
-    }
-}      
-/* Styles pour améliorer l'ergonomie de "Les entrées avec bouteille" */
-.pure-detail-row {
-    display: grid;
-    grid-template-columns: 1fr 2fr 1fr 1fr 1fr 1fr auto;
-    gap: 5px;
-    padding: 10px 0;
-    align-items: center;
-    border-bottom: 1px solid #444;
-}
-
-.pure-detail-row:last-child {
-    border-bottom: none;
-}
-
-.prestation-label {
-    font-weight: 500;
-    color: #00D4FF;
-    text-align: left;
-}
-
-.prestation-value {
-    font-size: 16px;
-    color: #fff;
-    text-align: left;
-}
-
-.prestation-qty,
-.prestation-price,
-.prestation-max,
-.prestation-discount {
-    font-size: 16px;
-    color: #e0e0e0;
-    text-align: center;
-}
-
-.prestation-price {
-    min-width: 60px; /* Alignement avec le prix de "Les entrées" */
-}
-
-.button-container {
-    display: flex;
-    gap: 5px;
-    align-items: center;
-}
-
-.even-row {
-    background-color: rgba(255, 255, 255, 0.05);
-}
-
-.odd-row {
-    background-color: rgba(0, 0, 0, 0.1);
-}
-
-@media (max-width: 768px) {
-    .pure-detail-row {
-        grid-template-columns: 1fr;
-        gap: 5px;
-        padding: 10px 0;
-    }
-
-    .prestation-label,
-    .prestation-value,
-    .prestation-qty,
-    .prestation-price,
-    .prestation-max,
-    .prestation-discount {
-        text-align: left;
-    }
-}      
 /* Styles pour aligner les éléments dans Pure Soirée */
 .kiosk-item-row {
     display: flex;
@@ -1203,12 +1000,14 @@
     font-weight: 500;
     text-align: left;
 }
-
 .kiosk-item-price {
     font-size: 18px;
     color: #b3b3b3;
-    min-width: 60px; /* Assure l'alignement avec Accès Soirée */
+    min-width: 60px; /* Maintenir une largeur minimale pour la cohérence */
     text-align: center;
+    display: flex;
+    justify-content: center; /* Centrer le contenu horizontalement */
+    align-items: center; /* Centrer verticalement si nécessaire */
 }
 
 .kiosk-item-max {
@@ -1242,9 +1041,6 @@
         align-items: flex-start;
     }
 
-    .kiosk-item-price {
-        text-align: left;
-    }
 
     .kiosk-quantity-control {
         width: 100%;
@@ -1352,6 +1148,260 @@
         font-size: 12px;
     }
 }
+/* Styles unifiés pour "Les entrées avec bouteille" dans Prestations actuelles */
+.grid-support {
+    width: 100%;
+    display: block; /* Ensure it acts as a block to contain the grid */
+}
+
+.pure-item {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    background-color: #2a3435;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    transition: box-shadow 0.3s;
+}
+
+.pure-item:hover {
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+}
+
+/* Ajuster l'alignement pour .pure-header-row et .pure-detail-row */
+/* Ajuster l'alignement pour .pure-header-row et .pure-detail-row */
+/* Ajuster l'alignement pour .pure-header-row et .pure-detail-row */
+.pure-header-row,
+.pure-detail-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 0.5fr 0.5fr 0.8fr 1fr auto;
+    gap: 10px;
+    padding: 5px 0;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 30px;
+}
+
+.pure-header-row {
+    border-bottom: 2px solid #00D4FF;
+    margin-bottom: 5px;
+}
+
+.pure-detail-row {
+    border-bottom: 1px solid #444;
+    white-space: nowrap;
+    overflow-x: auto;
+}
+
+/* Centrer l'en-tête "Prix" (5e colonne) */
+.pure-header-row .prestation-label:nth-child(5) {
+    text-align: left;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 0 5px;
+    font-size: 16px;
+    line-height: 1.2;
+}
+
+/* Centrer l'en-tête "Max. Entrée:" (6e colonne) */
+.pure-header-row .prestation-label:nth-child(6) {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 5px;
+    font-size: 16px;
+    line-height: 1.2;
+}
+
+/* Centrer l'en-tête "Réduc. Suppl.:" (7e colonne) */
+.pure-header-row .prestation-label:nth-child(7) {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 5px;
+    font-size: 16px;
+    line-height: 1.2;
+}
+
+.prestation-label {
+    font-weight: 500;
+    color: #00D4FF;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 16px;
+    line-height: 1.2;
+}
+
+.pure-detail-row .prestation-label:nth-child(1) {
+    color: #ffffff;
+}
+
+/* Centrer la valeur "1€" sous "Prix" */
+.pure-detail-row .prestation-price {
+    text-align: left;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    font-size: 16px;
+    color: #e0e0e0;
+    white-space: nowrap;
+    padding: 0 5px;
+    min-height: 20px;
+    line-height: 1.2;
+}
+
+/* Conserver l'alignement à gauche pour "Qt" */
+.pure-detail-row .prestation-qty {
+    text-align: left;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    font-size: 16px;
+    color: #e0e0e0;
+    white-space: nowrap;
+    padding: 0 5px;
+    min-height: 20px;
+    line-height: 1.2;
+}
+
+/* Centrer la valeur "1" sous "Max. Entrée:" */
+.pure-detail-row .prestation-max {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    color: #e0e0e0;
+    white-space: nowrap;
+    padding: 0 5px;
+    min-height: 20px;
+    line-height: 1.2;
+}
+
+/* Centrer la valeur "1€" sous "Réduc. Suppl.:" */
+.pure-detail-row .prestation-discount {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    color: #e0e0e0;
+    white-space: nowrap;
+    padding: 0 5px;
+    min-height: 20px;
+    line-height: 1.2;
+}
+
+.pure-detail-row .prestation-value,
+.pure-detail-row .prestation-price,
+.pure-detail-row .prestation-qty,
+.pure-detail-row .prestation-max,
+.pure-detail-row .prestation-discount {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+      /* Surcharge pour rendre "Entrée bouteille:" en blanc dans .pure-detail-row */
+.pure-detail-row .prestation-label:nth-child(1) {
+    color: #ffffff; /* Couleur blanche pour "Entrée bouteille:" */
+}
+
+/* Specific alignments for header labels */
+.access-header-row .prestation-label:nth-child(1),
+.access-header-row .prestation-label:nth-child(2) {
+    text-align: left;
+}
+
+.access-header-row .prestation-label:nth-child(3),
+.access-header-row .prestation-label:nth-child(4) {
+    text-align: center;
+}
+
+.prestation-value {
+    font-size: 16px;
+    color: #fff;
+    white-space: nowrap;
+    overflow: visible;
+    text-overflow: none;
+}
+
+/* Specific alignments for data values */
+.access-detail-row .prestation-value:nth-child(1),
+.access-detail-row .prestation-value:nth-child(2) {
+    text-align: left;
+}
+
+.access-detail-row .prestation-value:nth-child(4) {
+    text-align: center; /* Already set, but kept for clarity */
+}
+
+.prestation-price {
+    font-size: 16px;
+    color: #e0e0e0;
+    text-align: center; /* Center-align Prix in data rows */
+    white-space: nowrap;
+}
+
+.prestation-max,
+.prestation-discount {
+    font-size: 14px;
+    color: #e0e0e0;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.button-container {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    justify-content: flex-end;
+    white-space: nowrap;
+    min-width: 80px; /* Ensures buttons have enough space */
+}
+
+.even-row {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.odd-row {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+    .pure-header-row,
+    .pure-detail-row {
+        grid-template-columns: 1fr; /* Stack vertically on mobile */
+        gap: 5px;
+        padding: 5px 0;
+    }
+
+    .prestation-label,
+    .prestation-value,
+    .prestation-qty,
+    .prestation-price,
+    .prestation-max,
+    .prestation-discount {
+        text-align: left;
+    }
+}
+
+/* Ensure .current-prestations supports the grid */
+.current-prestations {
+    min-width: 0; /* Prevent overflow issues */
+    overflow-x: auto; /* Allow horizontal scrolling if content exceeds width */
+}
+
+/* Align .prestation-details to match */
+.prestation-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr 0.5fr 0.5fr auto; /* Adjusted for better alignment */
+    gap: 10px;
+    align-items: center;
+}
 /* Styles pour les éléments "Les entrées avec bouteille" dans Prestations actuelles */
 .pure-item {
     background-color: #2a3435;
@@ -1371,82 +1421,6 @@
     color: #00D4FF;
     margin-bottom: 10px;
     text-align: left;
-}
-
-.pure-detail-grid {
-    display: grid;
-    grid-template-columns: 1fr 2fr 1fr 1fr 1fr 1fr;
-    gap: 5px;
-    padding: 10px 0;
-    border-top: 1px solid #444;
-    border-bottom: 1px solid #444;
-}
-
-.pure-detail-row {
-    display: contents; /* Permet aux enfants de gérer la grille */
-    padding: 5px 0;
-}
-
-.pure-detail-row.even-row > * {
-    background-color: rgba(255, 255, 255, 0.05);
-}
-
-.pure-detail-row.odd-row > * {
-    background-color: rgba(0, 0, 0, 0.1);
-}
-
-.pure-detail-category,
-.pure-detail-name,
-.pure-detail-qty,
-.pure-detail-price,
-.pure-detail-max,
-.pure-detail-discount {
-    padding: 8px;
-    text-align: center;
-    font-size: 16px;
-    border-radius: 4px;
-}
-
-.pure-detail-category {
-    font-weight: 500;
-    color: #b3b3b3;
-}
-
-.pure-detail-name {
-    font-weight: 600;
-    color: #fff;
-    text-align: left;
-}
-
-.pure-detail-qty,
-.pure-detail-price,
-.pure-detail-max,
-.pure-detail-discount {
-    color: #e0e0e0;
-}
-
-@media (max-width: 768px) {
-    .pure-detail-grid {
-        grid-template-columns: 1fr;
-        gap: 5px;
-    }
-
-    .pure-detail-row {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 10px 0;
-    }
-
-    .pure-detail-category,
-    .pure-detail-name,
-    .pure-detail-qty,
-    .pure-detail-price,
-    .pure-detail-max,
-    .pure-detail-discount {
-        text-align: left;
-        padding: 5px 0;
-    }
 }
     </style>
 </head>
@@ -1870,11 +1844,13 @@
         }
 
         function savePrestation() {
-            const days = Array.from(document.querySelectorAll('input[name="days"]:checked')).map(checkbox => checkbox.value);
-            const presentationLow = document.getElementById('access-presentation-low').value.trim();
-            const presentationNormal = document.getElementById('access-presentation-normal').value.trim();
-            const price = document.getElementById('access-price').value || '';
-            const sex = document.getElementById('access-sex').value;
+    const days = Array.from(document.querySelectorAll('input[name="days"]:checked')).map(checkbox => checkbox.value);
+    const presentationLow = document.getElementById('access-presentation-low').value.trim();
+    const presentationNormal = document.getElementById('access-presentation-normal').value.trim();
+    const price = document.getElementById('access-price').value || '';
+    const sex = document.getElementById('access-sex').value;
+
+    console.log('Saving prestation:', { days, presentationLow, presentationNormal, price, sex }); // Debug log
 
             let errors = [];
             const daysCheckboxes = document.getElementById('days-checkboxes');
@@ -1950,134 +1926,169 @@
             addPure();
         }
 
-        function renderPrestations() {
-            const accessList = document.getElementById('access-prestations-list');
-            const pureList = document.getElementById('pure-prestations-list');
-            const separatorLine = document.getElementById('separator-line');
-            const previewSection = document.getElementById('preview-section');
-            const accessForm = document.getElementById('access-form');
-            const previewBtn = document.querySelector('.preview-btn');
-            accessList.style.display = 'block';
-            pureList.style.display = 'block';
-            previewSection.style.display = 'none';
-            accessForm.style.display = 'block';
-            previewBtn.classList.remove('active');
-            isPreviewActive = false;
+function renderPrestations() {
+    const accessList = document.getElementById('access-prestations-list');
+    const pureList = document.getElementById('pure-prestations-list');
+    const separatorLine = document.getElementById('separator-line');
+    const previewSection = document.getElementById('preview-section');
+    const accessForm = document.getElementById('access-form');
+    const previewBtn = document.querySelector('.preview-btn');
+    accessList.style.display = 'block';
+    pureList.style.display = 'block';
+    previewSection.style.display = 'none';
+    accessForm.style.display = 'block';
+    previewBtn.classList.remove('active');
+    isPreviewActive = false;
 
-            accessList.innerHTML = '';
-            pureList.innerHTML = '';
-            const filteredPrestations = selectedDayFilter 
-                ? prestations.filter(p => p.days.includes(selectedDayFilter))
-                : [...prestations];
+    accessList.innerHTML = '';
+    pureList.innerHTML = '';
+    const filteredPrestations = selectedDayFilter 
+        ? prestations.filter(p => p.days.includes(selectedDayFilter))
+        : [...prestations];
 
-            let hasAccess = false;
-            let hasPure = false;
+    let hasAccess = false;
+    let hasPure = false;
 
-            filteredPrestations.forEach((prestation, index) => {
-                if (prestation.presentationLow || prestation.presentationNormal || prestation.price) {
-                    hasAccess = true;
-                    const accessItem = document.createElement('div');
-                    accessItem.className = 'prestation-item';
-                    accessItem.draggable = true;
-                    accessItem.dataset.index = index;
-
-                    const presentationText = [
-                        prestation.presentationLow ? `Heure creuse: ${prestation.presentationLow}` : '',
-                        prestation.presentationNormal ? `Normal: ${prestation.presentationNormal}` : ''
-                    ].filter(Boolean).join(' / ');
-                    const accessText = presentationText.split(' / ')[0].split(': ')[0] || '';
-                    const prestationText = presentationText.split(': ')[1] || '';
-
-                    const accessLabels = !accessList.hasChildNodes() ? `
-                        <div>Les entrées:<br>${accessText}</div>
-                        <div>Prestation:<br>${prestationText}</div>
-                        <div>Prix:<br>${prestation.price}€</div>
-                        <div>Sexe:<br>${prestation.sex}</div>
-                    ` : `
-                        <div>${accessText}</div>
-                        <div>${prestationText}</div>
-                        <div>${prestation.price}€</div>
-                        <div>${prestation.sex}</div>
-                    `;
-
-                    accessItem.innerHTML = `
-                        <div class="prestation-details">
-                            ${accessLabels}
-                            <div class="button-container">
-                                <button class="edit-btn" onclick="editPrestation(${index})">✏️</button>
-                                <button class="delete-btn" onclick="deletePrestation(${index})">🗑️</button>
-                            </div>
-                        </div>
-                    `;
-                    accessList.appendChild(accessItem);
-                }
-
-if (prestation.pureItems.length > 0) {
-    hasPure = true;
-    prestation.pureItems.forEach((pure, pureIndex) => {
-        const pureItem = document.createElement('div');
-        pureItem.className = 'prestation-item pure-item';
-        pureItem.draggable = true;
-        pureItem.dataset.index = index;
-
-        // Générer le contenu pour chaque détail
-        const detailRows = pure.details.map((detail, detailIndex) => {
-            const rowClass = detailIndex % 2 === 0 ? 'even-row' : 'odd-row';
-            return `
-                <div class="pure-detail-row ${rowClass}" data-detail-index="${detailIndex}">
-                    <div class="prestation-label">Les entrées avec bouteille:</div>
-                    <div class="prestation-value">${detail.name}</div>
-                    <div class="prestation-value">${detail.category || 'Aucune'}</div>
-                    <div class="prestation-qty">Qt: ${detail.qty}</div>
-                    <div class="prestation-price">${detail.price}€</div>
-                    <div class="prestation-max">Max. Entrée: ${detail.maxEntries}</div>
-                    <div class="prestation-discount">Réduc. bouteille suppl.: ${detail.discount ? `${detail.discount}€` : '-'}</div>
-                    <div class="button-container">
-                        <button class="edit-btn" onclick="editPrestation(${index})">✏️</button>
-                        <button class="delete-btn" onclick="deletePrestation(${index})">🗑️</button>
-                    </div>
-                </div>
-            `;
-        }).join('');
-
-        pureItem.innerHTML = `
-            <div class="pure-details">
-                ${detailRows}
+    // Ajouter les en-têtes pour "Les entrées avec bouteille" une seule fois si nécessaire
+    const hasPureItems = filteredPrestations.some(prestation => prestation.pureItems.length > 0);
+    if (hasPureItems) {
+        const headerRow = `
+            <div class="pure-header-row">
+                <div class="prestation-label">Type:</div>
+                <div class="prestation-label">Catégorie:</div>
+                <div class="prestation-label">Nom:</div>
+                <div class="prestation-label">Qt:</div>
+                <div class="prestation-label">Prix:</div>
+                <div class="prestation-label">Max. Entrée:</div>
+                <div class="prestation-label">Réduc. Suppl.:</div>
+                <div class="button-container"></div>
             </div>
         `;
-        pureList.appendChild(pureItem);
+        pureList.innerHTML = headerRow;
+    }
 
-        // Ajouter des événements de drag-and-drop
-        pureItem.addEventListener('dragstart', handleDragStart);
-        pureItem.addEventListener('dragover', handleDragOver);
-        pureItem.addEventListener('drop', handleDrop);
-        pureItem.addEventListener('dragend', handleDragEnd);
+    // Ajouter un en-tête unique pour "Les entrées" si des prestations existent
+    const hasAccessItems = filteredPrestations.some(prestation => prestation.presentationLow || prestation.presentationNormal || prestation.price);
+    if (hasAccessItems) {
+        const headerRow = `
+            <div class="access-header-row">
+                <div class="prestation-label">Les entrées:</div>
+                <div class="prestation-label">Prestation:</div>
+                <div class="prestation-label">Prix:</div>
+                <div class="prestation-label">Sexe:</div>
+                <div class="button-container"></div>
+            </div>
+        `;
+        accessList.innerHTML = headerRow;
+    }
+
+filteredPrestations.forEach((prestation, index) => {
+    if (prestation.presentationLow || prestation.presentationNormal || prestation.price) {
+        hasAccess = true;
+        const accessItem = document.createElement('div');
+        accessItem.className = 'prestation-item';
+        accessItem.draggable = true;
+        accessItem.dataset.index = index;
+
+const presentationRows = [];
+if (prestation.presentationLow) {
+    presentationRows.push({
+        access: 'Heure creuse',
+        prestation: prestation.presentationLow,
+        price: prestation.price,
+        sex: prestation.sex
     });
 }
-            });
+if (prestation.presentationNormal) {
+    presentationRows.push({
+        access: 'Normal',
+        prestation: prestation.presentationNormal,
+        price: prestation.price,
+        sex: prestation.sex
+    });
+}
 
-            accessList.style.display = hasAccess ? 'block' : 'none';
-            pureList.style.display = hasPure ? 'block' : 'none';
-            separatorLine.style.display = (hasAccess && hasPure) ? 'block' : 'none';
+        // Render each row with alternating colors using a 5-column grid
+const detailRows = presentationRows.map((row, rowIndex) => {
+    const rowClass = rowIndex % 2 === 0 ? 'even-row' : 'odd-row';
+    // Ensure prestation is a string, fallback to '-' if invalid
+    const prestationText = (typeof row.prestation === 'string' && row.prestation.trim()) ? row.prestation : '-';
+    return `
+        <div class="access-detail-row ${rowClass}" data-detail-index="${rowIndex}">
+            <div class="prestation-value">${row.access || '-'}</div>
+            <div class="prestation-value">${prestationText}</div>
+            <div class="prestation-price">${row.price ? `${row.price}€` : '-'}</div>
+            <div class="prestation-value">${row.sex || '-'}</div>
+            <div class="button-container">
+                <button class="edit-btn" onclick="editPrestation(${index})">✏️</button>
+                <button class="delete-btn" onclick="deletePrestation(${index})">🗑️</button>
+            </div>
+        </div>
+    `;
+}).join('');
+        accessItem.innerHTML = detailRows;
+        accessList.appendChild(accessItem);
+    }
 
-            const accessItems = accessList.querySelectorAll('.prestation-item');
-            const pureItems = pureList.querySelectorAll('.prestation-item');
+    if (prestation.pureItems.length > 0) {
+        hasPure = true;
+        prestation.pureItems.forEach((pure, pureIndex) => {
+            const pureItem = document.createElement('div');
+            pureItem.className = 'prestation-item pure-item grid-support';
+            pureItem.draggable = true;
+            pureItem.dataset.index = index;
 
-            accessItems.forEach(item => {
-                item.addEventListener('dragstart', handleDragStart);
-                item.addEventListener('dragover', handleDragOver);
-                item.addEventListener('drop', handleDrop);
-                item.addEventListener('dragend', handleDragEnd);
-            });
+            // Générer le contenu pour chaque détail sans en-têtes répétés (unchanged)
+            const detailRows = pure.details.map((detail, detailIndex) => {
+                const rowClass = detailIndex % 2 === 0 ? 'even-row' : 'odd-row';
+                return `
+                    <div class="pure-detail-row ${rowClass}" data-detail-index="${detailIndex}">
+                        <div class="prestation-label">Entrée bouteille:</div>
+                        <div class="prestation-value">${detail.category || 'Aucune'}</div>
+                        <div class="prestation-value">${detail.name}</div>
+                        <div class="prestation-qty">${detail.qty}</div>
+                        <div class="prestation-price">${detail.price}€</div>
+                        <div class="prestation-max">${detail.maxEntries}</div>
+                        <div class="prestation-discount">${detail.discount ? `${detail.discount}€` : '-'}</div>
+                        <div class="button-container">
+                            <button class="edit-btn" onclick="editPrestation(${index})">✏️</button>
+                            <button class="delete-btn" onclick="deletePrestation(${index})">🗑️</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
 
-            pureItems.forEach(item => {
-                item.addEventListener('dragstart', handleDragStart);
-                item.addEventListener('dragover', handleDragOver);
-                item.addEventListener('drop', handleDrop);
-                item.addEventListener('dragend', handleDragEnd);
-            });
-        }
+            pureItem.innerHTML = detailRows;
+            pureList.appendChild(pureItem);
 
+            pureItem.addEventListener('dragstart', handleDragStart);
+            pureItem.addEventListener('dragover', handleDragOver);
+            pureItem.addEventListener('drop', handleDrop);
+            pureItem.addEventListener('dragend', handleDragEnd);
+        });
+    }
+});
+    accessList.style.display = hasAccess ? 'block' : 'none';
+    pureList.style.display = hasPure ? 'block' : 'none';
+    separatorLine.style.display = (hasAccess && hasPure) ? 'block' : 'none';
+
+    const accessItems = accessList.querySelectorAll('.prestation-item');
+    const pureItems = pureList.querySelectorAll('.prestation-item');
+
+    accessItems.forEach(item => {
+        item.addEventListener('dragstart', handleDragStart);
+        item.addEventListener('dragover', handleDragOver);
+        item.addEventListener('drop', handleDrop);
+        item.addEventListener('dragend', handleDragEnd);
+    });
+
+    pureItems.forEach(item => {
+        item.addEventListener('dragstart', handleDragStart);
+        item.addEventListener('dragover', handleDragOver);
+        item.addEventListener('drop', handleDrop);
+        item.addEventListener('dragend', handleDragEnd);
+    });
+}
         let draggedItem = null;
 
         function handleDragStart(e) {
@@ -2362,48 +2373,41 @@ if (prestation.pureItems.length > 0) {
             let hasPure = false;
 
             todayPrestations.forEach((prestation, prestationIndex) => {
-               if (prestation.presentationLow || prestation.presentationNormal) {
-    hasAccess = true;
-    const presentationLow = prestation.presentationLow || '';
-    const presentationNormal = prestation.presentationNormal || '';
-    const price = parseFloat(prestation.price) || 0;
-
-    if (presentationLow) {
-        const id = `access-low-${prestationIndex}`;
-        kioskItems[id] = { name: presentationLow, price, qty: 0, maxQty: presentationLow === "Entrée Gratuit" ? 1 : Infinity };
-        accessContainer.innerHTML += `
-            <div class="kiosk-item">
-                <div class="kiosk-item-row">
-                    <div class="kiosk-item-name">${presentationLow}</div>
-                    <div class="kiosk-item-price">${price}€</div>
-                    <div class="kiosk-quantity-control">
-                        <button class="kiosk-qty-btn" data-id="${id}" data-action="decrease">-</button>
-                        <div id="${id}-qty" class="kiosk-qty-value">0</div>
-                        <button class="kiosk-qty-btn" data-id="${id}" data-action="increase">+</button>
-                    </div>
+if (presentationLow) {
+    const id = `access-low-${prestationIndex}`;
+    kioskItems[id] = { name: presentationLow, price, qty: 0, maxQty: presentationLow === "Entrée Gratuit" ? 1 : Infinity };
+    accessContainer.innerHTML += `
+        <div class="kiosk-item">
+            <div class="kiosk-item-row">
+                <div class="kiosk-item-name">${presentationLow}</div>
+                <div class="kiosk-item-price">${price}€</div>
+                <div class="kiosk-quantity-control">
+                    <button class="kiosk-qty-btn" data-id="${id}" data-action="decrease">-</button>
+                    <div id="${id}-qty" class="kiosk-qty-value">0</div>
+                    <button class="kiosk-qty-btn" data-id="${id}" data-action="increase">+</button>
                 </div>
             </div>
-        `;
-    }
-    if (presentationNormal) {
-        const id = `access-normal-${prestationIndex}`;
-        kioskItems[id] = { name: presentationNormal, price, qty: 0, maxQty: Infinity };
-        accessContainer.innerHTML += `
-            <div class="kiosk-item">
-                <div class="kiosk-item-row">
-                    <div class="kiosk-item-name">${presentationNormal}</div>
-                    <div class="kiosk-item-price">${price}€</div>
-                    <div class="kiosk-quantity-control">
-                        <button class="kiosk-qty-btn" data-id="${id}" data-action="decrease">-</button>
-                        <div id="${id}-qty" class="kiosk-qty-value">0</div>
-                        <button class="kiosk-qty-btn" data-id="${id}" data-action="increase">+</button>
-                    </div>
-                </div>
-            </div>
-        `;
-    }
+        </div>
+    `;
 }
-
+if (presentationNormal) {
+    const id = `access-normal-${prestationIndex}`;
+    kioskItems[id] = { name: presentationNormal, price, qty: 0, maxQty: Infinity };
+    accessContainer.innerHTML += `
+        <div class="kiosk-item">
+            <div class="kiosk-item-row">
+                <div class="kiosk-item-name">${presentationNormal}</div>
+                <div class="kiosk-item-price">${price}€</div>
+                <div class="kiosk-quantity-control">
+                    <button class="kiosk-qty-btn" data-id="${id}" data-action="decrease">-</button>
+                    <div id="${id}-qty" class="kiosk-qty-value">0</div>
+                    <button class="kiosk-qty-btn" data-id="${id}" data-action="increase">+</button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+                                     
 if (prestation.pureItems.length > 0) {
     hasPure = true;
     prestation.pureItems.forEach((pure, pureIndex) => {
