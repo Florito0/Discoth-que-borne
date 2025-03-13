@@ -920,7 +920,7 @@
         }
 .access-header-row {
     display: grid;
-    grid-template-columns: 1fr 1fr 0.5fr 0.5fr auto; /* Matches the original .prestation-details */
+    grid-template-columns: minmax(120px, 1fr) minmax(150px, 1fr) minmax(80px, 0.8fr) minmax(80px, 1fr) 80px; /* Adjusted with minmax and fixed button width */
     gap: 10px;
     padding: 5px 0;
     align-items: center;
@@ -932,7 +932,7 @@
 
 .access-detail-row {
     display: grid;
-    grid-template-columns: 1fr 1fr 0.5fr 0.5fr auto;
+    grid-template-columns: minmax(120px, 1fr) minmax(150px, 1fr) minmax(80px, 0.8fr) minmax(80px, 1fr) 80px; /* Match header */
     gap: 10px;
     padding: 5px 0;
     align-items: center;
@@ -945,6 +945,15 @@
 
 .access-detail-row:last-child {
     border-bottom: none;
+}
+
+.button-container {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    justify-content: flex-end;
+    white-space: nowrap;
+    width: 80px; /* Match the grid column width */
 }
 
 @media (max-width: 768px) {
@@ -1186,35 +1195,45 @@
 .prestation-label {
     font-weight: 500;
     color: #00D4FF;
-    text-align: left;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+/* Specific alignments for header labels */
+.access-header-row .prestation-label:nth-child(1),
+.access-header-row .prestation-label:nth-child(2) {
+    text-align: left;
+}
+
+.access-header-row .prestation-label:nth-child(3),
+.access-header-row .prestation-label:nth-child(4) {
+    text-align: center;
 }
 
 .prestation-value {
     font-size: 16px;
     color: #fff;
-    text-align: left;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    overflow: visible;
+    text-overflow: none;
 }
 
-.prestation-qty {
-    font-size: 16px;
-    color: #e0e0e0;
-    text-align: center;
-    white-space: nowrap;
-    max-width: 50px; /* Reduced width for tighter alignment */
+/* Specific alignments for data values */
+.access-detail-row .prestation-value:nth-child(1),
+.access-detail-row .prestation-value:nth-child(2) {
+    text-align: left;
+}
+
+.access-detail-row .prestation-value:nth-child(4) {
+    text-align: center; /* Already set, but kept for clarity */
 }
 
 .prestation-price {
     font-size: 16px;
     color: #e0e0e0;
-    text-align: center;
+    text-align: center; /* Center-align Prix in data rows */
     white-space: nowrap;
-    min-width: 50px; /* Align with "Les entrées" price */
 }
 
 .prestation-max,
@@ -1231,6 +1250,7 @@
     align-items: center;
     justify-content: flex-end;
     white-space: nowrap;
+    min-width: 80px; /* Ensures buttons have enough space */
 }
 
 .even-row {
@@ -1714,11 +1734,13 @@
         }
 
         function savePrestation() {
-            const days = Array.from(document.querySelectorAll('input[name="days"]:checked')).map(checkbox => checkbox.value);
-            const presentationLow = document.getElementById('access-presentation-low').value.trim();
-            const presentationNormal = document.getElementById('access-presentation-normal').value.trim();
-            const price = document.getElementById('access-price').value || '';
-            const sex = document.getElementById('access-sex').value;
+    const days = Array.from(document.querySelectorAll('input[name="days"]:checked')).map(checkbox => checkbox.value);
+    const presentationLow = document.getElementById('access-presentation-low').value.trim();
+    const presentationNormal = document.getElementById('access-presentation-normal').value.trim();
+    const price = document.getElementById('access-price').value || '';
+    const sex = document.getElementById('access-sex').value;
+
+    console.log('Saving prestation:', { days, presentationLow, presentationNormal, price, sex }); // Debug log
 
             let errors = [];
             const daysCheckboxes = document.getElementById('days-checkboxes');
@@ -1858,41 +1880,42 @@ filteredPrestations.forEach((prestation, index) => {
         accessItem.draggable = true;
         accessItem.dataset.index = index;
 
-        const presentationRows = [];
-        if (prestation.presentationLow) {
-            presentationRows.push({
-                access: 'Heure creuse',
-                prestation: prestation.presentationLow,
-                price: prestation.price,
-                sex: prestation.sex
-            });
-        }
-        if (prestation.presentationNormal) {
-            presentationRows.push({
-                access: 'Normal',
-                prestation: prestation.presentationNormal,
-                price: prestation.price,
-                sex: prestation.sex
-            });
-        }
+const presentationRows = [];
+if (prestation.presentationLow) {
+    presentationRows.push({
+        access: 'Heure creuse',
+        prestation: prestation.presentationLow,
+        price: prestation.price,
+        sex: prestation.sex
+    });
+}
+if (prestation.presentationNormal) {
+    presentationRows.push({
+        access: 'Normal',
+        prestation: prestation.presentationNormal,
+        price: prestation.price,
+        sex: prestation.sex
+    });
+}
 
         // Render each row with alternating colors using a 5-column grid
-        const detailRows = presentationRows.map((row, rowIndex) => {
-            const rowClass = rowIndex % 2 === 0 ? 'even-row' : 'odd-row';
-            return `
-                <div class="access-detail-row ${rowClass}" data-detail-index="${rowIndex}">
-                    <div class="prestation-value">${row.access || '-'}</div>
-                    <div class="prestation-value">${row.prestation || '-'}</div>
-                    <div class="prestation-price">${row.price}€</div>
-                    <div class="prestation-value">${row.sex}</div>
-                    <div class="button-container">
-                        <button class="edit-btn" onclick="editPrestation(${index})">✏️</button>
-                        <button class="delete-btn" onclick="deletePrestation(${index})">🗑️</button>
-                    </div>
-                </div>
-            `;
-        }).join('');
-
+const detailRows = presentationRows.map((row, rowIndex) => {
+    const rowClass = rowIndex % 2 === 0 ? 'even-row' : 'odd-row';
+    // Ensure prestation is a string, fallback to '-' if invalid
+    const prestationText = (typeof row.prestation === 'string' && row.prestation.trim()) ? row.prestation : '-';
+    return `
+        <div class="access-detail-row ${rowClass}" data-detail-index="${rowIndex}">
+            <div class="prestation-value">${row.access || '-'}</div>
+            <div class="prestation-value">${prestationText}</div>
+            <div class="prestation-price">${row.price ? `${row.price}€` : '-'}</div>
+            <div class="prestation-value">${row.sex || '-'}</div>
+            <div class="button-container">
+                <button class="edit-btn" onclick="editPrestation(${index})">✏️</button>
+                <button class="delete-btn" onclick="deletePrestation(${index})">🗑️</button>
+            </div>
+        </div>
+    `;
+}).join('');
         accessItem.innerHTML = detailRows;
         accessList.appendChild(accessItem);
     }
