@@ -2388,23 +2388,23 @@ const detailRows = presentationRows.map((row, rowIndex) => {
     const presentationNormal = prestation.presentationNormal || '';
     const price = parseFloat(prestation.price) || 0;
 
-    if (presentationLow) {
-        const id = `access-low-${prestationIndex}`;
-        kioskItems[id] = { name: presentationLow, price, qty: 0, maxQty: presentationLow === "Entrée Gratuit" ? 1 : Infinity };
-        accessContainer.innerHTML += `
-            <div class="kiosk-item">
-                <div class="kiosk-item-row">
-                    <div class="kiosk-item-name">${presentationLow}</div>
-                    <div class="kiosk-item-price">${price}€</div>
-                    <div class="kiosk-quantity-control">
-                        <button class="kiosk-qty-btn" data-id="${id}" data-action="decrease">-</button>
-                        <div id="${id}-qty" class="kiosk-qty-value">0</div>
-                        <button class="kiosk-qty-btn" data-id="${id}" data-action="increase">+</button>
-                    </div>
+if (presentationLow) {
+    const id = `access-low-${prestationIndex}`;
+    kioskItems[id] = { name: presentationLow, price, qty: 0, maxQty: 1 }; // Toujours 1 pour "Heure creuse"
+    accessContainer.innerHTML += `
+        <div class="kiosk-item">
+            <div class="kiosk-item-row">
+                <div class="kiosk-item-name">${presentationLow}</div>
+                <div class="kiosk-item-price">${price}€</div>
+                <div class="kiosk-quantity-control">
+                    <button class="kiosk-qty-btn" data-id="${id}" data-action="decrease">-</button>
+                    <div id="${id}-qty" class="kiosk-qty-value">0</div>
+                    <button class="kiosk-qty-btn" data-id="${id}" data-action="increase">+</button>
                 </div>
             </div>
-        `;
-    }
+        </div>
+    `;
+}
     if (presentationNormal) {
         const id = `access-normal-${prestationIndex}`;
         kioskItems[id] = { name: presentationNormal, price, qty: 0, maxQty: Infinity };
