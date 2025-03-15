@@ -642,8 +642,7 @@
             .kiosk-item-max { flex-direction: column; align-items: flex-start; }
             .kiosk-max-label { font-size: 12px; }
         }
-    </style>
-    </style>
+</style>
 </head>
 <body>
     <div class="container" id="dashboard">
@@ -714,7 +713,7 @@
                 <div class="form-group pure-group">
                     <h3>Les entrées avec bouteille</h3>
                     <div class="pure-container" id="pure-container">
-                        <div class="pure-row">
+                        <div class="pure-row" draggable="true">
                             <div class="category-section">
                                 <div>
                                     <label>Catégorie de bouteille (optionnel)</label>
@@ -855,7 +854,6 @@
             const detailsSection = button.parentElement;
             const pureRow = detailsSection.parentElement;
             const nameSection = pureRow.querySelector('.name-section');
-
             const newDetailsRow = document.createElement('div');
             newDetailsRow.className = 'details-row';
             newDetailsRow.innerHTML = `
@@ -902,9 +900,7 @@
         function deletePure(button) {
             const container = document.getElementById('pure-container');
             button.parentElement.parentElement.remove();
-            if (container.children.length === 0) {
-                addPure();
-            }
+            if (container.children.length === 0) addPure();
         }
 
         function addDragEvents(pureDiv) {
@@ -936,10 +932,8 @@
                 const droppedIndex = allPure.indexOf(this);
                 const container = document.getElementById('pure-container');
                 const pureArray = Array.from(container.children);
-
                 const [movedPure] = pureArray.splice(draggedIndex, 1);
                 pureArray.splice(droppedIndex, 0, movedPure);
-
                 container.innerHTML = '';
                 pureArray.forEach(pure => {
                     container.appendChild(pure);
@@ -957,38 +951,28 @@
             const presentationLow = document.getElementById('access-presentation-low');
             const presentationNormal = document.getElementById('access-presentation-normal');
             const price = document.getElementById('access-price');
-
             presentationLow.classList.remove('error');
             presentationNormal.classList.remove('error');
             price.classList.remove('error');
-
             const hasPresentation = presentationLow.value.trim() || presentationNormal.value.trim();
             const hasPrice = price.value !== '';
-
             let errors = [];
-
             if (hasPresentation && !hasPrice) {
                 errors.push('Veuillez remplir le champ "Prix" dans "Les entrées" si une présentation est indiquée.');
                 price.classList.add('error');
             }
-
             if (hasPrice && !hasPresentation) {
                 errors.push('Veuillez remplir au moins une "Présentation" (normale ou heure creuse) dans "Les entrées" si un prix est indiqué.');
                 presentationLow.classList.add('error');
                 presentationNormal.classList.add('error');
             }
-
-            return {
-                isValid: (hasPresentation && hasPrice),
-                errors
-            };
+            return { isValid: (hasPresentation && hasPrice), errors };
         }
 
         function validatePureSoiree() {
             const pureRows = document.querySelectorAll('.pure-row');
             let errors = [];
             let hasValidRow = false;
-
             pureRows.forEach((row, index) => {
                 const categoryInput = row.querySelector('.pure-category-input');
                 const name = row.querySelector('.name-section .pure-name');
@@ -997,7 +981,6 @@
                 const firstMaxEntries = row.querySelector('.name-section .pure-max-entries');
                 const firstDiscount = row.querySelector('.name-section .pure-discount');
                 const additionalDetails = row.querySelectorAll('.details-section .details-row');
-
                 categoryInput.classList.remove('error');
                 name.classList.remove('error');
                 firstQty.classList.remove('error');
@@ -1011,100 +994,69 @@
                     detailRow.querySelector('.pure-max-entries').classList.remove('error');
                     detailRow.querySelector('.pure-discount').classList.remove('error');
                 });
-
                 const isRowValid = name.value.trim() && firstQty.value && firstPrice.value && firstMaxEntries.value;
-
                 if (isRowValid) {
                     hasValidRow = true;
-
                     additionalDetails.forEach((detailRow, detailIndex) => {
                         const nameDetail = detailRow.querySelector('.pure-name');
                         const qty = detailRow.querySelector('.pure-qty');
                         const price = detailRow.querySelector('.pure-price');
                         const maxEntries = detailRow.querySelector('.pure-max-entries');
                         const discount = detailRow.querySelector('.pure-discount');
-
                         if (!nameDetail.value.trim()) {
-                            errors.push(`Veuillez remplir le champ "Nom" dans la ligne supplémentaire ${detailIndex + 1} de la ligne ${index + 1} de "Les entrées avec bouteille".`);
+                            errors.push(`Veuillez remplir le champ "Nom" dans la ligne supplémentaire ${detailIndex + 1} de la ligne ${index + 1}.`);
                             nameDetail.classList.add('error');
                         }
                         if (!qty.value) {
-                            errors.push(`Veuillez remplir le champ "Qt. bouteilles" dans la ligne supplémentaire ${detailIndex + 1} de la ligne ${index + 1} de "Les entrées avec bouteille".`);
+                            errors.push(`Veuillez remplir le champ "Qt. bouteilles" dans la ligne supplémentaire ${detailIndex + 1} de la ligne ${index + 1}.`);
                             qty.classList.add('error');
                         }
                         if (!price.value) {
-                            errors.push(`Veuillez remplir le champ "Prix" dans la ligne supplémentaire ${detailIndex + 1} de la ligne ${index + 1} de "Les entrées avec bouteille".`);
+                            errors.push(`Veuillez remplir le champ "Prix" dans la ligne supplémentaire ${detailIndex + 1} de la ligne ${index + 1}.`);
                             price.classList.add('error');
                         }
                         if (!maxEntries.value) {
-                            errors.push(`Veuillez remplir le champ "Max. Entrée" dans la ligne supplémentaire ${detailIndex + 1} de la ligne ${index + 1} de "Les entrées avec bouteille".`);
+                            errors.push(`Veuillez remplir le champ "Max. Entrée" dans la ligne supplémentaire ${detailIndex + 1} de la ligne ${index + 1}.`);
                             maxEntries.classList.add('error');
                         }
                     });
                 } else if (name.value.trim() || firstQty.value || firstPrice.value || firstMaxEntries.value || firstDiscount.value) {
-                    if (!name.value.trim()) {
-                        errors.push(`Veuillez remplir le champ "Nom" dans la ligne ${index + 1} de "Les entrées avec bouteille".`);
-                        name.classList.add('error');
-                    }
-                    if (!firstQty.value) {
-                        errors.push(`Veuillez remplir le champ "Qt. bouteilles" dans la ligne ${index + 1} de "Les entrées avec bouteille".`);
-                        firstQty.classList.add('error');
-                    }
-                    if (!firstPrice.value) {
-                        errors.push(`Veuillez remplir le champ "Prix" dans la ligne ${index + 1} de "Les entrées avec bouteille".`);
-                        firstPrice.classList.add('error');
-                    }
-                    if (!firstMaxEntries.value) {
-                        errors.push(`Veuillez remplir le champ "Max. Entrée" dans la ligne ${index + 1} de "Les entrées avec bouteille".`);
-                        firstMaxEntries.classList.add('error');
-                    }
+                    if (!name.value.trim()) errors.push(`Veuillez remplir le champ "Nom" dans la ligne ${index + 1}.`), name.classList.add('error');
+                    if (!firstQty.value) errors.push(`Veuillez remplir le champ "Qt. bouteilles" dans la ligne ${index + 1}.`), firstQty.classList.add('error');
+                    if (!firstPrice.value) errors.push(`Veuillez remplir le champ "Prix" dans la ligne ${index + 1}.`), firstPrice.classList.add('error');
+                    if (!firstMaxEntries.value) errors.push(`Veuillez remplir le champ "Max. Entrée" dans la ligne ${index + 1}.`), firstMaxEntries.classList.add('error');
                 }
             });
-
             return { errors, hasValidRow };
         }
 
         function savePrestation() {
-    const days = Array.from(document.querySelectorAll('input[name="days"]:checked')).map(checkbox => checkbox.value);
-    const presentationLow = document.getElementById('access-presentation-low').value.trim();
-    const presentationNormal = document.getElementById('access-presentation-normal').value.trim();
-    const price = document.getElementById('access-price').value || '';
-    const sex = document.getElementById('access-sex').value;
-
-    console.log('Saving prestation:', { days, presentationLow, presentationNormal, price, sex }); // Debug log
-
+            const days = Array.from(document.querySelectorAll('input[name="days"]:checked')).map(checkbox => checkbox.value);
+            const presentationLow = document.getElementById('access-presentation-low').value.trim();
+            const presentationNormal = document.getElementById('access-presentation-normal').value.trim();
+            const price = document.getElementById('access-price').value || '';
+            const sex = document.getElementById('access-sex').value;
             let errors = [];
             const daysCheckboxes = document.getElementById('days-checkboxes');
             daysCheckboxes.classList.remove('error');
-
-            if (days.length === 0) {
-                errors.push('Veuillez sélectionner au moins un jour dans "Jour(s)".');
-                daysCheckboxes.classList.add('error');
-            }
-
+            if (days.length === 0) errors.push('Veuillez sélectionner au moins un jour.'), daysCheckboxes.classList.add('error');
             const accessValidation = validateAccessSoiree();
             errors = [...errors, ...accessValidation.errors];
-            const isAccessValid = accessValidation.isValid;
-
             const { errors: pureErrors, hasValidRow: isPureValid } = validatePureSoiree();
             errors = [...errors, ...pureErrors];
-
-            if (!isAccessValid && !isPureValid) {
-                errors.push('Veuillez remplir au moins une section complète : soit "Les entrées" (présentation et prix), soit "Les entrées avec bouteille" (au moins une ligne complète).');
+            if (!accessValidation.isValid && !isPureValid) {
+                errors.push('Veuillez remplir au moins une section complète : "Les entrées" ou "Les entrées avec bouteille".');
                 alert(errors.join('\n'));
                 return;
             }
-
             if (errors.length > 0) {
                 alert(errors.join('\n'));
                 return;
             }
-
             const pureItems = isPureValid ? Array.from(document.querySelectorAll('.pure-row')).map(row => {
-                const categoryInput = row.querySelector('.pure-category-input');
-                const category = categoryInput.value.trim() || '';
+                const category = row.querySelector('.pure-category-input').value.trim() || '';
                 const firstDetail = {
-                    category: category,
+                    category,
                     name: row.querySelector('.name-section .pure-name').value,
                     qty: parseInt(row.querySelector('.name-section .pure-qty').value) || 1,
                     price: parseFloat(row.querySelector('.name-section .pure-price').value) || 0,
@@ -1118,18 +1070,9 @@
                     maxEntries: parseInt(detailRow.querySelector('.pure-max-entries').value) || 1,
                     discount: parseFloat(detailRow.querySelector('.pure-discount').value) || 0
                 }));
-                const details = [firstDetail, ...additionalDetails];
-                return { details };
+                return { details: [firstDetail, ...additionalDetails] };
             }) : [];
-
-            const prestation = { 
-                days, 
-                presentationLow, 
-                presentationNormal, 
-                price: parseFloat(price) || 0,
-                sex, 
-                pureItems 
-            };
+            const prestation = { days, presentationLow, presentationNormal, price: parseFloat(price) || 0, sex, pureItems };
             prestations.push(prestation);
             renderPrestations();
             renderKioskItems();
@@ -1147,169 +1090,122 @@
             addPure();
         }
 
-function renderPrestations() {
-    const accessList = document.getElementById('access-prestations-list');
-    const pureList = document.getElementById('pure-prestations-list');
-    const separatorLine = document.getElementById('separator-line');
-    const previewSection = document.getElementById('preview-section');
-    const accessForm = document.getElementById('access-form');
-    const previewBtn = document.querySelector('.preview-btn');
-    accessList.style.display = 'block';
-    pureList.style.display = 'block';
-    previewSection.style.display = 'none';
-    accessForm.style.display = 'block';
-    previewBtn.classList.remove('active');
-    isPreviewActive = false;
+        function renderPrestations() {
+            const accessList = document.getElementById('access-prestations-list');
+            const pureList = document.getElementById('pure-prestations-list');
+            const separatorLine = document.getElementById('separator-line');
+            const previewSection = document.getElementById('preview-section');
+            const accessForm = document.getElementById('access-form');
+            const previewBtn = document.querySelector('.preview-btn');
+            accessList.style.display = 'block';
+            pureList.style.display = 'block';
+            previewSection.style.display = 'none';
+            accessForm.style.display = 'block';
+            previewBtn.classList.remove('active');
+            isPreviewActive = false;
+            accessList.innerHTML = '';
+            pureList.innerHTML = '';
+            const filteredPrestations = selectedDayFilter ? prestations.filter(p => p.days.includes(selectedDayFilter)) : [...prestations];
+            let hasAccess = false;
+            let hasPure = false;
 
-    accessList.innerHTML = '';
-    pureList.innerHTML = '';
-    const filteredPrestations = selectedDayFilter 
-        ? prestations.filter(p => p.days.includes(selectedDayFilter))
-        : [...prestations];
-
-    let hasAccess = false;
-    let hasPure = false;
-
-    // Ajouter les en-têtes pour "Les entrées avec bouteille" une seule fois si nécessaire
-    const hasPureItems = filteredPrestations.some(prestation => prestation.pureItems.length > 0);
-    if (hasPureItems) {
-        const headerRow = `
-            <div class="pure-header-row">
-                <div class="prestation-label">Type:</div>
-                <div class="prestation-label">Catégorie:</div>
-                <div class="prestation-label">Nom:</div>
-                <div class="prestation-label">Qt:</div>
-                <div class="prestation-label">Prix:</div>
-                <div class="prestation-label">Max. Entrée:</div>
-                <div class="prestation-label">Réduc. Suppl.:</div>
-                <div class="button-container"></div>
-            </div>
-        `;
-        pureList.innerHTML = headerRow;
-    }
-
-    // Ajouter un en-tête unique pour "Les entrées" si des prestations existent
-    const hasAccessItems = filteredPrestations.some(prestation => prestation.presentationLow || prestation.presentationNormal || prestation.price);
-    if (hasAccessItems) {
-        const headerRow = `
-            <div class="access-header-row">
-                <div class="prestation-label">Les entrées:</div>
-                <div class="prestation-label">Prestation:</div>
-                <div class="prestation-label">Prix:</div>
-                <div class="prestation-label">Sexe:</div>
-                <div class="button-container"></div>
-            </div>
-        `;
-        accessList.innerHTML = headerRow;
-    }
-
-filteredPrestations.forEach((prestation, index) => {
-    if (prestation.presentationLow || prestation.presentationNormal || prestation.price) {
-        hasAccess = true;
-        const accessItem = document.createElement('div');
-        accessItem.className = 'prestation-item';
-        accessItem.draggable = true;
-        accessItem.dataset.index = index;
-
-const presentationRows = [];
-if (prestation.presentationLow) {
-    presentationRows.push({
-        access: 'Heure creuse',
-        prestation: prestation.presentationLow,
-        price: prestation.price,
-        sex: prestation.sex
-    });
-}
-if (prestation.presentationNormal) {
-    presentationRows.push({
-        access: 'Normal',
-        prestation: prestation.presentationNormal,
-        price: prestation.price,
-        sex: prestation.sex
-    });
-}
-
-        // Render each row with alternating colors using a 5-column grid
-const detailRows = presentationRows.map((row, rowIndex) => {
-    const rowClass = rowIndex % 2 === 0 ? 'even-row' : 'odd-row';
-    // Ensure prestation is a string, fallback to '-' if invalid
-    const prestationText = (typeof row.prestation === 'string' && row.prestation.trim()) ? row.prestation : '-';
-    return `
-        <div class="access-detail-row ${rowClass}" data-detail-index="${rowIndex}">
-            <div class="prestation-value">${row.access || '-'}</div>
-            <div class="prestation-value">${prestationText}</div>
-            <div class="prestation-price">${row.price ? `${row.price}€` : '-'}</div>
-            <div class="prestation-value">${row.sex || '-'}</div>
-            <div class="button-container">
-                <button class="edit-btn" onclick="editPrestation(${index})">✏️</button>
-                <button class="delete-btn" onclick="deletePrestation(${index})">🗑️</button>
-            </div>
-        </div>
-    `;
-}).join('');
-        accessItem.innerHTML = detailRows;
-        accessList.appendChild(accessItem);
-    }
-
-    if (prestation.pureItems.length > 0) {
-        hasPure = true;
-        prestation.pureItems.forEach((pure, pureIndex) => {
-            const pureItem = document.createElement('div');
-            pureItem.className = 'prestation-item pure-item grid-support';
-            pureItem.draggable = true;
-            pureItem.dataset.index = index;
-
-            // Générer le contenu pour chaque détail sans en-têtes répétés (unchanged)
-            const detailRows = pure.details.map((detail, detailIndex) => {
-                const rowClass = detailIndex % 2 === 0 ? 'even-row' : 'odd-row';
-                return `
-                    <div class="pure-detail-row ${rowClass}" data-detail-index="${detailIndex}">
-                        <div class="prestation-label">Entrée bouteille:</div>
-                        <div class="prestation-value">${detail.category || 'Aucune'}</div>
-                        <div class="prestation-value">${detail.name}</div>
-                        <div class="prestation-qty">${detail.qty}</div>
-                        <div class="prestation-price">${detail.price}€</div>
-                        <div class="prestation-max">${detail.maxEntries}</div>
-                        <div class="prestation-discount">${detail.discount ? `${detail.discount}€` : '-'}</div>
-                        <div class="button-container">
-                            <button class="edit-btn" onclick="editPrestation(${index})">✏️</button>
-                            <button class="delete-btn" onclick="deletePrestation(${index})">🗑️</button>
-                        </div>
+            if (filteredPrestations.some(p => p.presentationLow || p.presentationNormal || p.price)) {
+                accessList.innerHTML = `
+                    <div class="access-header-row">
+                        <div class="prestation-label">Les entrées:</div>
+                        <div class="prestation-label">Prestation:</div>
+                        <div class="prestation-label">Prix:</div>
+                        <div class="prestation-label">Sexe:</div>
+                        <div class="button-container"></div>
                     </div>
                 `;
-            }).join('');
+            }
 
-            pureItem.innerHTML = detailRows;
-            pureList.appendChild(pureItem);
+            if (filteredPrestations.some(p => p.pureItems.length > 0)) {
+                pureList.innerHTML = `
+                    <div class="pure-header-row">
+                        <div class="prestation-label">Type:</div>
+                        <div class="prestation-label">Catégorie:</div>
+                        <div class="prestation-label">Nom:</div>
+                        <div class="prestation-label">Qt:</div>
+                        <div class="prestation-label">Prix:</div>
+                        <div class="prestation-label">Max. Entrée:</div>
+                        <div class="prestation-label">Réduc. Suppl.:</div>
+                        <div class="button-container"></div>
+                    </div>
+                `;
+            }
 
-            pureItem.addEventListener('dragstart', handleDragStart);
-            pureItem.addEventListener('dragover', handleDragOver);
-            pureItem.addEventListener('drop', handleDrop);
-            pureItem.addEventListener('dragend', handleDragEnd);
-        });
-    }
-});
-    accessList.style.display = hasAccess ? 'block' : 'none';
-    pureList.style.display = hasPure ? 'block' : 'none';
-    separatorLine.style.display = (hasAccess && hasPure) ? 'block' : 'none';
+            filteredPrestations.forEach((prestation, index) => {
+                if (prestation.presentationLow || prestation.presentationNormal || prestation.price) {
+                    hasAccess = true;
+                    const accessItem = document.createElement('div');
+                    accessItem.className = 'prestation-item';
+                    accessItem.draggable = true;
+                    accessItem.dataset.index = prestations.indexOf(prestation); // Utilise l'index global
+                    const presentationRows = [];
+                    if (prestation.presentationLow) presentationRows.push({ access: 'Heure creuse', prestation: prestation.presentationLow, price: prestation.price, sex: prestation.sex });
+                    if (prestation.presentationNormal) presentationRows.push({ access: 'Normal', prestation: prestation.presentationNormal, price: prestation.price, sex: prestation.sex });
+                    const detailRows = presentationRows.map((row, rowIndex) => `
+                        <div class="access-detail-row ${rowIndex % 2 === 0 ? 'even-row' : 'odd-row'}" data-detail-index="${rowIndex}">
+                            <div class="prestation-value">${row.access || '-'}</div>
+                            <div class="prestation-value">${row.prestation || '-'}</div>
+                            <div class="prestation-price">${row.price ? `${row.price}€` : '-'}</div>
+                            <div class="prestation-value">${row.sex || '-'}</div>
+                            <div class="button-container">
+                                <button class="edit-btn" onclick="editPrestation(${prestations.indexOf(prestation)})">✏️</button>
+                                <button class="delete-btn" onclick="deletePrestation(${prestations.indexOf(prestation)})">🗑️</button>
+                            </div>
+                        </div>
+                    `).join('');
+                    accessItem.innerHTML = detailRows;
+                    accessList.appendChild(accessItem);
+                }
 
-    const accessItems = accessList.querySelectorAll('.prestation-item');
-    const pureItems = pureList.querySelectorAll('.prestation-item');
+                if (prestation.pureItems.length > 0) {
+                    hasPure = true;
+                    prestation.pureItems.forEach((pure, pureIndex) => {
+                        const pureItem = document.createElement('div');
+                        pureItem.className = 'prestation-item pure-item grid-support';
+                        pureItem.draggable = true;
+                        pureItem.dataset.index = prestations.indexOf(prestation); // Utilise l'index global
+                        const detailRows = pure.details.map((detail, detailIndex) => `
+                            <div class="pure-detail-row ${detailIndex % 2 === 0 ? 'even-row' : 'odd-row'}" data-detail-index="${detailIndex}">
+                                <div class="prestation-label">Entrée bouteille:</div>
+                                <div class="prestation-value">${detail.category || 'Aucune'}</div>
+                                <div class="prestation-value">${detail.name}</div>
+                                <div class="prestation-qty">${detail.qty}</div>
+                                <div class="prestation-price">${detail.price}€</div>
+                                <div class="prestation-max">${detail.maxEntries}</div>
+                                <div class="prestation-discount">${detail.discount ? `${detail.discount}€` : '-'}</div>
+                                <div class="button-container">
+                                    <button class="edit-btn" onclick="editPrestation(${prestations.indexOf(prestation)})">✏️</button>
+                                    <button class="delete-btn" onclick="deletePrestation(${prestations.indexOf(prestation)})">🗑️</button>
+                                </div>
+                            </div>
+                        `).join('');
+                        pureItem.innerHTML = detailRows;
+                        pureList.appendChild(pureItem);
+                        pureItem.addEventListener('dragstart', handleDragStart);
+                        pureItem.addEventListener('dragover', handleDragOver);
+                        pureItem.addEventListener('drop', handleDrop);
+                        pureItem.addEventListener('dragend', handleDragEnd);
+                    });
+                }
+            });
 
-    accessItems.forEach(item => {
-        item.addEventListener('dragstart', handleDragStart);
-        item.addEventListener('dragover', handleDragOver);
-        item.addEventListener('drop', handleDrop);
-        item.addEventListener('dragend', handleDragEnd);
-    });
+            accessList.style.display = hasAccess ? 'block' : 'none';
+            pureList.style.display = hasPure ? 'block' : 'none';
+            separatorLine.style.display = (hasAccess && hasPure) ? 'block' : 'none';
 
-    pureItems.forEach(item => {
-        item.addEventListener('dragstart', handleDragStart);
-        item.addEventListener('dragover', handleDragOver);
-        item.addEventListener('drop', handleDrop);
-        item.addEventListener('dragend', handleDragEnd);
-    });
-}
+            document.querySelectorAll('.prestation-item').forEach(item => {
+                item.addEventListener('dragstart', handleDragStart);
+                item.addEventListener('dragover', handleDragOver);
+                item.addEventListener('drop', handleDrop);
+                item.addEventListener('dragend', handleDragEnd);
+            });
+        }
+
         let draggedItem = null;
 
         function handleDragStart(e) {
@@ -1330,27 +1226,10 @@ const detailRows = presentationRows.map((row, rowIndex) => {
                 const allItems = [...document.querySelectorAll('.prestation-item')];
                 const draggedIndex = parseInt(draggedItem.dataset.index);
                 const droppedIndex = parseInt(this.dataset.index);
-                const filteredPrestations = selectedDayFilter 
-                    ? prestations.filter(p => p.days.includes(selectedDayFilter))
-                    : [...prestations];
-                
-                const [movedItem] = filteredPrestations.splice(draggedIndex, 1);
-                filteredPrestations.splice(droppedIndex, 0, movedItem);
-
-                if (!selectedDayFilter) {
-                    prestations = filteredPrestations;
-                } else {
-                    const originalIndices = allItems.map(item => parseInt(item.dataset.index));
-                    const newPrestations = [];
-                    filteredPrestations.forEach((item, i) => {
-                        const origIndex = originalIndices[draggedIndex] === originalIndices[droppedIndex] 
-                            ? originalIndices[droppedIndex] 
-                            : originalIndices[i];
-                        newPrestations[origIndex] = item;
-                    });
-                    prestations = newPrestations.filter(Boolean);
-                }
+                const [movedItem] = prestations.splice(draggedIndex, 1);
+                prestations.splice(droppedIndex, 0, movedItem);
                 renderPrestations();
+                renderKioskItems(); // Met à jour le kiosque pour refléter le nouvel ordre
             }
         }
 
@@ -1364,35 +1243,25 @@ const detailRows = presentationRows.map((row, rowIndex) => {
             const previewBtn = document.querySelector('.preview-btn');
             buttons.forEach(btn => btn.classList.remove('active'));
             previewBtn.classList.remove('active');
-            if (selectedDayFilter === day) {
-                selectedDayFilter = null;
-            } else {
-                selectedDayFilter = day;
-                document.querySelector(`button[onclick="filterByDay('${day}')"]`).classList.add('active');
-            }
+            selectedDayFilter = (selectedDayFilter === day) ? null : day;
+            if (selectedDayFilter) document.querySelector(`button[onclick="filterByDay('${day}')"]`).classList.add('active');
             isPreviewActive = false;
             renderPrestations();
         }
 
         function deletePrestation(index) {
-            const filteredIndex = prestations.findIndex((_, i) => i === index && (!selectedDayFilter || prestations[i].days.includes(selectedDayFilter)));
-            prestations.splice(filteredIndex, 1);
+            prestations.splice(index, 1);
             renderPrestations();
             renderKioskItems();
         }
 
         function editPrestation(index) {
-            const filteredIndex = prestations.findIndex((_, i) => i === index && (!selectedDayFilter || prestations[i].days.includes(selectedDayFilter)));
-            const prestation = prestations[filteredIndex];
-
-            document.querySelectorAll('input[name="days"]').forEach(checkbox => {
-                checkbox.checked = prestation.days.includes(checkbox.value);
-            });
+            const prestation = prestations[index];
+            document.querySelectorAll('input[name="days"]').forEach(checkbox => checkbox.checked = prestation.days.includes(checkbox.value));
             document.getElementById('access-presentation-low').value = prestation.presentationLow || '';
             document.getElementById('access-presentation-normal').value = prestation.presentationNormal || '';
             document.getElementById('access-price').value = prestation.price || '';
             document.getElementById('access-sex').value = prestation.sex;
-            
             const pureContainer = document.getElementById('pure-container');
             pureContainer.innerHTML = '';
             prestation.pureItems.forEach(pure => {
@@ -1471,11 +1340,8 @@ const detailRows = presentationRows.map((row, rowIndex) => {
                 pureContainer.appendChild(pureDiv);
                 addDragEvents(pureDiv);
             });
-            if (pureContainer.children.length === 0) {
-                addPure();
-            }
-
-            prestations.splice(filteredIndex, 1);
+            if (pureContainer.children.length === 0) addPure();
+            prestations.splice(index, 1);
             renderPrestations();
         }
 
@@ -1487,7 +1353,6 @@ const detailRows = presentationRows.map((row, rowIndex) => {
             const accessForm = document.getElementById('access-form');
             const previewBtn = document.querySelector('.preview-btn');
             const buttons = document.querySelectorAll('.day-btn');
-
             accessList.style.display = 'none';
             pureList.style.display = 'none';
             separatorLine.style.display = 'none';
@@ -1497,10 +1362,8 @@ const detailRows = presentationRows.map((row, rowIndex) => {
             buttons.forEach(btn => btn.classList.remove('active'));
             selectedDayFilter = null;
             isPreviewActive = true;
-
             const daysOrder = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
             let html = '<table class="preview-table"><tr><th>Jour</th><th>Les entrées</th><th>Prestation</th><th>Catégorie</th><th>Prix</th><th>Sexe</th><th>Qt. bouteilles</th><th>Max. Entrée</th><th>Réduc. bouteille suppl.</th></tr>';
-            
             daysOrder.forEach((day, dayIndex) => {
                 const dayPrestations = prestations.filter(p => p.days.includes(day));
                 const dayClass = `day-${day.toLowerCase()}`;
@@ -1512,7 +1375,6 @@ const detailRows = presentationRows.map((row, rowIndex) => {
                         ].filter(Boolean).join(' / ');
                         const accessText = presentationText.split(' / ')[0].split(': ')[0] || '';
                         const prestationText = presentationText.split(': ')[1] || '';
-
                         let pureAccessText = accessText;
                         let purePrestationText = prestationText;
                         let pureCategoryText = '';
@@ -1520,28 +1382,13 @@ const detailRows = presentationRows.map((row, rowIndex) => {
                         let pureQtyText = '';
                         let pureMaxEntriesText = '';
                         let pureDiscountText = '';
-
                         if (prestation.pureItems.length > 0) {
-                            const pureNames = prestation.pureItems.map(pure => 
-                                pure.details.map(detail => detail.name).join('<br>')
-                            ).join('<br>');
-                            const pureCategories = prestation.pureItems.map(pure => 
-                                pure.details.map(detail => detail.category || '').join('<br>')
-                            ).join('<br>');
-                            const purePrices = prestation.pureItems.map(pure => 
-                                pure.details.map(detail => `${detail.price}€`).join('<br>')
-                            ).join('<br>');
-                            const pureQuantities = prestation.pureItems.map(pure => 
-                                pure.details.map(detail => detail.qty).join('<br>')
-                            ).join('<br>');
-                            const pureMaxEntries = prestation.pureItems.map(pure => 
-                                pure.details.map(detail => detail.maxEntries).join('<br>')
-                            ).join('<br>');
-                            const pureDiscounts = prestation.pureItems.map(pure => 
-                                pure.details.map(detail => detail.discount ? `${detail.discount}€` : '').join('<br>')
-                            ).join('<br>');
-
-                            // Indiquer "Bouteille" dans la colonne "Les entrées"
+                            const pureNames = prestation.pureItems.map(pure => pure.details.map(detail => detail.name).join('<br>')).join('<br>');
+                            const pureCategories = prestation.pureItems.map(pure => pure.details.map(detail => detail.category || '').join('<br>')).join('<br>');
+                            const purePrices = prestation.pureItems.map(pure => pure.details.map(detail => `${detail.price}€`).join('<br>')).join('<br>');
+                            const pureQuantities = prestation.pureItems.map(pure => pure.details.map(detail => detail.qty).join('<br>')).join('<br>');
+                            const pureMaxEntries = prestation.pureItems.map(pure => pure.details.map(detail => detail.maxEntries).join('<br>')).join('<br>');
+                            const pureDiscounts = prestation.pureItems.map(pure => pure.details.map(detail => detail.discount ? `${detail.discount}€` : '').join('<br>')).join('<br>');
                             pureAccessText = pureAccessText ? `${pureAccessText}<br>Bouteille` : 'Bouteille';
                             purePrestationText = purePrestationText ? `${purePrestationText}<br>${pureNames}` : pureNames;
                             pureCategoryText = pureCategories;
@@ -1550,7 +1397,6 @@ const detailRows = presentationRows.map((row, rowIndex) => {
                             pureMaxEntriesText = pureMaxEntries;
                             pureDiscountText = pureDiscounts;
                         }
-
                         html += `
                             <tr class="${dayClass}">
                                 ${prestationIndex === 0 ? `<td class="day-cell" onclick="filterByDay('${day}')">${day}</td>` : '<td></td>'}
@@ -1569,12 +1415,11 @@ const detailRows = presentationRows.map((row, rowIndex) => {
                     html += `<tr class="${dayClass}"><td class="day-cell" onclick="filterByDay('${day}')">${day}</td><td colspan="8">Aucune prestation</td></tr>`;
                 }
             });
-            
             html += '</table>';
             previewSection.innerHTML = html;
         }
 
-        const today = new Date('2025-03-08');
+        const today = new Date('2025-03-15');
         const daysOfWeek = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
         const currentDay = daysOfWeek[today.getDay()];
         document.getElementById('kiosk-subtitle').textContent = `Aujourd'hui : ${currentDay} ${today.toLocaleDateString('fr-FR')}`;
@@ -1588,99 +1433,90 @@ const detailRows = presentationRows.map((row, rowIndex) => {
             accessContainer.innerHTML = '';
             pureContainer.innerHTML = '';
             kioskItems = {};
-
             const todayPrestations = prestations.filter(p => p.days.includes(currentDay));
             let hasAccess = false;
             let hasPure = false;
 
             todayPrestations.forEach((prestation, prestationIndex) => {
-               if (prestation.presentationLow || prestation.presentationNormal) {
-    hasAccess = true;
-    const presentationLow = prestation.presentationLow || '';
-    const presentationNormal = prestation.presentationNormal || '';
-    const price = parseFloat(prestation.price) || 0;
+                if (prestation.presentationLow || prestation.presentationNormal) {
+                    hasAccess = true;
+                    const price = parseFloat(prestation.price) || 0;
+                    if (prestation.presentationLow) {
+                        const id = `access-low-${prestationIndex}`;
+                        kioskItems[id] = { name: prestation.presentationLow, price, qty: 0, maxQty: 1 };
+                        accessContainer.innerHTML += `
+                            <div class="kiosk-item">
+                                <div class="kiosk-item-row">
+                                    <div class="kiosk-item-name">${prestation.presentationLow}</div>
+                                    <div class="kiosk-item-price">${price}€</div>
+                                    <div class="kiosk-quantity-control">
+                                        <button class="kiosk-qty-btn" data-id="${id}" data-action="decrease">-</button>
+                                        <div id="${id}-qty" class="kiosk-qty-value">0</div>
+                                        <button class="kiosk-qty-btn" data-id="${id}" data-action="increase">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    if (prestation.presentationNormal) {
+                        const id = `access-normal-${prestationIndex}`;
+                        kioskItems[id] = { name: prestation.presentationNormal, price, qty: 0, maxQty: Infinity };
+                        accessContainer.innerHTML += `
+                            <div class="kiosk-item">
+                                <div class="kiosk-item-row">
+                                    <div class="kiosk-item-name">${prestation.presentationNormal}</div>
+                                    <div class="kiosk-item-price">${price}€</div>
+                                    <div class="kiosk-quantity-control">
+                                        <button class="kiosk-qty-btn" data-id="${id}" data-action="decrease">-</button>
+                                        <div id="${id}-qty" class="kiosk-qty-value">0</div>
+                                        <button class="kiosk-qty-btn" data-id="${id}" data-action="increase">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                }
 
-if (presentationLow) {
-    const id = `access-low-${prestationIndex}`;
-    kioskItems[id] = { name: presentationLow, price, qty: 0, maxQty: 1 }; // Toujours 1 pour "Heure creuse"
-    accessContainer.innerHTML += `
-        <div class="kiosk-item">
-            <div class="kiosk-item-row">
-                <div class="kiosk-item-name">${presentationLow}</div>
-                <div class="kiosk-item-price">${price}€</div>
-                <div class="kiosk-quantity-control">
-                    <button class="kiosk-qty-btn" data-id="${id}" data-action="decrease">-</button>
-                    <div id="${id}-qty" class="kiosk-qty-value">0</div>
-                    <button class="kiosk-qty-btn" data-id="${id}" data-action="increase">+</button>
-                </div>
-            </div>
-        </div>
-    `;
-}
-    if (presentationNormal) {
-        const id = `access-normal-${prestationIndex}`;
-        kioskItems[id] = { name: presentationNormal, price, qty: 0, maxQty: Infinity };
-        accessContainer.innerHTML += `
-            <div class="kiosk-item">
-                <div class="kiosk-item-row">
-                    <div class="kiosk-item-name">${presentationNormal}</div>
-                    <div class="kiosk-item-price">${price}€</div>
-                    <div class="kiosk-quantity-control">
-                        <button class="kiosk-qty-btn" data-id="${id}" data-action="decrease">-</button>
-                        <div id="${id}-qty" class="kiosk-qty-value">0</div>
-                        <button class="kiosk-qty-btn" data-id="${id}" data-action="increase">+</button>
-                    </div>
-                </div>
-            </div>
-        `;
-    }
-}
-
-if (prestation.pureItems.length > 0) {
-    hasPure = true;
-    prestation.pureItems.forEach((pure, pureIndex) => {
-        pure.details.forEach((detail, detailIndex) => {
-            const id = `pure-${prestationIndex}-${pureIndex}-${detailIndex}`;
-            const baseQty = parseInt(detail.qty) || 1;
-            const extraQty = Math.max(0, kioskItems[id]?.qty - baseQty) || 0;
-            const discount = parseFloat(detail.discount) || 0;
-            const price = parseFloat(detail.price) || 0;
-            const discountTotal = extraQty * discount;
-            kioskItems[id] = { 
-                name: detail.name, 
-                category: detail.category || '', 
-                price: price, 
-                maxEntries: parseInt(detail.maxEntries) || Infinity,
-                discount: discount,
-                qty: 0, 
-                maxQty: Infinity 
-            };
-            pureContainer.innerHTML += `
-                <div class="kiosk-item">
-                    <div class="kiosk-item-category">${detail.category || ''}</div>
-                    <div class="kiosk-item-row">
-                        <div class="kiosk-item-name">${detail.name}</div>
-                        <div class="kiosk-item-details">
-                            <div class="kiosk-item-price">${price}€</div>
-                            <div class="kiosk-item-max">Max. Entrées: ${detail.maxEntries}</div>
-                        </div>
-                        <div class="kiosk-quantity-control">
-                            <button class="kiosk-qty-btn" data-id="${id}" data-action="decrease">-</button>
-                            <div id="${id}-qty" class="kiosk-qty-value">0</div>
-                            <button class="kiosk-qty-btn" data-id="${id}" data-action="increase">+</button>
-                        </div>
-                    </div>
-                </div>
-            `;
-        });
-    });
-}
+                if (prestation.pureItems.length > 0) {
+                    hasPure = true;
+                    prestation.pureItems.forEach((pure, pureIndex) => {
+                        pure.details.forEach((detail, detailIndex) => {
+                            const id = `pure-${prestationIndex}-${pureIndex}-${detailIndex}`;
+                            const price = parseFloat(detail.price) || 0;
+                            kioskItems[id] = { 
+                                name: detail.name, 
+                                category: detail.category || '', 
+                                price, 
+                                maxEntries: parseInt(detail.maxEntries) || Infinity,
+                                discount: parseFloat(detail.discount) || 0,
+                                qty: 0, 
+                                maxQty: Infinity 
+                            };
+                            pureContainer.innerHTML += `
+                                <div class="kiosk-item">
+                                    <div class="kiosk-item-category">${detail.category || ''}</div>
+                                    <div class="kiosk-item-row">
+                                        <div class="kiosk-item-name">${detail.name}</div>
+                                        <div class="kiosk-item-details">
+                                            <div class="kiosk-item-price">${price}€</div>
+                                            <div class="kiosk-item-max">Max. Entrées: ${detail.maxEntries}</div>
+                                        </div>
+                                        <div class="kiosk-quantity-control">
+                                            <button class="kiosk-qty-btn" data-id="${id}" data-action="decrease">-</button>
+                                            <div id="${id}-qty" class="kiosk-qty-value">0</div>
+                                            <button class="kiosk-qty-btn" data-id="${id}" data-action="increase">+</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    });
+                }
             });
 
             accessSection.style.display = hasAccess ? 'block' : 'none';
             pureSection.style.display = hasPure ? 'block' : 'none';
             separator.style.display = (hasAccess && hasPure) ? 'block' : 'none';
-
             attachKioskQuantityListeners();
             updateKioskTotal();
         }
@@ -1717,13 +1553,11 @@ if (prestation.pureItems.length > 0) {
                 const price = parseFloat(item.price) || 0;
                 const discount = parseFloat(item.discount) || 0;
                 total += price * item.qty;
-                const baseQty = 1;
-                const extraQty = Math.max(0, item.qty - baseQty);
+                const extraQty = Math.max(0, item.qty - 1);
                 discountTotal += extraQty * discount;
                 itemCount += item.qty;
             }
-            const discountDisplay = discountTotal > 0 ? `(Réduc. bouteille suppl.: -${discountTotal.toFixed(2)}€)` : '';
-            document.getElementById('kiosk-total-discount').textContent = discountDisplay;
+            document.getElementById('kiosk-total-discount').textContent = discountTotal > 0 ? `(Réduc. bouteille suppl.: -${discountTotal.toFixed(2)}€)` : '';
             document.getElementById('kiosk-total-price').textContent = `${(total - discountTotal).toFixed(2)}€`;
             document.getElementById('kiosk-checkout-btn').disabled = itemCount === 0;
         }
@@ -1734,18 +1568,15 @@ if (prestation.pureItems.length > 0) {
             let discountTotal = 0;
             for (const [id, item] of Object.entries(kioskItems)) {
                 if (item.qty > 0) {
-                    const baseQty = 1;
-                    const extraQty = Math.max(0, item.qty - baseQty);
+                    const extraQty = Math.max(0, item.qty - 1);
                     const itemDiscount = extraQty * item.discount;
                     summary += `${item.name} (${item.category}) x${item.qty} - ${item.price * item.qty - itemDiscount}€\n`;
                     total += item.price * item.qty;
                     discountTotal += itemDiscount;
                 }
             }
-            summary += `\nTotal : ${total - discountTotal}€`;
-            if (discountTotal > 0) {
-                summary = `(Réduc. bouteille suppl.: -${discountTotal}€)\n` + summary;
-            }
+            summary += `\nTotal : ${(total - discountTotal).toFixed(2)}€`;
+            if (discountTotal > 0) summary = `(Réduc. bouteille suppl.: -${discountTotal.toFixed(2)}€)\n` + summary;
             alert(summary);
         });
 
