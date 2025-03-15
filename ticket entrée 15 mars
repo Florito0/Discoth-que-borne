@@ -1,0 +1,1771 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion et Kiosque Discothèque</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container, .kiosk-container {
+            background-color: #1e1e1e;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 1000px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .kiosk-container {
+            max-width: 600px;
+            margin: 20px;
+            display: block;
+        }
+
+        .container { display: none; }
+
+        .access-section, .kiosk-items-container {
+            padding: 20px;
+        }
+
+        .header-content, .kiosk-header {
+            background-color: #2c2c2c;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid #333;
+        }
+
+        .header-content { margin-bottom: 20px; }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        h2 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: #b3b3b3;
+        }
+
+        .current-prestations {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: linear-gradient(135deg, #1c2526 0%, #2a3b4c 100%);
+            border-radius: 8px;
+            min-width: 0;
+            overflow-x: auto;
+        }
+
+        .day-filter {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .day-btn, .preview-btn, .add-pure-btn, .toggle-btn {
+            padding: 5px 10px;
+            background: #444;
+            border: 1px solid #333;
+            border-radius: 4px;
+            cursor: pointer;
+            color: white;
+            transition: background-color 0.3s;
+        }
+
+        .toggle-btn {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            padding: 10px 20px;
+        }
+
+        .add-pure-btn {
+            margin-top: 20px;
+            align-self: flex-start;
+        }
+
+        .day-btn:hover, .preview-btn:hover, .add-pure-btn:hover, .toggle-btn:hover {
+            background: #555;
+        }
+
+        .day-btn.active, .preview-btn.active {
+            background: linear-gradient(to right, #9733EE, #DA22FF);
+        }
+
+        .prestation-item, .pure-item {
+            cursor: move;
+            user-select: none;
+            width: 100%;
+            box-sizing: border-box;
+            background-color: #2a3435;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            padding: 10px;
+            transition: box-shadow 0.3s;
+        }
+
+        .prestation-item.dragging, .pure-row.dragging {
+            opacity: 0.5;
+        }
+
+        .prestation-item:hover, .pure-item:hover {
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        }
+
+        .access-header-row, .access-detail-row, .pure-header-row, .pure-detail-row {
+            display: grid;
+            grid-template-columns: minmax(120px, 1fr) minmax(150px, 1fr) minmax(80px, 0.8fr) minmax(80px, 1fr) 80px;
+            gap: 10px;
+            padding: 5px 0;
+            align-items: center;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .pure-header-row, .pure-detail-row {
+            grid-template-columns: 1fr 1fr 1fr 0.5fr 0.5fr 0.8fr 1fr auto;
+        }
+
+        .access-header-row, .pure-header-row {
+            border-bottom: 2px solid #00D4FF;
+            margin-bottom: 5px;
+        }
+
+        .access-detail-row, .pure-detail-row {
+            border-bottom: 1px solid #444;
+            white-space: nowrap;
+            overflow-x: auto;
+        }
+
+        .access-detail-row:last-child, .pure-detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .prestation-label {
+            font-weight: 500;
+            color: #00D4FF;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 16px;
+            line-height: 1.2;
+        }
+
+        .pure-detail-row .prestation-label:nth-child(1) {
+            color: #ffffff;
+        }
+
+        .prestation-value, .prestation-qty, .prestation-price, .prestation-max, .prestation-discount {
+            font-size: 16px;
+            color: #e0e0e0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: flex;
+            align-items: center;
+            padding: 0 5px;
+            min-height: 20px;
+            line-height: 1.2;
+        }
+
+        .prestation-value { color: #fff; }
+        .prestation-qty { justify-content: flex-start; }
+        .prestation-price { justify-content: flex-start; }
+        .prestation-max, .prestation-discount { justify-content: center; }
+
+        .button-container {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            justify-content: flex-end;
+            min-width: 80px;
+        }
+
+        .delete-btn, .edit-btn, .pure-duplicate-btn, .pure-delete-btn, .add-details-btn, .delete-details-btn {
+            border: none;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: box-shadow 0.3s, transform 0.3s;
+        }
+
+        .delete-btn, .pure-delete-btn, .delete-details-btn {
+            background-color: #ff4444;
+            width: 22px;
+            height: 22px;
+            font-size: 12px;
+        }
+
+        .edit-btn {
+            background-color: #9733EE;
+            width: 22px;
+            height: 22px;
+            font-size: 12px;
+        }
+
+        .pure-duplicate-btn {
+            background-color: #4CAF50;
+            width: 21px;
+            height: 21px;
+            font-size: 12px;
+        }
+
+        .add-details-btn, .delete-details-btn {
+            width: 30px;
+            height: 30px;
+            font-size: 16px;
+        }
+
+        .add-details-btn {
+            background-color: #4CAF50;
+            margin-top: 5px;
+            align-self: center;
+        }
+
+        .delete-btn:hover, .edit-btn:hover, .pure-duplicate-btn:hover, .pure-delete-btn:hover, .add-details-btn:hover, .delete-details-btn:hover {
+            box-shadow: 0 0 10px currentColor, 0 0 5px #00D4FF;
+            transform: scale(1.1);
+        }
+
+        .delete-btn:active, .edit-btn:active, .pure-duplicate-btn:active, .pure-delete-btn:active, .add-details-btn:active, .delete-details-btn:active {
+            transform: scale(0.95);
+        }
+
+        .access-form, .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 3px;
+            font-weight: 500;
+        }
+
+        input, select {
+            padding: 10px;
+            background-color: #333;
+            border: 1px solid #333;
+            color: white;
+            border-radius: 4px;
+            width: 100%;
+            max-width: 300px;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+
+        input:hover, select:hover, input:focus, select:focus {
+            background-color: #444;
+            box-shadow: 0 0 5px #00D4FF;
+            outline: none;
+        }
+
+        .days-checkboxes {
+            display: flex;
+            gap: 15px;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            padding: 5px;
+        }
+
+        .days-checkboxes.error {
+            border: 2px solid #ff4444;
+            border-radius: 4px;
+        }
+
+        .days-checkboxes label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+        }
+
+        .error input, .error select {
+            border: 2px solid #ff4444;
+        }
+
+        .pure-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 20px;
+            width: 100%;
+        }
+
+        .pure-row {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            max-width: 960px;
+            border-bottom: 1px solid #444;
+            padding-bottom: 10px;
+        }
+
+        .category-section, .name-section, .details-row {
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+        }
+
+        .category-section div, .name-section div, .details-row div {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .details-section {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .pure-row input.pure-name, .pure-row input.pure-custom-category, .pure-row input[list="bottle-categories"],
+        .details-row input.pure-name {
+            width: 220px;
+            max-width: none;
+        }
+
+        .pure-row input.pure-qty, .pure-row input.pure-price, .pure-row input.pure-max-entries, .pure-row input.pure-discount,
+        .details-row input.pure-qty, .details-row input.pure-price, .details-row input.pure-max-entries, .details-row input.pure-discount,
+        .presentation-fields input#access-price, .presentation-fields .sex-container select {
+            width: 150px;
+            max-width: none;
+        }
+
+        .presentation-group, .pure-group {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            position: relative;
+        }
+
+        .presentation-group h3, .pure-group h3 {
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .presentation-group::before, .pure-group::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #00D4FF;
+        }
+
+        .presentation-fields {
+            display: flex;
+            justify-content: flex-start;
+            width: 100%;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .presentation-fields div {
+            flex: 1;
+            min-width: 220px;
+        }
+
+        .presentation-fields .price-container, .presentation-fields .sex-container {
+            flex: none;
+            min-width: auto;
+        }
+
+        .presentation-fields input, .presentation-fields select {
+            width: 100%;
+            max-width: none;
+        }
+
+        .save-btn, .kiosk-checkout-btn {
+            padding: 15px;
+            background: linear-gradient(to right, #9733EE, #DA22FF);
+            color: white;
+            border: 1px solid #333;
+            border-radius: 6px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: box-shadow 0.3s;
+            width: 100%;
+        }
+
+        .save-btn {
+            margin: 20px 0;
+        }
+
+        .save-btn:hover {
+            box-shadow: 0 0 10px #9733EE, 0 0 5px #00D4FF;
+        }
+
+        .kiosk-checkout-btn {
+            transition: opacity 0.2s;
+            border: none;
+        }
+
+        .kiosk-checkout-btn:hover { opacity: 0.9; }
+        .kiosk-checkout-btn:active { opacity: 0.8; }
+        .kiosk-checkout-btn:disabled {
+            background: #444;
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .preview-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background: linear-gradient(135deg, #2a3435 0%, #3b4c5d 100%);
+            border: 1px solid #FF00FF;
+        }
+
+        .preview-table th, .preview-table td {
+            padding: 10px;
+            border: 1px solid #555;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .preview-table th {
+            background-color: #444;
+            font-weight: 700;
+            border-bottom: 2px solid #00D4FF;
+        }
+
+        .preview-table .day-cell {
+            cursor: pointer;
+            transition: box-shadow 0.3s;
+        }
+
+        .preview-table .day-cell:hover {
+            box-shadow: 0 0 5px #00D4FF;
+        }
+
+        .preview-table .day-lundi, .preview-table .day-mercredi,
+        .preview-table .day-vendredi, .preview-table .day-dimanche {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .preview-table .day-mardi, .preview-table .day-jeudi,
+        .preview-table .day-samedi {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .kiosk-separator {
+            width: 70%;
+            height: 2px;
+            background-color: #ffffff;
+            margin: 20px auto;
+        }
+
+        .kiosk-item {
+            padding: 15px 0;
+            border-bottom: 1px solid #333;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .kiosk-item:last-child { border-bottom: none; }
+
+        .kiosk-item-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 5px 0;
+        }
+
+        .kiosk-item-category {
+            color: #00D4FF;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            text-align: left;
+        }
+
+        .kiosk-item-name {
+            font-size: 18px;
+            font-weight: 500;
+            flex: 2;
+            text-align: left;
+        }
+
+        .kiosk-item-price {
+            font-size: 16px;
+            color: #b3b3b3;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .kiosk-item-max {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #b3b3b3;
+            font-size: 14px;
+        }
+
+        .kiosk-max-value { font-weight: 600; color: #e0e0e0; }
+        .kiosk-max-label { font-size: 14px; }
+
+        .kiosk-quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            justify-content: flex-end;
+        }
+
+        .kiosk-qty-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background-color: #333;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.2s;
+        }
+
+        .kiosk-qty-btn:hover { background-color: #444; }
+        .kiosk-qty-btn:active { background-color: #555; }
+
+        .kiosk-qty-value {
+            width: 40px;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .kiosk-total-section {
+            background-color: #2c2c2c;
+            padding: 20px;
+            border-top: 1px solid #333;
+        }
+
+        .kiosk-total-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .kiosk-total-discount {
+            color: #ff4444;
+            font-style: italic;
+        }
+
+        .even-row { background-color: rgba(255, 255, 255, 0.05); }
+        .odd-row { background-color: rgba(0, 0, 0, 0.1); }
+
+        @media (max-width: 768px) {
+            .access-header-row, .access-detail-row, .pure-header-row, .pure-detail-row {
+                grid-template-columns: 1fr;
+                gap: 5px;
+            }
+
+            .prestation-label, .prestation-value, .prestation-qty,
+            .prestation-price, .prestation-max, .prestation-discount {
+                text-align: left;
+            }
+
+            .pure-row, .details-row, .category-section, .name-section,
+            .presentation-fields, .kiosk-item-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .category-section div, .name-section div {
+                width: 100%;
+            }
+
+            input, select {
+                max-width: 100%;
+            }
+
+            .day-filter { gap: 5px; }
+
+            .presentation-fields div, .presentation-fields .price-container,
+            .presentation-fields .sex-container {
+                min-width: 100%;
+            }
+
+            .presentation-fields input#access-price, .presentation-fields .sex-container select {
+                max-width: 150px;
+            }
+
+            .pure-row input.pure-name, .pure-row input.pure-custom-category,
+            .pure-row input[list="bottle-categories"], .details-row input.pure-name {
+                max-width: 220px;
+            }
+
+            .pure-row input.pure-qty, .pure-row input.pure-price,
+            .pure-row input.pure-max-entries, .pure-row input.pure-discount,
+            .details-row input.pure-qty, .details-row input.pure-price,
+            .details-row input.pure-max-entries, .details-row input.pure-discount {
+                max-width: 150px;
+            }
+
+            .kiosk-quantity-control {
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .kiosk-item-max { flex-direction: column; align-items: flex-start; }
+            .kiosk-max-label { font-size: 12px; }
+        }
+    </style>
+    </style>
+</head>
+<body>
+    <div class="container" id="dashboard">
+        <div class="access-section">
+            <div class="header-content">
+                <h1>Gestion des Les entrées</h1>
+                <div class="subtitle">Configurez vos formules d'entrée</div>
+            </div>
+            
+            <div class="current-prestations">
+                <h2>Prestations actuelles</h2>
+                <div class="day-filter" id="day-filter">
+                    <button class="day-btn" onclick="filterByDay('Lundi')">Lundi</button>
+                    <button class="day-btn" onclick="filterByDay('Mardi')">Mardi</button>
+                    <button class="day-btn" onclick="filterByDay('Mercredi')">Mercredi</button>
+                    <button class="day-btn" onclick="filterByDay('Jeudi')">Jeudi</button>
+                    <button class="day-btn" onclick="filterByDay('Vendredi')">Vendredi</button>
+                    <button class="day-btn" onclick="filterByDay('Samedi')">Samedi</button>
+                    <button class="day-btn" onclick="filterByDay('Dimanche')">Dimanche</button>
+                    <button class="preview-btn" onclick="showPreview()">Aperçu</button>
+                </div>
+                <div class="prestation-container" id="access-prestations-list"></div>
+                <div id="separator-line" class="separator-line" style="display: none;"></div>
+                <div class="prestation-container" id="pure-prestations-list"></div>
+                <div id="preview-section" style="display: none;"></div>
+            </div>
+            
+            <div class="access-form" id="access-form">
+                <div class="form-group">
+                    <label>Jour(s)</label>
+                    <div class="days-checkboxes" id="days-checkboxes">
+                        <label><input type="checkbox" name="days" value="Lundi"> Lundi</label>
+                        <label><input type="checkbox" name="days" value="Mardi"> Mardi</label>
+                        <label><input type="checkbox" name="days" value="Mercredi"> Mercredi</label>
+                        <label><input type="checkbox" name="days" value="Jeudi"> Jeudi</label>
+                        <label><input type="checkbox" name="days" value="Vendredi"> Vendredi</label>
+                        <label><input type="checkbox" name="days" value="Samedi"> Samedi</label>
+                        <label><input type="checkbox" name="days" value="Dimanche"> Dimanche</label>
+                    </div>
+                </div>
+                
+                <div class="form-group presentation-group">
+                    <h3>Les entrées</h3>
+                    <div class="presentation-fields">
+                        <div>
+                            <label>Accès Normal:</label>
+                            <input type="text" placeholder="Ex: Entrée avec boisson" id="access-presentation-normal">
+                        </div>
+                        <div>
+                            <label>Accès Heure Creuse:</label>
+                            <input type="text" placeholder="Ex: Entrée Gratuit" id="access-presentation-low">
+                        </div>
+                        <div class="price-container">
+                            <label>Prix</label>
+                            <input type="number" step="0.01" min="0" placeholder="Prix (€)" id="access-price">
+                        </div>
+                        <div class="sex-container">
+                            <label>Sexe</label>
+                            <select id="access-sex">
+                                <option value="Homme"><span style="color: #00D4FF;">♂</span> Homme</option>
+                                <option value="Femme"><span style="color: #FF00FF;">♀</span> Femme</option>
+                                <option value="H/F" selected><span style="color: #00D4FF;">♂</span>/<span style="color: #FF00FF;">♀</span> H/F</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group pure-group">
+                    <h3>Les entrées avec bouteille</h3>
+                    <div class="pure-container" id="pure-container">
+                        <div class="pure-row">
+                            <div class="category-section">
+                                <div>
+                                    <label>Catégorie de bouteille (optionnel)</label>
+                                    <input type="text" list="bottle-categories" placeholder="Saisir ou sélectionner une catégorie" class="pure-category-input">
+                                    <datalist id="bottle-categories">
+                                        <option value="VODKA">
+                                        <option value="WHISKY">
+                                        <option value="RUM">
+                                        <option value="JÄGERBOMB">
+                                        <option value="CHAMPAGNE">
+                                    </datalist>
+                                </div>
+                            </div>
+                            <div class="name-section">
+                                <div>
+                                    <label>Nom</label>
+                                    <input type="text" placeholder="Ex: Bouteille" class="pure-name">
+                                </div>
+                                <div>
+                                    <label>Qt. bouteilles</label>
+                                    <input type="number" min="1" placeholder="Quantité" class="pure-qty">
+                                </div>
+                                <div>
+                                    <label>Prix</label>
+                                    <input type="number" step="0.01" min="0" placeholder="Prix (€)" class="pure-price">
+                                </div>
+                                <div>
+                                    <label>Max. Entrée</label>
+                                    <input type="number" min="1" placeholder="Max. Entrée" class="pure-max-entries">
+                                </div>
+                                <div>
+                                    <label>Réduc. bouteille suppl.</label>
+                                    <input type="number" step="0.01" min="0" placeholder="Réduction (€)" class="pure-discount">
+                                </div>
+                                <button class="pure-duplicate-btn" onclick="duplicatePure(this)">📋</button>
+                                <button class="pure-delete-btn" onclick="deletePure(this)">🗑️</button>
+                            </div>
+                            <div class="details-section">
+                                <button class="add-details-btn" onclick="addDetails(this)">+</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="add-pure-btn" onclick="addPure()">+ Ajouter une formule bouteille</div>
+                </div>
+            </div>
+            
+            <button class="save-btn" onclick="savePrestation()">Enregistrer les modifications</button>
+        </div>
+    </div>
+
+    <div class="kiosk-container" id="kiosk">
+        <div class="kiosk-header">
+            <h1>KIOSQUE</h1>
+            <div class="subtitle" id="kiosk-subtitle"></div>
+        </div>
+        
+        <div class="kiosk-items-container">
+            <div class="kiosk-category" id="access-soiree">
+                <h2>Accès Soirée</h2>
+                <div id="access-items"></div>
+            </div>
+            <div class="kiosk-separator"></div>
+            <div class="kiosk-category" id="pure-soiree">
+                <h2>Pure Soirée</h2>
+                <div id="pure-items"></div>
+            </div>
+        </div>
+        
+        <div class="kiosk-total-section">
+            <div class="kiosk-total-row">
+                <div id="kiosk-total-discount"></div>
+                <div id="kiosk-total-price">0€</div>
+            </div>
+            <button id="kiosk-checkout-btn" class="kiosk-checkout-btn" disabled>VALIDER</button>
+        </div>
+    </div>
+
+    <button class="toggle-btn" id="toggle-btn" onclick="toggleInterface()">Passer au Tableau de Bord</button>
+
+    <script>
+        let prestations = [];
+        let selectedDayFilter = null;
+        let isPreviewActive = false;
+        let kioskItems = {};
+
+        function addPure() {
+            const container = document.getElementById('pure-container');
+            const pureDiv = document.createElement('div');
+            pureDiv.className = 'pure-row';
+            pureDiv.draggable = true;
+            pureDiv.innerHTML = `
+                <div class="category-section">
+                    <div>
+                        <label>Catégorie de bouteille (optionnel)</label>
+                        <input type="text" list="bottle-categories" placeholder="Saisir ou sélectionner une catégorie" class="pure-category-input">
+                        <datalist id="bottle-categories">
+                            <option value="VODKA">
+                            <option value="WHISKY">
+                            <option value="RUM">
+                            <option value="JÄGERBOMB">
+                            <option value="CHAMPAGNE">
+                        </datalist>
+                    </div>
+                </div>
+                <div class="name-section">
+                    <div>
+                        <label>Nom</label>
+                        <input type="text" placeholder="Ex: Bouteille" class="pure-name">
+                    </div>
+                    <div>
+                        <label>Qt. bouteilles</label>
+                        <input type="number" min="1" placeholder="Quantité" class="pure-qty">
+                    </div>
+                    <div>
+                        <label>Prix</label>
+                        <input type="number" step="0.01" min="0" placeholder="Prix (€)" class="pure-price">
+                    </div>
+                    <div>
+                        <label>Max. Entrée</label>
+                        <input type="number" min="1" placeholder="Max. Entrée" class="pure-max-entries">
+                    </div>
+                    <div>
+                        <label>Réduc. bouteille suppl.</label>
+                        <input type="number" step="0.01" min="0" placeholder="Réduction (€)" class="pure-discount">
+                    </div>
+                    <button class="pure-duplicate-btn" onclick="duplicatePure(this)">📋</button>
+                    <button class="pure-delete-btn" onclick="deletePure(this)">🗑️</button>
+                </div>
+                <div class="details-section">
+                    <button class="add-details-btn" onclick="addDetails(this)">+</button>
+                </div>
+            `;
+            container.appendChild(pureDiv);
+            addDragEvents(pureDiv);
+        }
+
+        function addDetails(button) {
+            const detailsSection = button.parentElement;
+            const pureRow = detailsSection.parentElement;
+            const nameSection = pureRow.querySelector('.name-section');
+
+            const newDetailsRow = document.createElement('div');
+            newDetailsRow.className = 'details-row';
+            newDetailsRow.innerHTML = `
+                <div>
+                    <label>Nom</label>
+                    <input type="text" value="${nameSection.querySelector('.pure-name').value || ''}" class="pure-name">
+                </div>
+                <div>
+                    <label>Qt. bouteilles</label>
+                    <input type="number" min="1" value="${nameSection.querySelector('.pure-qty').value || ''}" class="pure-qty">
+                </div>
+                <div>
+                    <label>Prix</label>
+                    <input type="number" step="0.01" min="0" value="${nameSection.querySelector('.pure-price').value || ''}" class="pure-price">
+                </div>
+                <div>
+                    <label>Max. Entrée</label>
+                    <input type="number" min="1" value="${nameSection.querySelector('.pure-max-entries').value || ''}" class="pure-max-entries">
+                </div>
+                <div>
+                    <label>Réduc. bouteille suppl.</label>
+                    <input type="number" step="0.01" min="0" value="${nameSection.querySelector('.pure-discount').value || ''}" class="pure-discount">
+                </div>
+                <button class="delete-details-btn" onclick="deleteDetails(this)">🗑️</button>
+            `;
+            detailsSection.insertBefore(newDetailsRow, button);
+        }
+
+        function deleteDetails(button) {
+            button.parentElement.remove();
+        }
+
+        function duplicatePure(button) {
+            const container = document.getElementById('pure-container');
+            const originalRow = button.parentElement.parentElement;
+            const newRow = originalRow.cloneNode(true);
+            newRow.querySelector('.pure-duplicate-btn').onclick = () => duplicatePure(newRow.querySelector('.pure-duplicate-btn'));
+            newRow.querySelector('.pure-delete-btn').onclick = () => deletePure(newRow.querySelector('.pure-delete-btn'));
+            newRow.querySelector('.add-details-btn').onclick = () => addDetails(newRow.querySelector('.add-details-btn'));
+            container.appendChild(newRow);
+            addDragEvents(newRow);
+        }
+
+        function deletePure(button) {
+            const container = document.getElementById('pure-container');
+            button.parentElement.parentElement.remove();
+            if (container.children.length === 0) {
+                addPure();
+            }
+        }
+
+        function addDragEvents(pureDiv) {
+            pureDiv.addEventListener('dragstart', handlePureDragStart);
+            pureDiv.addEventListener('dragover', handlePureDragOver);
+            pureDiv.addEventListener('drop', handlePureDrop);
+            pureDiv.addEventListener('dragend', handlePureDragEnd);
+        }
+
+        let draggedPure = null;
+
+        function handlePureDragStart(e) {
+            draggedPure = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', this.innerHTML);
+        }
+
+        function handlePureDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        }
+
+        function handlePureDrop(e) {
+            e.preventDefault();
+            if (draggedPure !== this) {
+                const allPure = [...document.querySelectorAll('.pure-row')];
+                const draggedIndex = allPure.indexOf(draggedPure);
+                const droppedIndex = allPure.indexOf(this);
+                const container = document.getElementById('pure-container');
+                const pureArray = Array.from(container.children);
+
+                const [movedPure] = pureArray.splice(draggedIndex, 1);
+                pureArray.splice(droppedIndex, 0, movedPure);
+
+                container.innerHTML = '';
+                pureArray.forEach(pure => {
+                    container.appendChild(pure);
+                    addDragEvents(pure);
+                });
+            }
+        }
+
+        function handlePureDragEnd() {
+            this.classList.remove('dragging');
+            draggedPure = null;
+        }
+
+        function validateAccessSoiree() {
+            const presentationLow = document.getElementById('access-presentation-low');
+            const presentationNormal = document.getElementById('access-presentation-normal');
+            const price = document.getElementById('access-price');
+
+            presentationLow.classList.remove('error');
+            presentationNormal.classList.remove('error');
+            price.classList.remove('error');
+
+            const hasPresentation = presentationLow.value.trim() || presentationNormal.value.trim();
+            const hasPrice = price.value !== '';
+
+            let errors = [];
+
+            if (hasPresentation && !hasPrice) {
+                errors.push('Veuillez remplir le champ "Prix" dans "Les entrées" si une présentation est indiquée.');
+                price.classList.add('error');
+            }
+
+            if (hasPrice && !hasPresentation) {
+                errors.push('Veuillez remplir au moins une "Présentation" (normale ou heure creuse) dans "Les entrées" si un prix est indiqué.');
+                presentationLow.classList.add('error');
+                presentationNormal.classList.add('error');
+            }
+
+            return {
+                isValid: (hasPresentation && hasPrice),
+                errors
+            };
+        }
+
+        function validatePureSoiree() {
+            const pureRows = document.querySelectorAll('.pure-row');
+            let errors = [];
+            let hasValidRow = false;
+
+            pureRows.forEach((row, index) => {
+                const categoryInput = row.querySelector('.pure-category-input');
+                const name = row.querySelector('.name-section .pure-name');
+                const firstQty = row.querySelector('.name-section .pure-qty');
+                const firstPrice = row.querySelector('.name-section .pure-price');
+                const firstMaxEntries = row.querySelector('.name-section .pure-max-entries');
+                const firstDiscount = row.querySelector('.name-section .pure-discount');
+                const additionalDetails = row.querySelectorAll('.details-section .details-row');
+
+                categoryInput.classList.remove('error');
+                name.classList.remove('error');
+                firstQty.classList.remove('error');
+                firstPrice.classList.remove('error');
+                firstMaxEntries.classList.remove('error');
+                firstDiscount.classList.remove('error');
+                additionalDetails.forEach(detailRow => {
+                    detailRow.querySelector('.pure-name').classList.remove('error');
+                    detailRow.querySelector('.pure-qty').classList.remove('error');
+                    detailRow.querySelector('.pure-price').classList.remove('error');
+                    detailRow.querySelector('.pure-max-entries').classList.remove('error');
+                    detailRow.querySelector('.pure-discount').classList.remove('error');
+                });
+
+                const isRowValid = name.value.trim() && firstQty.value && firstPrice.value && firstMaxEntries.value;
+
+                if (isRowValid) {
+                    hasValidRow = true;
+
+                    additionalDetails.forEach((detailRow, detailIndex) => {
+                        const nameDetail = detailRow.querySelector('.pure-name');
+                        const qty = detailRow.querySelector('.pure-qty');
+                        const price = detailRow.querySelector('.pure-price');
+                        const maxEntries = detailRow.querySelector('.pure-max-entries');
+                        const discount = detailRow.querySelector('.pure-discount');
+
+                        if (!nameDetail.value.trim()) {
+                            errors.push(`Veuillez remplir le champ "Nom" dans la ligne supplémentaire ${detailIndex + 1} de la ligne ${index + 1} de "Les entrées avec bouteille".`);
+                            nameDetail.classList.add('error');
+                        }
+                        if (!qty.value) {
+                            errors.push(`Veuillez remplir le champ "Qt. bouteilles" dans la ligne supplémentaire ${detailIndex + 1} de la ligne ${index + 1} de "Les entrées avec bouteille".`);
+                            qty.classList.add('error');
+                        }
+                        if (!price.value) {
+                            errors.push(`Veuillez remplir le champ "Prix" dans la ligne supplémentaire ${detailIndex + 1} de la ligne ${index + 1} de "Les entrées avec bouteille".`);
+                            price.classList.add('error');
+                        }
+                        if (!maxEntries.value) {
+                            errors.push(`Veuillez remplir le champ "Max. Entrée" dans la ligne supplémentaire ${detailIndex + 1} de la ligne ${index + 1} de "Les entrées avec bouteille".`);
+                            maxEntries.classList.add('error');
+                        }
+                    });
+                } else if (name.value.trim() || firstQty.value || firstPrice.value || firstMaxEntries.value || firstDiscount.value) {
+                    if (!name.value.trim()) {
+                        errors.push(`Veuillez remplir le champ "Nom" dans la ligne ${index + 1} de "Les entrées avec bouteille".`);
+                        name.classList.add('error');
+                    }
+                    if (!firstQty.value) {
+                        errors.push(`Veuillez remplir le champ "Qt. bouteilles" dans la ligne ${index + 1} de "Les entrées avec bouteille".`);
+                        firstQty.classList.add('error');
+                    }
+                    if (!firstPrice.value) {
+                        errors.push(`Veuillez remplir le champ "Prix" dans la ligne ${index + 1} de "Les entrées avec bouteille".`);
+                        firstPrice.classList.add('error');
+                    }
+                    if (!firstMaxEntries.value) {
+                        errors.push(`Veuillez remplir le champ "Max. Entrée" dans la ligne ${index + 1} de "Les entrées avec bouteille".`);
+                        firstMaxEntries.classList.add('error');
+                    }
+                }
+            });
+
+            return { errors, hasValidRow };
+        }
+
+        function savePrestation() {
+    const days = Array.from(document.querySelectorAll('input[name="days"]:checked')).map(checkbox => checkbox.value);
+    const presentationLow = document.getElementById('access-presentation-low').value.trim();
+    const presentationNormal = document.getElementById('access-presentation-normal').value.trim();
+    const price = document.getElementById('access-price').value || '';
+    const sex = document.getElementById('access-sex').value;
+
+    console.log('Saving prestation:', { days, presentationLow, presentationNormal, price, sex }); // Debug log
+
+            let errors = [];
+            const daysCheckboxes = document.getElementById('days-checkboxes');
+            daysCheckboxes.classList.remove('error');
+
+            if (days.length === 0) {
+                errors.push('Veuillez sélectionner au moins un jour dans "Jour(s)".');
+                daysCheckboxes.classList.add('error');
+            }
+
+            const accessValidation = validateAccessSoiree();
+            errors = [...errors, ...accessValidation.errors];
+            const isAccessValid = accessValidation.isValid;
+
+            const { errors: pureErrors, hasValidRow: isPureValid } = validatePureSoiree();
+            errors = [...errors, ...pureErrors];
+
+            if (!isAccessValid && !isPureValid) {
+                errors.push('Veuillez remplir au moins une section complète : soit "Les entrées" (présentation et prix), soit "Les entrées avec bouteille" (au moins une ligne complète).');
+                alert(errors.join('\n'));
+                return;
+            }
+
+            if (errors.length > 0) {
+                alert(errors.join('\n'));
+                return;
+            }
+
+            const pureItems = isPureValid ? Array.from(document.querySelectorAll('.pure-row')).map(row => {
+                const categoryInput = row.querySelector('.pure-category-input');
+                const category = categoryInput.value.trim() || '';
+                const firstDetail = {
+                    category: category,
+                    name: row.querySelector('.name-section .pure-name').value,
+                    qty: parseInt(row.querySelector('.name-section .pure-qty').value) || 1,
+                    price: parseFloat(row.querySelector('.name-section .pure-price').value) || 0,
+                    maxEntries: parseInt(row.querySelector('.name-section .pure-max-entries').value) || 1,
+                    discount: parseFloat(row.querySelector('.name-section .pure-discount').value) || 0
+                };
+                const additionalDetails = Array.from(row.querySelectorAll('.details-section .details-row')).map(detailRow => ({
+                    name: detailRow.querySelector('.pure-name').value,
+                    qty: parseInt(detailRow.querySelector('.pure-qty').value) || 1,
+                    price: parseFloat(detailRow.querySelector('.pure-price').value) || 0,
+                    maxEntries: parseInt(detailRow.querySelector('.pure-max-entries').value) || 1,
+                    discount: parseFloat(detailRow.querySelector('.pure-discount').value) || 0
+                }));
+                const details = [firstDetail, ...additionalDetails];
+                return { details };
+            }) : [];
+
+            const prestation = { 
+                days, 
+                presentationLow, 
+                presentationNormal, 
+                price: parseFloat(price) || 0,
+                sex, 
+                pureItems 
+            };
+            prestations.push(prestation);
+            renderPrestations();
+            renderKioskItems();
+            resetForm();
+        }
+
+        function resetForm() {
+            document.querySelectorAll('input[name="days"]').forEach(checkbox => checkbox.checked = false);
+            document.getElementById('access-presentation-low').value = '';
+            document.getElementById('access-presentation-normal').value = '';
+            document.getElementById('access-price').value = '';
+            document.getElementById('access-sex').value = 'H/F';
+            const pureContainer = document.getElementById('pure-container');
+            pureContainer.innerHTML = '';
+            addPure();
+        }
+
+function renderPrestations() {
+    const accessList = document.getElementById('access-prestations-list');
+    const pureList = document.getElementById('pure-prestations-list');
+    const separatorLine = document.getElementById('separator-line');
+    const previewSection = document.getElementById('preview-section');
+    const accessForm = document.getElementById('access-form');
+    const previewBtn = document.querySelector('.preview-btn');
+    accessList.style.display = 'block';
+    pureList.style.display = 'block';
+    previewSection.style.display = 'none';
+    accessForm.style.display = 'block';
+    previewBtn.classList.remove('active');
+    isPreviewActive = false;
+
+    accessList.innerHTML = '';
+    pureList.innerHTML = '';
+    const filteredPrestations = selectedDayFilter 
+        ? prestations.filter(p => p.days.includes(selectedDayFilter))
+        : [...prestations];
+
+    let hasAccess = false;
+    let hasPure = false;
+
+    // Ajouter les en-têtes pour "Les entrées avec bouteille" une seule fois si nécessaire
+    const hasPureItems = filteredPrestations.some(prestation => prestation.pureItems.length > 0);
+    if (hasPureItems) {
+        const headerRow = `
+            <div class="pure-header-row">
+                <div class="prestation-label">Type:</div>
+                <div class="prestation-label">Catégorie:</div>
+                <div class="prestation-label">Nom:</div>
+                <div class="prestation-label">Qt:</div>
+                <div class="prestation-label">Prix:</div>
+                <div class="prestation-label">Max. Entrée:</div>
+                <div class="prestation-label">Réduc. Suppl.:</div>
+                <div class="button-container"></div>
+            </div>
+        `;
+        pureList.innerHTML = headerRow;
+    }
+
+    // Ajouter un en-tête unique pour "Les entrées" si des prestations existent
+    const hasAccessItems = filteredPrestations.some(prestation => prestation.presentationLow || prestation.presentationNormal || prestation.price);
+    if (hasAccessItems) {
+        const headerRow = `
+            <div class="access-header-row">
+                <div class="prestation-label">Les entrées:</div>
+                <div class="prestation-label">Prestation:</div>
+                <div class="prestation-label">Prix:</div>
+                <div class="prestation-label">Sexe:</div>
+                <div class="button-container"></div>
+            </div>
+        `;
+        accessList.innerHTML = headerRow;
+    }
+
+filteredPrestations.forEach((prestation, index) => {
+    if (prestation.presentationLow || prestation.presentationNormal || prestation.price) {
+        hasAccess = true;
+        const accessItem = document.createElement('div');
+        accessItem.className = 'prestation-item';
+        accessItem.draggable = true;
+        accessItem.dataset.index = index;
+
+const presentationRows = [];
+if (prestation.presentationLow) {
+    presentationRows.push({
+        access: 'Heure creuse',
+        prestation: prestation.presentationLow,
+        price: prestation.price,
+        sex: prestation.sex
+    });
+}
+if (prestation.presentationNormal) {
+    presentationRows.push({
+        access: 'Normal',
+        prestation: prestation.presentationNormal,
+        price: prestation.price,
+        sex: prestation.sex
+    });
+}
+
+        // Render each row with alternating colors using a 5-column grid
+const detailRows = presentationRows.map((row, rowIndex) => {
+    const rowClass = rowIndex % 2 === 0 ? 'even-row' : 'odd-row';
+    // Ensure prestation is a string, fallback to '-' if invalid
+    const prestationText = (typeof row.prestation === 'string' && row.prestation.trim()) ? row.prestation : '-';
+    return `
+        <div class="access-detail-row ${rowClass}" data-detail-index="${rowIndex}">
+            <div class="prestation-value">${row.access || '-'}</div>
+            <div class="prestation-value">${prestationText}</div>
+            <div class="prestation-price">${row.price ? `${row.price}€` : '-'}</div>
+            <div class="prestation-value">${row.sex || '-'}</div>
+            <div class="button-container">
+                <button class="edit-btn" onclick="editPrestation(${index})">✏️</button>
+                <button class="delete-btn" onclick="deletePrestation(${index})">🗑️</button>
+            </div>
+        </div>
+    `;
+}).join('');
+        accessItem.innerHTML = detailRows;
+        accessList.appendChild(accessItem);
+    }
+
+    if (prestation.pureItems.length > 0) {
+        hasPure = true;
+        prestation.pureItems.forEach((pure, pureIndex) => {
+            const pureItem = document.createElement('div');
+            pureItem.className = 'prestation-item pure-item grid-support';
+            pureItem.draggable = true;
+            pureItem.dataset.index = index;
+
+            // Générer le contenu pour chaque détail sans en-têtes répétés (unchanged)
+            const detailRows = pure.details.map((detail, detailIndex) => {
+                const rowClass = detailIndex % 2 === 0 ? 'even-row' : 'odd-row';
+                return `
+                    <div class="pure-detail-row ${rowClass}" data-detail-index="${detailIndex}">
+                        <div class="prestation-label">Entrée bouteille:</div>
+                        <div class="prestation-value">${detail.category || 'Aucune'}</div>
+                        <div class="prestation-value">${detail.name}</div>
+                        <div class="prestation-qty">${detail.qty}</div>
+                        <div class="prestation-price">${detail.price}€</div>
+                        <div class="prestation-max">${detail.maxEntries}</div>
+                        <div class="prestation-discount">${detail.discount ? `${detail.discount}€` : '-'}</div>
+                        <div class="button-container">
+                            <button class="edit-btn" onclick="editPrestation(${index})">✏️</button>
+                            <button class="delete-btn" onclick="deletePrestation(${index})">🗑️</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            pureItem.innerHTML = detailRows;
+            pureList.appendChild(pureItem);
+
+            pureItem.addEventListener('dragstart', handleDragStart);
+            pureItem.addEventListener('dragover', handleDragOver);
+            pureItem.addEventListener('drop', handleDrop);
+            pureItem.addEventListener('dragend', handleDragEnd);
+        });
+    }
+});
+    accessList.style.display = hasAccess ? 'block' : 'none';
+    pureList.style.display = hasPure ? 'block' : 'none';
+    separatorLine.style.display = (hasAccess && hasPure) ? 'block' : 'none';
+
+    const accessItems = accessList.querySelectorAll('.prestation-item');
+    const pureItems = pureList.querySelectorAll('.prestation-item');
+
+    accessItems.forEach(item => {
+        item.addEventListener('dragstart', handleDragStart);
+        item.addEventListener('dragover', handleDragOver);
+        item.addEventListener('drop', handleDrop);
+        item.addEventListener('dragend', handleDragEnd);
+    });
+
+    pureItems.forEach(item => {
+        item.addEventListener('dragstart', handleDragStart);
+        item.addEventListener('dragover', handleDragOver);
+        item.addEventListener('drop', handleDrop);
+        item.addEventListener('dragend', handleDragEnd);
+    });
+}
+        let draggedItem = null;
+
+        function handleDragStart(e) {
+            draggedItem = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', this.innerHTML);
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            if (draggedItem !== this) {
+                const allItems = [...document.querySelectorAll('.prestation-item')];
+                const draggedIndex = parseInt(draggedItem.dataset.index);
+                const droppedIndex = parseInt(this.dataset.index);
+                const filteredPrestations = selectedDayFilter 
+                    ? prestations.filter(p => p.days.includes(selectedDayFilter))
+                    : [...prestations];
+                
+                const [movedItem] = filteredPrestations.splice(draggedIndex, 1);
+                filteredPrestations.splice(droppedIndex, 0, movedItem);
+
+                if (!selectedDayFilter) {
+                    prestations = filteredPrestations;
+                } else {
+                    const originalIndices = allItems.map(item => parseInt(item.dataset.index));
+                    const newPrestations = [];
+                    filteredPrestations.forEach((item, i) => {
+                        const origIndex = originalIndices[draggedIndex] === originalIndices[droppedIndex] 
+                            ? originalIndices[droppedIndex] 
+                            : originalIndices[i];
+                        newPrestations[origIndex] = item;
+                    });
+                    prestations = newPrestations.filter(Boolean);
+                }
+                renderPrestations();
+            }
+        }
+
+        function handleDragEnd() {
+            this.classList.remove('dragging');
+            draggedItem = null;
+        }
+
+        function filterByDay(day) {
+            const buttons = document.querySelectorAll('.day-btn');
+            const previewBtn = document.querySelector('.preview-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            previewBtn.classList.remove('active');
+            if (selectedDayFilter === day) {
+                selectedDayFilter = null;
+            } else {
+                selectedDayFilter = day;
+                document.querySelector(`button[onclick="filterByDay('${day}')"]`).classList.add('active');
+            }
+            isPreviewActive = false;
+            renderPrestations();
+        }
+
+        function deletePrestation(index) {
+            const filteredIndex = prestations.findIndex((_, i) => i === index && (!selectedDayFilter || prestations[i].days.includes(selectedDayFilter)));
+            prestations.splice(filteredIndex, 1);
+            renderPrestations();
+            renderKioskItems();
+        }
+
+        function editPrestation(index) {
+            const filteredIndex = prestations.findIndex((_, i) => i === index && (!selectedDayFilter || prestations[i].days.includes(selectedDayFilter)));
+            const prestation = prestations[filteredIndex];
+
+            document.querySelectorAll('input[name="days"]').forEach(checkbox => {
+                checkbox.checked = prestation.days.includes(checkbox.value);
+            });
+            document.getElementById('access-presentation-low').value = prestation.presentationLow || '';
+            document.getElementById('access-presentation-normal').value = prestation.presentationNormal || '';
+            document.getElementById('access-price').value = prestation.price || '';
+            document.getElementById('access-sex').value = prestation.sex;
+            
+            const pureContainer = document.getElementById('pure-container');
+            pureContainer.innerHTML = '';
+            prestation.pureItems.forEach(pure => {
+                const pureDiv = document.createElement('div');
+                pureDiv.className = 'pure-row';
+                pureDiv.draggable = true;
+                const firstDetail = pure.details[0] || { category: '', name: '', qty: '', price: '', maxEntries: '', discount: 0 };
+                const additionalDetails = pure.details.slice(1);
+                pureDiv.innerHTML = `
+                    <div class="category-section">
+                        <div>
+                            <label>Catégorie de bouteille (optionnel)</label>
+                            <input type="text" list="bottle-categories" value="${firstDetail.category}" placeholder="Saisir ou sélectionner une catégorie" class="pure-category-input">
+                            <datalist id="bottle-categories">
+                                <option value="VODKA">
+                                <option value="WHISKY">
+                                <option value="RUM">
+                                <option value="JÄGERBOMB">
+                                <option value="CHAMPAGNE">
+                            </datalist>
+                        </div>
+                    </div>
+                    <div class="name-section">
+                        <div>
+                            <label>Nom</label>
+                            <input type="text" value="${firstDetail.name}" class="pure-name">
+                        </div>
+                        <div>
+                            <label>Qt. bouteilles</label>
+                            <input type="number" min="1" value="${firstDetail.qty}" class="pure-qty">
+                        </div>
+                        <div>
+                            <label>Prix</label>
+                            <input type="number" step="0.01" min="0" value="${firstDetail.price}" class="pure-price">
+                        </div>
+                        <div>
+                            <label>Max. Entrée</label>
+                            <input type="number" min="1" value="${firstDetail.maxEntries}" class="pure-max-entries">
+                        </div>
+                        <div>
+                            <label>Réduc. bouteille suppl.</label>
+                            <input type="number" step="0.01" min="0" value="${firstDetail.discount}" class="pure-discount">
+                        </div>
+                        <button class="pure-duplicate-btn" onclick="duplicatePure(this)">📋</button>
+                        <button class="pure-delete-btn" onclick="deletePure(this)">🗑️</button>
+                    </div>
+                    <div class="details-section">
+                        ${additionalDetails.map(detail => `
+                            <div class="details-row">
+                                <div>
+                                    <label>Nom</label>
+                                    <input type="text" value="${detail.name}" class="pure-name">
+                                </div>
+                                <div>
+                                    <label>Qt. bouteilles</label>
+                                    <input type="number" min="1" value="${detail.qty}" class="pure-qty">
+                                </div>
+                                <div>
+                                    <label>Prix</label>
+                                    <input type="number" step="0.01" min="0" value="${detail.price}" class="pure-price">
+                                </div>
+                                <div>
+                                    <label>Max. Entrée</label>
+                                    <input type="number" min="1" value="${detail.maxEntries}" class="pure-max-entries">
+                                </div>
+                                <div>
+                                    <label>Réduc. bouteille suppl.</label>
+                                    <input type="number" step="0.01" min="0" value="${detail.discount}" class="pure-discount">
+                                </div>
+                                <button class="delete-details-btn" onclick="deleteDetails(this)">🗑️</button>
+                            </div>
+                        `).join('')}
+                        <button class="add-details-btn" onclick="addDetails(this)">+</button>
+                    </div>
+                `;
+                pureContainer.appendChild(pureDiv);
+                addDragEvents(pureDiv);
+            });
+            if (pureContainer.children.length === 0) {
+                addPure();
+            }
+
+            prestations.splice(filteredIndex, 1);
+            renderPrestations();
+        }
+
+        function showPreview() {
+            const previewSection = document.getElementById('preview-section');
+            const accessList = document.getElementById('access-prestations-list');
+            const pureList = document.getElementById('pure-prestations-list');
+            const separatorLine = document.getElementById('separator-line');
+            const accessForm = document.getElementById('access-form');
+            const previewBtn = document.querySelector('.preview-btn');
+            const buttons = document.querySelectorAll('.day-btn');
+
+            accessList.style.display = 'none';
+            pureList.style.display = 'none';
+            separatorLine.style.display = 'none';
+            accessForm.style.display = 'none';
+            previewSection.style.display = 'block';
+            previewBtn.classList.add('active');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            selectedDayFilter = null;
+            isPreviewActive = true;
+
+            const daysOrder = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
+            let html = '<table class="preview-table"><tr><th>Jour</th><th>Les entrées</th><th>Prestation</th><th>Catégorie</th><th>Prix</th><th>Sexe</th><th>Qt. bouteilles</th><th>Max. Entrée</th><th>Réduc. bouteille suppl.</th></tr>';
+            
+            daysOrder.forEach((day, dayIndex) => {
+                const dayPrestations = prestations.filter(p => p.days.includes(day));
+                const dayClass = `day-${day.toLowerCase()}`;
+                if (dayPrestations.length > 0) {
+                    dayPrestations.forEach((prestation, prestationIndex) => {
+                        const presentationText = [
+                            prestation.presentationLow ? `Heure creuse: ${prestation.presentationLow}` : '',
+                            prestation.presentationNormal ? `Normal: ${prestation.presentationNormal}` : ''
+                        ].filter(Boolean).join(' / ');
+                        const accessText = presentationText.split(' / ')[0].split(': ')[0] || '';
+                        const prestationText = presentationText.split(': ')[1] || '';
+
+                        let pureAccessText = accessText;
+                        let purePrestationText = prestationText;
+                        let pureCategoryText = '';
+                        let purePriceText = prestation.price ? `${prestation.price}€` : '';
+                        let pureQtyText = '';
+                        let pureMaxEntriesText = '';
+                        let pureDiscountText = '';
+
+                        if (prestation.pureItems.length > 0) {
+                            const pureNames = prestation.pureItems.map(pure => 
+                                pure.details.map(detail => detail.name).join('<br>')
+                            ).join('<br>');
+                            const pureCategories = prestation.pureItems.map(pure => 
+                                pure.details.map(detail => detail.category || '').join('<br>')
+                            ).join('<br>');
+                            const purePrices = prestation.pureItems.map(pure => 
+                                pure.details.map(detail => `${detail.price}€`).join('<br>')
+                            ).join('<br>');
+                            const pureQuantities = prestation.pureItems.map(pure => 
+                                pure.details.map(detail => detail.qty).join('<br>')
+                            ).join('<br>');
+                            const pureMaxEntries = prestation.pureItems.map(pure => 
+                                pure.details.map(detail => detail.maxEntries).join('<br>')
+                            ).join('<br>');
+                            const pureDiscounts = prestation.pureItems.map(pure => 
+                                pure.details.map(detail => detail.discount ? `${detail.discount}€` : '').join('<br>')
+                            ).join('<br>');
+
+                            // Indiquer "Bouteille" dans la colonne "Les entrées"
+                            pureAccessText = pureAccessText ? `${pureAccessText}<br>Bouteille` : 'Bouteille';
+                            purePrestationText = purePrestationText ? `${purePrestationText}<br>${pureNames}` : pureNames;
+                            pureCategoryText = pureCategories;
+                            purePriceText = purePriceText ? `${purePriceText}<br>${purePrices}` : purePrices;
+                            pureQtyText = pureQuantities;
+                            pureMaxEntriesText = pureMaxEntries;
+                            pureDiscountText = pureDiscounts;
+                        }
+
+                        html += `
+                            <tr class="${dayClass}">
+                                ${prestationIndex === 0 ? `<td class="day-cell" onclick="filterByDay('${day}')">${day}</td>` : '<td></td>'}
+                                <td>${pureAccessText}</td>
+                                <td>${purePrestationText}</td>
+                                <td>${pureCategoryText}</td>
+                                <td>${purePriceText}</td>
+                                <td>${prestation.sex}</td>
+                                <td>${pureQtyText}</td>
+                                <td>${pureMaxEntriesText}</td>
+                                <td>${pureDiscountText}</td>
+                            </tr>
+                        `;
+                    });
+                } else {
+                    html += `<tr class="${dayClass}"><td class="day-cell" onclick="filterByDay('${day}')">${day}</td><td colspan="8">Aucune prestation</td></tr>`;
+                }
+            });
+            
+            html += '</table>';
+            previewSection.innerHTML = html;
+        }
+
+        const today = new Date('2025-03-08');
+        const daysOfWeek = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
+        const currentDay = daysOfWeek[today.getDay()];
+        document.getElementById('kiosk-subtitle').textContent = `Aujourd'hui : ${currentDay} ${today.toLocaleDateString('fr-FR')}`;
+
+        function renderKioskItems() {
+            const accessContainer = document.getElementById('access-items');
+            const pureContainer = document.getElementById('pure-items');
+            const accessSection = document.getElementById('access-soiree');
+            const pureSection = document.getElementById('pure-soiree');
+            const separator = document.querySelector('.kiosk-separator');
+            accessContainer.innerHTML = '';
+            pureContainer.innerHTML = '';
+            kioskItems = {};
+
+            const todayPrestations = prestations.filter(p => p.days.includes(currentDay));
+            let hasAccess = false;
+            let hasPure = false;
+
+            todayPrestations.forEach((prestation, prestationIndex) => {
+               if (prestation.presentationLow || prestation.presentationNormal) {
+    hasAccess = true;
+    const presentationLow = prestation.presentationLow || '';
+    const presentationNormal = prestation.presentationNormal || '';
+    const price = parseFloat(prestation.price) || 0;
+
+if (presentationLow) {
+    const id = `access-low-${prestationIndex}`;
+    kioskItems[id] = { name: presentationLow, price, qty: 0, maxQty: 1 }; // Toujours 1 pour "Heure creuse"
+    accessContainer.innerHTML += `
+        <div class="kiosk-item">
+            <div class="kiosk-item-row">
+                <div class="kiosk-item-name">${presentationLow}</div>
+                <div class="kiosk-item-price">${price}€</div>
+                <div class="kiosk-quantity-control">
+                    <button class="kiosk-qty-btn" data-id="${id}" data-action="decrease">-</button>
+                    <div id="${id}-qty" class="kiosk-qty-value">0</div>
+                    <button class="kiosk-qty-btn" data-id="${id}" data-action="increase">+</button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+    if (presentationNormal) {
+        const id = `access-normal-${prestationIndex}`;
+        kioskItems[id] = { name: presentationNormal, price, qty: 0, maxQty: Infinity };
+        accessContainer.innerHTML += `
+            <div class="kiosk-item">
+                <div class="kiosk-item-row">
+                    <div class="kiosk-item-name">${presentationNormal}</div>
+                    <div class="kiosk-item-price">${price}€</div>
+                    <div class="kiosk-quantity-control">
+                        <button class="kiosk-qty-btn" data-id="${id}" data-action="decrease">-</button>
+                        <div id="${id}-qty" class="kiosk-qty-value">0</div>
+                        <button class="kiosk-qty-btn" data-id="${id}" data-action="increase">+</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+}
+
+if (prestation.pureItems.length > 0) {
+    hasPure = true;
+    prestation.pureItems.forEach((pure, pureIndex) => {
+        pure.details.forEach((detail, detailIndex) => {
+            const id = `pure-${prestationIndex}-${pureIndex}-${detailIndex}`;
+            const baseQty = parseInt(detail.qty) || 1;
+            const extraQty = Math.max(0, kioskItems[id]?.qty - baseQty) || 0;
+            const discount = parseFloat(detail.discount) || 0;
+            const price = parseFloat(detail.price) || 0;
+            const discountTotal = extraQty * discount;
+            kioskItems[id] = { 
+                name: detail.name, 
+                category: detail.category || '', 
+                price: price, 
+                maxEntries: parseInt(detail.maxEntries) || Infinity,
+                discount: discount,
+                qty: 0, 
+                maxQty: Infinity 
+            };
+            pureContainer.innerHTML += `
+                <div class="kiosk-item">
+                    <div class="kiosk-item-category">${detail.category || ''}</div>
+                    <div class="kiosk-item-row">
+                        <div class="kiosk-item-name">${detail.name}</div>
+                        <div class="kiosk-item-details">
+                            <div class="kiosk-item-price">${price}€</div>
+                            <div class="kiosk-item-max">Max. Entrées: ${detail.maxEntries}</div>
+                        </div>
+                        <div class="kiosk-quantity-control">
+                            <button class="kiosk-qty-btn" data-id="${id}" data-action="decrease">-</button>
+                            <div id="${id}-qty" class="kiosk-qty-value">0</div>
+                            <button class="kiosk-qty-btn" data-id="${id}" data-action="increase">+</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+    });
+}
+            });
+
+            accessSection.style.display = hasAccess ? 'block' : 'none';
+            pureSection.style.display = hasPure ? 'block' : 'none';
+            separator.style.display = (hasAccess && hasPure) ? 'block' : 'none';
+
+            attachKioskQuantityListeners();
+            updateKioskTotal();
+        }
+
+        function attachKioskQuantityListeners() {
+            document.querySelectorAll('.kiosk-qty-btn').forEach(button => {
+                button.removeEventListener('click', handleKioskQuantityClick);
+                button.addEventListener('click', handleKioskQuantityClick);
+            });
+        }
+
+        function handleKioskQuantityClick() {
+            const id = this.dataset.id;
+            const action = this.dataset.action;
+            updateKioskQuantity(id, action === 'increase' ? 1 : -1);
+        }
+
+        function updateKioskQuantity(itemId, change) {
+            if (!kioskItems[itemId]) return;
+            const item = kioskItems[itemId];
+            const newQty = item.qty + change;
+            if (newQty >= 0 && newQty <= item.maxQty) {
+                item.qty = newQty;
+                document.getElementById(`${itemId}-qty`).textContent = newQty;
+                updateKioskTotal();
+            }
+        }
+
+        function updateKioskTotal() {
+            let total = 0;
+            let discountTotal = 0;
+            let itemCount = 0;
+            for (const item of Object.values(kioskItems)) {
+                const price = parseFloat(item.price) || 0;
+                const discount = parseFloat(item.discount) || 0;
+                total += price * item.qty;
+                const baseQty = 1;
+                const extraQty = Math.max(0, item.qty - baseQty);
+                discountTotal += extraQty * discount;
+                itemCount += item.qty;
+            }
+            const discountDisplay = discountTotal > 0 ? `(Réduc. bouteille suppl.: -${discountTotal.toFixed(2)}€)` : '';
+            document.getElementById('kiosk-total-discount').textContent = discountDisplay;
+            document.getElementById('kiosk-total-price').textContent = `${(total - discountTotal).toFixed(2)}€`;
+            document.getElementById('kiosk-checkout-btn').disabled = itemCount === 0;
+        }
+
+        document.getElementById('kiosk-checkout-btn').addEventListener('click', () => {
+            let summary = 'Réservations :\n';
+            let total = 0;
+            let discountTotal = 0;
+            for (const [id, item] of Object.entries(kioskItems)) {
+                if (item.qty > 0) {
+                    const baseQty = 1;
+                    const extraQty = Math.max(0, item.qty - baseQty);
+                    const itemDiscount = extraQty * item.discount;
+                    summary += `${item.name} (${item.category}) x${item.qty} - ${item.price * item.qty - itemDiscount}€\n`;
+                    total += item.price * item.qty;
+                    discountTotal += itemDiscount;
+                }
+            }
+            summary += `\nTotal : ${total - discountTotal}€`;
+            if (discountTotal > 0) {
+                summary = `(Réduc. bouteille suppl.: -${discountTotal}€)\n` + summary;
+            }
+            alert(summary);
+        });
+
+        function toggleInterface() {
+            const dashboard = document.getElementById('dashboard');
+            const kiosk = document.getElementById('kiosk');
+            const toggleBtn = document.getElementById('toggle-btn');
+            if (dashboard.style.display === 'block') {
+                dashboard.style.display = 'none';
+                kiosk.style.display = 'block';
+                toggleBtn.textContent = 'Passer au Tableau de Bord';
+            } else {
+                dashboard.style.display = 'block';
+                kiosk.style.display = 'none';
+                toggleBtn.textContent = 'Passer au Kiosque';
+            }
+        }
+
+        renderPrestations();
+        renderKioskItems();
+    </script>
+</body>
+</html>
