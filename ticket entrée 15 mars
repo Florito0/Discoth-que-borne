@@ -510,14 +510,20 @@
             margin-bottom: 5px;
         }
 
-        /* MODIFICATION: Ajuster le style pour gérer les noms longs avec ellipsis */
+        /* MODIFICATION: Ajuster le style pour gérer les noms longs avec retour à la ligne */
         .kiosk-item-name {
             font-size: 18px;
             font-weight: 500;
             text-align: left;
             overflow: hidden;
             text-overflow: ellipsis;
-            white-space: nowrap;
+            white-space: normal; /* Permettre le retour à la ligne */
+            word-wrap: break-word; /* Assurer le retour à la ligne pour les chaînes longues */
+            max-width: 100%; /* Limiter la largeur au conteneur */
+            line-height: 1.2; /* Ajuster la hauteur des lignes */
+            display: -webkit-box; /* Conserver pour compatibilité */
+            -webkit-line-clamp: 2; /* Limiter à 2 lignes maximum */
+            -webkit-box-orient: vertical;
         }
 
         /* MODIFICATION: Renforcer le centrage du prix */
@@ -689,6 +695,9 @@
             .kiosk-item-name {
                 white-space: normal; /* Permet le retour à la ligne sur mobile */
                 text-align: center; /* Centre le nom sur mobile */
+                -webkit-line-clamp: 3; /* Limiter à 3 lignes maximum sur mobile */
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
             }
         }
     </style>
