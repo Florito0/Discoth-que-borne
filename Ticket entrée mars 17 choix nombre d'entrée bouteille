@@ -661,6 +661,7 @@
         }
 
         /* Ajout du style pour l'éditeur de Max. Entrée */
+/* Existing .max-entries-editor styles (keep these) */
 .max-entries-editor {
     position: absolute;
     background: #333;
@@ -669,27 +670,38 @@
     border-radius: 4px;
     z-index: 100;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-    min-width: 200px; /* Match the input width approximately */
-    max-width: 300px; /* Prevent it from becoming too wide */
+    min-width: 200px;
+    max-width: 300px;
     box-sizing: border-box;
 }
-      .max-entries-editor input {
-    width: 60px; /* Ensure inputs inside the editor are sized appropriately */
+
+/* New styles for scrollable content */
+.max-entries-editor #max-entries-inputs {
+    max-height: 200px; /* Adjustable height limit for scrolling */
+    overflow-y: auto; /* Enable vertical scrolling */
+    margin-bottom: 10px; /* Space before buttons */
+}
+
+/* Ensure inputs inside the editor are styled consistently */
+.max-entries-editor input {
+    width: 60px;
     margin-right: 5px;
 }
-        .max-entries-editor button {
-            margin-top: 5px;
-            padding: 5px 10px;
-            background: #444;
-            border: none;
-            color: white;
-            border-radius: 4px;
-            cursor: pointer;
-        }
 
-        .max-entries-editor button:hover {
-            background: #555;
-        }
+/* Existing button styles (keep these) */
+.max-entries-editor button {
+    margin-top: 5px;
+    padding: 5px 10px;
+    background: #444;
+    border: none;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.max-entries-editor button:hover {
+    background: #555;
+}
 
         @media (max-width: 768px) {
             .access-header-row, .access-detail-row, .pure-header-row, .pure-detail-row {
@@ -1147,22 +1159,18 @@ function showMaxEntriesEditor(input) {
 
         if (input.dataset.maxEntries) {
             const maxEntries = JSON.parse(input.dataset.maxEntries);
+            const inputsContainer = editor.querySelector('#max-entries-inputs');
+            inputsContainer.innerHTML = ''; // Clear default entries
             for (const [qty, max] of Object.entries(maxEntries)) {
-                const existingInput = editor.querySelector(`.max-entry-input[data-qty="${qty}"]`);
-                if (existingInput) {
-                    existingInput.value = max;
-                } else {
-                    const newInput = document.createElement('div');
-                    newInput.innerHTML = `${qty} bouteilles: <input type="number" min="1" class="max-entry-input" data-qty="${qty}" value="${max}">`;
-                    editor.querySelector('#max-entries-inputs').appendChild(newInput);
-                }
+                const newInput = document.createElement('div');
+                newInput.innerHTML = `${qty} bouteilles: <input type="number" min="1" class="max-entry-input" data-qty="${qty}" value="${max}">`;
+                inputsContainer.appendChild(newInput);
             }
         }
     }
     console.log("Toggling editor display, current state:", editor.style.display); // Debug log
     editor.style.display = editor.style.display === 'none' ? 'block' : 'none';
 }
-
         function addMaxEntryInput(button) {
             const inputsContainer = button.parentElement.querySelector('#max-entries-inputs');
             const existingQtys = Array.from(inputsContainer.querySelectorAll('.max-entry-input')).map(input => parseInt(input.dataset.qty));
