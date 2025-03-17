@@ -530,7 +530,7 @@
             align-items: center;
             justify-items: center; /* Centre les éléments dans chaque colonne */
             width: 100%;
-            gap: 10px; /* Maintient l'espacement entre colonnes */
+            gap: 10px; /* Maintients l'espacement entre colonnes */
         }
 
         .kiosk-item-category {
@@ -658,6 +658,37 @@
 
         .tooltip.visible {
             display: block;
+        }
+
+        /* Ajout du style pour l'éditeur de Max. Entrée */
+.max-entries-editor {
+    position: absolute;
+    background: #333;
+    color: #fff;
+    padding: 10px;
+    border-radius: 4px;
+    z-index: 100;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    min-width: 200px; /* Match the input width approximately */
+    max-width: 300px; /* Prevent it from becoming too wide */
+    box-sizing: border-box;
+}
+      .max-entries-editor input {
+    width: 60px; /* Ensure inputs inside the editor are sized appropriately */
+    margin-right: 5px;
+}
+        .max-entries-editor button {
+            margin-top: 5px;
+            padding: 5px 10px;
+            background: #444;
+            border: none;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .max-entries-editor button:hover {
+            background: #555;
         }
 
         @media (max-width: 768px) {
@@ -848,7 +879,7 @@
                                 </div>
                                 <div>
                                     <label>Max. Entrée</label>
-                                    <input type="number" min="1" placeholder="Max. Entrée" class="pure-max-entries" onclick="showMaxEntriesTooltip(this)">
+                                    <input type="text" placeholder="Cliquez pour définir" class="pure-max-entries" readonly onclick="showMaxEntriesEditor(this)">
                                 </div>
                                 <div>
                                     <label>Réduc. bouteille suppl.</label>
@@ -939,7 +970,7 @@
                     </div>
                     <div>
                         <label>Max. Entrée</label>
-                        <input type="number" min="1" placeholder="Max. Entrée" class="pure-max-entries" onclick="showMaxEntriesTooltip(this)">
+                        <input type="text" placeholder="Cliquez pour définir" class="pure-max-entries" readonly onclick="showMaxEntriesEditor(this)">
                     </div>
                     <div>
                         <label>Réduc. bouteille suppl.</label>
@@ -977,7 +1008,7 @@
                 </div>
                 <div>
                     <label>Max. Entrée</label>
-                    <input type="number" min="1" value="${nameSection.querySelector('.pure-max-entries').value || ''}" class="pure-max-entries" onclick="showMaxEntriesTooltip(this)">
+                    <input type="text" placeholder="Cliquez pour définir" class="pure-max-entries" readonly onclick="showMaxEntriesEditor(this)">
                 </div>
                 <div>
                     <label>Réduc. bouteille suppl.</label>
@@ -999,22 +1030,18 @@
             const categoryInput = newRow.querySelector('.pure-category-input');
             const originalCategory = originalRow.querySelector('.pure-category-input').value;
 
-            // Assurez-vous que la catégorie est bien copiée
             categoryInput.value = originalCategory;
 
-            // Réassigner les gestionnaires d'événements pour les boutons dupliqués
             newRow.querySelector('.pure-duplicate-btn').onclick = () => duplicatePure(newRow.querySelector('.pure-duplicate-btn'));
             newRow.querySelector('.pure-delete-btn').onclick = () => deletePure(newRow.querySelector('.pure-delete-btn'));
             newRow.querySelector('.add-details-btn').onclick = () => addDetails(newRow.querySelector('.add-details-btn'));
 
-            // Ajouter les gestionnaires d'événements pour les boutons de suppression des lignes supplémentaires
             newRow.querySelectorAll('.delete-details-btn').forEach(btn => {
                 btn.onclick = () => deleteDetails(btn);
             });
 
-            // Réassigner l'événement onclick pour les tooltips dans les champs "Max. Entrée"
             newRow.querySelectorAll('.pure-max-entries').forEach(input => {
-                input.onclick = () => showMaxEntriesTooltip(input);
+                input.onclick = () => showMaxEntriesEditor(input);
             });
 
             container.appendChild(newRow);
@@ -1071,30 +1098,102 @@
             draggedPure = null;
         }
 
-        function showMaxEntriesTooltip(input) {
-            let tooltip = input.parentElement.querySelector('.tooltip');
-            if (!tooltip) {
-                tooltip = document.createElement('div');
-                tooltip.className = 'tooltip';
-                const qty = parseInt(input.parentElement.parentElement.querySelector('.pure-qty').value) || 0;
-                const maxEntries = parseInt(input.value) || 0;
-                tooltip.innerHTML = `Qt. bouteilles: ${qty}<br>Max. Entrée: ${maxEntries}`;
-                input.parentElement.appendChild(tooltip);
+function showMaxEntriesEditor(input) {
+    console.log("showMaxEntriesEditor called for input:", input); // Debug log
+    let editor = input.parentElement.querySelector('.max-entries-editor');
+    if (!editor) {
+        console.log("Creating new max-entries-editor"); // Debug log
+        editor = document.createElement('div');
+        editor.className = 'max-entries-editor';
+        editor.innerHTML = `
+            <label>Définir Max. Entrée par Qt. bouteilles:</label><br>
+            <div id="max-entries-inputs">
+                <div>1 bouteille: <input type="number" min="1" class="max-entry-input" data-qty="1"></div>
+                <div>2 bouteilles: <input type="number" min="1" class="max-entry-input" data-qty="2"></div>
+            </div>
+            <button onclick="addMaxEntryInput(this)">+ Ajouter</button>
+            <button onclick="saveMaxEntries(this)">OK</button>
+        `;
+        input.parentElement.appendChild(editor);
 
-                // Positionner le tooltip sous le champ
-                const rect = input.getBoundingClientRect();
-                tooltip.style.top = `${rect.bottom + window.scrollY + 5}px`;
-                tooltip.style.left = `${rect.left + window.scrollX}px`;
-            }
-            tooltip.classList.toggle('visible');
+        // Calculate position relative to the document and adjust for parent container
+        const rect = input.getBoundingClientRect();
+        const parentRect = input.offsetParent.getBoundingClientRect();
+        const scrollTop = window.scrollY || window.pageYOffset;
+        const scrollLeft = window.scrollX || window.pageXOffset;
+
+        // Position editor directly below the input, aligned with its left edge
+        editor.style.position = 'absolute';
+        editor.style.top = `${rect.bottom + scrollTop}px`; // Start just below the input
+        editor.style.left = `${rect.left + scrollLeft}px`; // Align with the left edge of the input
+
+        // Adjust for parent container's offset if necessary
+        const offsetTopAdjustment = parentRect.top + scrollTop;
+        const offsetLeftAdjustment = parentRect.left + scrollLeft;
+        editor.style.top = `${parseInt(editor.style.top) - offsetTopAdjustment}px`;
+        editor.style.left = `${parseInt(editor.style.left) - offsetLeftAdjustment}px`;
+
+        // Ensure the editor stays within the viewport
+        const editorRect = editor.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+        const viewportWidth = window.innerWidth;
+
+        if (editorRect.bottom > viewportHeight) {
+            editor.style.top = `${parseInt(editor.style.top) - (editorRect.bottom - viewportHeight) - 10}px`; // Move up to fit
+        }
+        if (editorRect.right > viewportWidth) {
+            editor.style.left = `${parseInt(editor.style.left) - (editorRect.right - viewportWidth) - 5}px`; // Move left to fit
         }
 
-        // Fermer le tooltip si on clique ailleurs
+        if (input.dataset.maxEntries) {
+            const maxEntries = JSON.parse(input.dataset.maxEntries);
+            for (const [qty, max] of Object.entries(maxEntries)) {
+                const existingInput = editor.querySelector(`.max-entry-input[data-qty="${qty}"]`);
+                if (existingInput) {
+                    existingInput.value = max;
+                } else {
+                    const newInput = document.createElement('div');
+                    newInput.innerHTML = `${qty} bouteilles: <input type="number" min="1" class="max-entry-input" data-qty="${qty}" value="${max}">`;
+                    editor.querySelector('#max-entries-inputs').appendChild(newInput);
+                }
+            }
+        }
+    }
+    console.log("Toggling editor display, current state:", editor.style.display); // Debug log
+    editor.style.display = editor.style.display === 'none' ? 'block' : 'none';
+}
+
+        function addMaxEntryInput(button) {
+            const inputsContainer = button.parentElement.querySelector('#max-entries-inputs');
+            const existingQtys = Array.from(inputsContainer.querySelectorAll('.max-entry-input')).map(input => parseInt(input.dataset.qty));
+            const nextQty = Math.max(...existingQtys, 0) + 1;
+            const newInput = document.createElement('div');
+            newInput.innerHTML = `${nextQty} bouteilles: <input type="number" min="1" class="max-entry-input" data-qty="${nextQty}">`;
+            inputsContainer.appendChild(newInput);
+        }
+
+        function saveMaxEntries(button) {
+            const editor = button.parentElement;
+            const inputs = editor.querySelectorAll('.max-entry-input');
+            const maxEntries = {};
+            inputs.forEach(input => {
+                const value = parseInt(input.value);
+                if (!isNaN(value) && value >= 1) {
+                    maxEntries[input.dataset.qty] = value;
+                }
+            });
+            const inputField = editor.parentElement.querySelector('.pure-max-entries');
+            inputField.dataset.maxEntries = JSON.stringify(maxEntries);
+            inputField.value = Object.entries(maxEntries).length > 0 ? Object.entries(maxEntries).map(([qty, max]) => `${qty}=${max}`).join(', ') : 'Cliquez pour définir';
+            editor.style.display = 'none';
+        }
+
         document.addEventListener('click', (e) => {
-            const tooltips = document.querySelectorAll('.tooltip.visible');
-            tooltips.forEach(tooltip => {
-                if (!tooltip.parentElement.contains(e.target)) {
-                    tooltip.classList.remove('visible');
+            const editors = document.querySelectorAll('.max-entries-editor');
+            editors.forEach(editor => {
+                if (!editor.contains(e.target) && !editor.parentElement.querySelector('.pure-max-entries').contains(e.target)) {
+                    console.log("Closing editor:", editor); // Debug log
+                    editor.style.display = 'none';
                 }
             });
         });
@@ -1146,7 +1245,7 @@
                     detailRow.querySelector('.pure-max-entries').classList.remove('error');
                     detailRow.querySelector('.pure-discount').classList.remove('error');
                 });
-                const isRowValid = name.value.trim() && firstQty.value && firstPrice.value && firstMaxEntries.value;
+                const isRowValid = name.value.trim() && firstQty.value && firstPrice.value && firstMaxEntries.dataset.maxEntries;
                 if (isRowValid) {
                     hasValidRow = true;
                     additionalDetails.forEach((detailRow, detailIndex) => {
@@ -1167,16 +1266,16 @@
                             errors.push(`Veuillez remplir le champ "Prix" dans la ligne supplémentaire ${detailIndex + 1} de la ligne ${index + 1}.`);
                             price.classList.add('error');
                         }
-                        if (!maxEntries.value) {
-                            errors.push(`Veuillez remplir le champ "Max. Entrée" dans la ligne supplémentaire ${detailIndex + 1} de la ligne ${index + 1}.`);
+                        if (!maxEntries.dataset.maxEntries) {
+                            errors.push(`Veuillez définir "Max. Entrée" dans la ligne supplémentaire ${detailIndex + 1} de la ligne ${index + 1}.`);
                             maxEntries.classList.add('error');
                         }
                     });
-                } else if (name.value.trim() || firstQty.value || firstPrice.value || firstMaxEntries.value || firstDiscount.value) {
+                } else if (name.value.trim() || firstQty.value || firstPrice.value || firstMaxEntries.dataset.maxEntries || firstDiscount.value) {
                     if (!name.value.trim()) errors.push(`Veuillez remplir le champ "Nom" dans la ligne ${index + 1}.`), name.classList.add('error');
                     if (!firstQty.value) errors.push(`Veuillez remplir le champ "Qt. bouteilles" dans la ligne ${index + 1}.`), firstQty.classList.add('error');
                     if (!firstPrice.value) errors.push(`Veuillez remplir le champ "Prix" dans la ligne ${index + 1}.`), firstPrice.classList.add('error');
-                    if (!firstMaxEntries.value) errors.push(`Veuillez remplir le champ "Max. Entrée" dans la ligne ${index + 1}.`), firstMaxEntries.classList.add('error');
+                    if (!firstMaxEntries.dataset.maxEntries) errors.push(`Veuillez définir "Max. Entrée" dans la ligne ${index + 1}.`), firstMaxEntries.classList.add('error');
                 }
             });
             return { errors, hasValidRow };
@@ -1212,7 +1311,7 @@
                     name: row.querySelector('.name-section .pure-name').value,
                     qty: parseInt(row.querySelector('.name-section .pure-qty').value) || 1,
                     price: parseFloat(row.querySelector('.name-section .pure-price').value) || 0,
-                    maxEntries: parseInt(row.querySelector('.name-section .pure-max-entries').value) || 1,
+                    maxEntries: row.querySelector('.name-section .pure-max-entries').dataset.maxEntries ? JSON.parse(row.querySelector('.name-section .pure-max-entries').dataset.maxEntries) : { 1: 1 },
                     discount: parseFloat(row.querySelector('.name-section .pure-discount').value) || 0
                 };
                 const additionalDetails = Array.from(row.querySelectorAll('.details-section .details-row')).map(detailRow => ({
@@ -1220,7 +1319,7 @@
                     name: detailRow.querySelector('.pure-name').value,
                     qty: parseInt(detailRow.querySelector('.pure-qty').value) || 1,
                     price: parseFloat(detailRow.querySelector('.pure-price').value) || 0,
-                    maxEntries: parseInt(detailRow.querySelector('.pure-max-entries').value) || 1,
+                    maxEntries: detailRow.querySelector('.pure-max-entries').dataset.maxEntries ? JSON.parse(detailRow.querySelector('.pure-max-entries').dataset.maxEntries) : { 1: 1 },
                     discount: parseFloat(detailRow.querySelector('.pure-discount').value) || 0
                 }));
                 return { details: [firstDetail, ...additionalDetails] };
@@ -1352,7 +1451,7 @@
                                 <div class="prestation-value">${detail.name || '-'}</div>
                                 <div class="prestation-qty">${detail.qty || '-'}</div>
                                 <div class="prestation-price">${detail.price ? `${detail.price}€` : '-'}</div>
-                                <div class="prestation-max">${detail.maxEntries || '-'}</div>
+                                <div class="prestation-max">${Object.entries(detail.maxEntries).map(([qty, max]) => `${qty}=${max}`).join(', ') || '-'}</div>
                                 <div class="prestation-discount">${detail.discount ? `${detail.discount}€` : '-'}</div>
                                 <div class="button-container">
                                     <button class="edit-btn" onclick="editPrestation(${prestations.indexOf(prestation)})">✏️</button>
@@ -1446,14 +1545,14 @@
                 const pureDiv = document.createElement('div');
                 pureDiv.className = 'pure-row';
                 pureDiv.draggable = true;
-                const firstDetail = pure.details[0] || { category: '', name: '', qty: '', price: '', maxEntries: '', discount: 0 };
+                const firstDetail = pure.details[0] || { category: '', name: '', qty: '', price: '', maxEntries: { 1: 1 }, discount: 0 };
                 const additionalDetails = pure.details.slice(1);
                 pureDiv.innerHTML = `
                     <div class="category-section">
                         <div>
                             <label>Catégorie de bouteille (optionnel)</label>
                             <input type="text" list="bottle-categories" value="${firstDetail.category}" placeholder="Saisir ou sélectionner une catégorie" class="pure-category-input">
-                            <datalist id="bottle-categories">
+                            <datalist id="bbole-categories">
                                 <option value="VODKA">
                                 <option value="WHISKY">
                                 <option value="RUM">
@@ -1477,7 +1576,7 @@
                         </div>
                         <div>
                             <label>Max. Entrée</label>
-                            <input type="number" min="1" value="${firstDetail.maxEntries}" class="pure-max-entries" onclick="showMaxEntriesTooltip(this)">
+                            <input type="text" value="${Object.entries(firstDetail.maxEntries).map(([qty, max]) => `${qty}=${max}`).join(', ')}" class="pure-max-entries" readonly onclick="showMaxEntriesEditor(this)" data-max-entries='${JSON.stringify(firstDetail.maxEntries)}'>
                         </div>
                         <div>
                             <label>Réduc. bouteille suppl.</label>
@@ -1503,7 +1602,7 @@
                                 </div>
                                 <div>
                                     <label>Max. Entrée</label>
-                                    <input type="number" min="1" value="${detail.maxEntries}" class="pure-max-entries" onclick="showMaxEntriesTooltip(this)">
+                                    <input type="text" value="${Object.entries(detail.maxEntries).map(([qty, max]) => `${qty}=${max}`).join(', ')}" class="pure-max-entries" readonly onclick="showMaxEntriesEditor(this)" data-max-entries='${JSON.stringify(detail.maxEntries)}'>
                                 </div>
                                 <div>
                                     <label>Réduc. bouteille suppl.</label>
@@ -1586,7 +1685,7 @@
                                     sex: prestation.sex,
                                     category: detail.category || '',
                                     qty: detail.qty || '-',
-                                    maxEntries: detail.maxEntries || '-',
+                                    maxEntries: Object.entries(detail.maxEntries).map(([qty, max]) => `${qty}=${max}`).join(', ') || '-',
                                     discount: detail.discount ? `${detail.discount}€` : ''
                                 });
                             });
@@ -1714,18 +1813,18 @@
                                 id,
                                 name: detail.name,
                                 price: parseFloat(detail.price) || 0,
-                                maxEntriesPerBottle: parseInt(detail.maxEntries) || 0,
+                                maxEntries: detail.maxEntries || { 1: 1 },
                                 discount: parseFloat(detail.discount) || 0
                             });
                             kioskItems[id] = { 
                                 name: detail.name, 
                                 category: detail.category || '', 
                                 price: parseFloat(detail.price) || 0,
-                                maxEntriesPerBottle: parseInt(detail.maxEntries) || 0,
-                                maxEntries: 0,
+                                maxEntries: detail.maxEntries || { 1: 1 },
+                                currentMaxEntries: 0,
                                 discount: parseFloat(detail.discount) || 0,
                                 qty: 0, 
-                                maxQty: Infinity 
+                                maxQty: Math.max(...Object.keys(detail.maxEntries).map(Number)) 
                             };
                         });
                     });
@@ -1787,11 +1886,11 @@
             if (newQty >= 0 && newQty <= item.maxQty) {
                 item.qty = newQty;
                 document.getElementById(`${itemId}-qty`).textContent = newQty;
-                if (item.maxEntriesPerBottle !== undefined) {
-                    item.maxEntries = item.maxEntriesPerBottle * newQty;
+                if (item.maxEntries) {
+                    item.currentMaxEntries = item.maxEntries[newQty] || 0;
                     const maxEntriesElement = document.getElementById(`${itemId}-max-entries`);
                     if (maxEntriesElement) {
-                        maxEntriesElement.querySelector('.kiosk-max-value').textContent = item.maxEntries;
+                        maxEntriesElement.querySelector('.kiosk-max-value').textContent = item.currentMaxEntries;
                     }
                 }
                 updateKioskTotal();
@@ -1823,7 +1922,7 @@
                 if (item.qty > 0) {
                     const extraQty = Math.max(0, item.qty - 1);
                     const itemDiscount = extraQty * item.discount;
-                    summary += `${item.name} x${item.qty} - ${(item.price * item.qty).toFixed(2)}€`;
+                    summary += `${item.name} x${item.qty} - ${(item.price * item.qty).toFixed(2)}€ (Max. Entrées: ${item.currentMaxEntries})`;
                     if (itemDiscount > 0) summary += ` (Réduc. bouteille suppl.: -${itemDiscount.toFixed(2)}€)`;
                     summary += '\n';
                     total += item.price * item.qty;
