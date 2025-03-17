@@ -673,13 +673,16 @@
     min-width: 200px;
     max-width: 300px;
     box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Space between label, inputs, and buttons */
 }
 
-/* New styles for scrollable content */
+/* Updated styles for scrollable content */
 .max-entries-editor #max-entries-inputs {
-    max-height: 200px; /* Adjustable height limit for scrolling */
+    max-height: 150px; /* Reduced to leave room for buttons */
     overflow-y: auto; /* Enable vertical scrolling */
-    margin-bottom: 10px; /* Space before buttons */
+    flex-grow: 1; /* Allow the container to grow but stay within max-height */
 }
 
 /* Ensure inputs inside the editor are styled consistently */
@@ -688,21 +691,28 @@
     margin-right: 5px;
 }
 
+/* Style for the button container */
+.max-entries-editor .editor-buttons {
+    display: flex;
+    gap: 10px;
+    padding-top: 5px;
+    border-top: 1px solid #444; /* Optional: visual separation */
+}
+
 /* Existing button styles (keep these) */
 .max-entries-editor button {
-    margin-top: 5px;
     padding: 5px 10px;
     background: #444;
     border: none;
     color: white;
     border-radius: 4px;
     cursor: pointer;
+    flex-shrink: 0; /* Prevent buttons from shrinking */
 }
 
 .max-entries-editor button:hover {
     background: #555;
 }
-
         @media (max-width: 768px) {
             .access-header-row, .access-detail-row, .pure-header-row, .pure-detail-row {
                 grid-template-columns: 1fr;
