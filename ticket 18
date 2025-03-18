@@ -645,22 +645,22 @@
         .odd-row { background-color: rgba(0, 0, 0, 0.1); }
 
         /* Ajout du style pour le tooltip */
-        .tooltip {
-            position: absolute;
-            background-color: #333;
-            color: #fff;
-            padding: 10px;
-            border-radius: 4px;
-            font-size: 14px;
-            z-index: 10;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-            display: none;
-            max-width: 300px;
-        }
-
-        .tooltip.visible {
-            display: block;
-        }
+       .tooltip {
+    position: absolute;
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 14px;
+    z-index: 10;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    display: none;
+    max-width: 300px;
+    pointer-events: none; /* Empêche le tooltip d'interférer avec les événements de la souris */
+}
+.tooltip.visible {
+    display: block;
+}
 
         /* Ajout du style pour l'éditeur de Max. Entrée */
         .max-entries-editor {
@@ -1442,124 +1442,181 @@ function validatePureSoiree() {
             });
         }
 
-        function renderPrestations() {
-            const accessList = document.getElementById('access-prestations-list');
-            const pureList = document.getElementById('pure-prestations-list');
-            const separatorLine = document.getElementById('separator-line');
-            const previewSection = document.getElementById('preview-section');
-            const accessForm = document.getElementById('access-form');
-            const previewBtn = document.querySelector('.preview-btn');
-            accessList.style.display = 'block';
-            pureList.style.display = 'block';
-            previewSection.style.display = 'none';
-            accessForm.style.display = 'block';
-            previewBtn.classList.remove('active');
-            isPreviewActive = false;
-            accessList.innerHTML = '';
-            pureList.innerHTML = '';
-            const filteredPrestations = selectedDayFilter ? prestations.filter(p => p.days.includes(selectedDayFilter)) : [...prestations];
-            let hasAccess = false;
-            let hasPure = false;
+function renderPrestations() {
+    const accessList = document.getElementById('access-prestations-list');
+    const pureList = document.getElementById('pure-prestations-list');
+    const separatorLine = document.getElementById('separator-line');
+    const previewSection = document.getElementById('preview-section');
+    const accessForm = document.getElementById('access-form');
+    const previewBtn = document.querySelector('.preview-btn');
+    accessList.style.display = 'block';
+    pureList.style.display = 'block';
+    previewSection.style.display = 'none';
+    accessForm.style.display = 'block';
+    previewBtn.classList.remove('active');
+    isPreviewActive = false;
+    accessList.innerHTML = '';
+    pureList.innerHTML = '';
+    const filteredPrestations = selectedDayFilter ? prestations.filter(p => p.days.includes(selectedDayFilter)) : [...prestations];
+    let hasAccess = false;
+    let hasPure = false;
 
-            if (filteredPrestations.some(p => p.presentationLow || p.presentationNormal || p.price)) {
-                accessList.innerHTML = `
-                    <div class="access-header-row">
-                        <div class="prestation-label">Les entrées:</div>
-                        <div class="prestation-label">Prestation:</div>
-                        <div class="prestation-label">Prix:</div>
-                        <div class="prestation-label">Sexe:</div>
-                        <div class="button-container"></div>
+    if (filteredPrestations.some(p => p.presentationLow || p.presentationNormal || p.price)) {
+        accessList.innerHTML = `
+            <div class="access-header-row">
+                <div class="prestation-label">Les entrées:</div>
+                <div class="prestation-label">Prestation:</div>
+                <div class="prestation-label">Prix:</div>
+                <div class="prestation-label">Sexe:</div>
+                <div class="button-container"></div>
+            </div>
+        `;
+    }
+
+    if (filteredPrestations.some(p => p.pureItems.length > 0)) {
+        pureList.innerHTML = `
+            <div class="pure-header-row">
+                <div class="prestation-label">Type:</div>
+                <div class="prestation-label">Catégorie:</div>
+                <div class="prestation-label">Nom:</div>
+                <div class="prestation-label">Qt:</div>
+                <div class="prestation-label">Prix:</div>
+                <div class="prestation-label">Max. Entrée:</div>
+                <div class="prestation-label">Réduc. Suppl.:</div>
+                <div class="button-container"></div>
+            </div>
+        `;
+    }
+
+    filteredPrestations.forEach((prestation, index) => {
+        if (prestation.presentationLow || prestation.presentationNormal || prestation.price) {
+            hasAccess = true;
+            const accessItem = document.createElement('div');
+            accessItem.className = 'prestation-item';
+            accessItem.draggable = true;
+            accessItem.dataset.index = prestations.indexOf(prestation);
+            const presentationRows = [];
+            if (prestation.presentationLow) presentationRows.push({ access: 'Heure creuse', prestation: prestation.presentationLow, price: prestation.price, sex: prestation.sex });
+            if (prestation.presentationNormal) presentationRows.push({ access: 'Normal', prestation: prestation.presentationNormal, price: prestation.price, sex: prestation.sex });
+            const detailRows = presentationRows.map((row, rowIndex) => `
+                <div class="access-detail-row ${rowIndex % 2 === 0 ? 'even-row' : 'odd-row'}" data-detail-index="${rowIndex}">
+                    <div class="prestation-value">${row.access || '-'}</div>
+                    <div class="prestation-value">${row.prestation || '-'}</div>
+                    <div class="prestation-price">${row.price ? `${row.price}€` : '-'}</div>
+                    <div class="prestation-value">${row.sex || '-'}</div>
+                    <div class="button-container">
+                        <button class="edit-btn" onclick="editPrestation(${prestations.indexOf(prestation)})">✏️</button>
+                        <button class="delete-btn" onclick="deletePrestation(${prestations.indexOf(prestation)})">🗑️</button>
                     </div>
-                `;
-            }
+                </div>
+            `).join('');
+            accessItem.innerHTML = detailRows;
+            accessList.appendChild(accessItem);
+        }
 
-            if (filteredPrestations.some(p => p.pureItems.length > 0)) {
-                pureList.innerHTML = `
-                    <div class="pure-header-row">
-                        <div class="prestation-label">Type:</div>
-                        <div class="prestation-label">Catégorie:</div>
-                        <div class="prestation-label">Nom:</div>
-                        <div class="prestation-label">Qt:</div>
-                        <div class="prestation-label">Prix:</div>
-                        <div class="prestation-label">Max. Entrée:</div>
-                        <div class="prestation-label">Réduc. Suppl.:</div>
-                        <div class="button-container"></div>
-                    </div>
-                `;
-            }
-
-            filteredPrestations.forEach((prestation, index) => {
-                if (prestation.presentationLow || prestation.presentationNormal || prestation.price) {
-                    hasAccess = true;
-                    const accessItem = document.createElement('div');
-                    accessItem.className = 'prestation-item';
-                    accessItem.draggable = true;
-                    accessItem.dataset.index = prestations.indexOf(prestation);
-                    const presentationRows = [];
-                    if (prestation.presentationLow) presentationRows.push({ access: 'Heure creuse', prestation: prestation.presentationLow, price: prestation.price, sex: prestation.sex });
-                    if (prestation.presentationNormal) presentationRows.push({ access: 'Normal', prestation: prestation.presentationNormal, price: prestation.price, sex: prestation.sex });
-                    const detailRows = presentationRows.map((row, rowIndex) => `
-                        <div class="access-detail-row ${rowIndex % 2 === 0 ? 'even-row' : 'odd-row'}" data-detail-index="${rowIndex}">
-                            <div class="prestation-value">${row.access || '-'}</div>
-                            <div class="prestation-value">${row.prestation || '-'}</div>
-                            <div class="prestation-price">${row.price ? `${row.price}€` : '-'}</div>
-                            <div class="prestation-value">${row.sex || '-'}</div>
+        if (prestation.pureItems.length > 0) {
+            hasPure = true;
+            prestation.pureItems.forEach((pure, pureIndex) => {
+                const pureItem = document.createElement('div');
+                pureItem.className = 'prestation-item pure-item grid-support';
+                pureItem.draggable = true;
+                pureItem.dataset.index = prestations.indexOf(prestation);
+                const detailRows = pure.details.map((detail, detailIndex) => {
+                    const maxEntriesText = Object.entries(detail.maxEntries).map(([qty, max]) => `${qty}=${max}`).join(', ') || '-';
+                    return `
+                        <div class="pure-detail-row ${detailIndex % 2 === 0 ? 'even-row' : 'odd-row'}" data-detail-index="${detailIndex}">
+                            <div class="prestation-label">Entrée bouteille:</div>
+                            <div class="prestation-value">${detail.category || 'Aucune'}</div>
+                            <div class="prestation-value">${detail.name || '-'}</div>
+                            <div class="prestation-qty">${detail.qty || '-'}</div>
+                            <div class="prestation-price">${detail.price ? `${detail.price}€` : '-'}</div>
+                            <div class="prestation-max" data-tooltip="${maxEntriesText}">${maxEntriesText}</div>
+                            <div class="prestation-discount">${detail.discount ? `${detail.discount}€` : '-'}</div>
                             <div class="button-container">
                                 <button class="edit-btn" onclick="editPrestation(${prestations.indexOf(prestation)})">✏️</button>
                                 <button class="delete-btn" onclick="deletePrestation(${prestations.indexOf(prestation)})">🗑️</button>
                             </div>
                         </div>
-                    `).join('');
-                    accessItem.innerHTML = detailRows;
-                    accessList.appendChild(accessItem);
-                }
-
-                if (prestation.pureItems.length > 0) {
-                    hasPure = true;
-                    prestation.pureItems.forEach((pure, pureIndex) => {
-                        const pureItem = document.createElement('div');
-                        pureItem.className = 'prestation-item pure-item grid-support';
-                        pureItem.draggable = true;
-                        pureItem.dataset.index = prestations.indexOf(prestation);
-                        const detailRows = pure.details.map((detail, detailIndex) => `
-                            <div class="pure-detail-row ${detailIndex % 2 === 0 ? 'even-row' : 'odd-row'}" data-detail-index="${detailIndex}">
-                                <div class="prestation-label">Entrée bouteille:</div>
-                                <div class="prestation-value">${detail.category || 'Aucune'}</div>
-                                <div class="prestation-value">${detail.name || '-'}</div>
-                                <div class="prestation-qty">${detail.qty || '-'}</div>
-                                <div class="prestation-price">${detail.price ? `${detail.price}€` : '-'}</div>
-                                <div class="prestation-max">${Object.entries(detail.maxEntries).map(([qty, max]) => `${qty}=${max}`).join(', ') || '-'}</div>
-                                <div class="prestation-discount">${detail.discount ? `${detail.discount}€` : '-'}</div>
-                                <div class="button-container">
-                                    <button class="edit-btn" onclick="editPrestation(${prestations.indexOf(prestation)})">✏️</button>
-                                    <button class="delete-btn" onclick="deletePrestation(${prestations.indexOf(prestation)})">🗑️</button>
-                                </div>
-                            </div>
-                        `).join('');
-                        pureItem.innerHTML = detailRows;
-                        pureList.appendChild(pureItem);
-                        pureItem.addEventListener('dragstart', handleDragStart);
-                        pureItem.addEventListener('dragover', handleDragOver);
-                        pureItem.addEventListener('drop', handleDrop);
-                        pureItem.addEventListener('dragend', handleDragEnd);
-                    });
-                }
+                    `;
+                }).join('');
+                pureItem.innerHTML = detailRows;
+                pureList.appendChild(pureItem);
+                pureItem.addEventListener('dragstart', handleDragStart);
+                pureItem.addEventListener('dragover', handleDragOver);
+                pureItem.addEventListener('drop', handleDrop);
+                pureItem.addEventListener('dragend', handleDragEnd);
             });
-
-            accessList.style.display = hasAccess ? 'block' : 'none';
-            pureList.style.display = hasPure ? 'block' : 'none';
-            separatorLine.style.display = (hasAccess && hasPure) ? 'block' : 'none';
-
-            document.querySelectorAll('.prestation-item').forEach(item => {
-                item.addEventListener('dragstart', handleDragStart);
-                item.addEventListener('dragover', handleDragOver);
-                item.addEventListener('drop', handleDrop);
-                item.addEventListener('dragend', handleDragEnd);
-            });
-
-            addTooltipsToPrestations();
         }
+    });
 
+    accessList.style.display = hasAccess ? 'block' : 'none';
+    pureList.style.display = hasPure ? 'block' : 'none';
+    separatorLine.style.display = (hasAccess && hasPure) ? 'block' : 'none';
+
+    document.querySelectorAll('.prestation-item').forEach(item => {
+        item.addEventListener('dragstart', handleDragStart);
+        item.addEventListener('dragover', handleDragOver);
+        item.addEventListener('drop', handleDrop);
+        item.addEventListener('dragend', handleDragEnd);
+    });
+
+    // Ajout des événements pour les tooltips
+    document.querySelectorAll('.prestation-max').forEach(element => {
+        const tooltipText = element.getAttribute('data-tooltip');
+        if (element.scrollWidth > element.clientWidth) {
+            element.addEventListener('mouseenter', showTooltip);
+            element.addEventListener('mouseleave', hideTooltip);
+            element.addEventListener('mousemove', positionTooltip);
+        }
+    });
+
+    addTooltipsToPrestations();
+}
+
+// Fonctions pour gérer le tooltip
+function showTooltip(e) {
+    let tooltip = document.querySelector('.tooltip');
+    if (!tooltip) {
+        tooltip = document.createElement('div');
+        tooltip.className = 'tooltip';
+        document.body.appendChild(tooltip);
+    }
+    tooltip.textContent = this.getAttribute('data-tooltip');
+    tooltip.classList.add('visible');
+    positionTooltip.call(this, e); // Positionner immédiatement
+}
+
+function hideTooltip() {
+    const tooltip = document.querySelector('.tooltip');
+    if (tooltip) {
+        tooltip.classList.remove('visible');
+    }
+}
+
+function positionTooltip(e) {
+    const tooltip = document.querySelector('.tooltip');
+    if (!tooltip || !tooltip.classList.contains('visible')) return;
+
+    const rect = this.getBoundingClientRect();
+    const scrollX = window.scrollX || window.pageXOffset;
+    const scrollY = window.scrollY || window.pageYOffset;
+
+    // Positionner le tooltip juste au-dessus ou en dessous de l'élément
+    let top = rect.bottom + scrollY + 5; // Par défaut en dessous
+    let left = rect.left + scrollX + (rect.width / 2) - (tooltip.offsetWidth / 2);
+
+    // Ajuster si le tooltip dépasse la fenêtre
+    if (top + tooltip.offsetHeight > window.innerHeight + scrollY) {
+        top = rect.top + scrollY - tooltip.offsetHeight - 5; // Placer au-dessus si pas assez de place en dessous
+    }
+    if (left < scrollX) left = scrollX + 5; // Garder dans la fenêtre à gauche
+    if (left + tooltip.offsetWidth > window.innerWidth + scrollX) {
+        left = window.innerWidth + scrollX - tooltip.offsetWidth - 5; // Garder dans la fenêtre à droite
+    }
+
+    tooltip.style.top = `${top}px`;
+    tooltip.style.left = `${left}px`;
+}
         let draggedItem = null;
 
         function handleDragStart(e) {
