@@ -1009,37 +1009,56 @@
             addDragEvents(pureDiv);
         }
 
-        function addDetails(button) {
-            const detailsSection = button.parentElement;
-            const pureRow = detailsSection.parentElement;
-            const nameSection = pureRow.querySelector('.name-section');
-            const newDetailsRow = document.createElement('div');
-            newDetailsRow.className = 'details-row';
-            newDetailsRow.innerHTML = `
-                <div>
-                    <label>Nom</label>
-                    <input type="text" value="${nameSection.querySelector('.pure-name').value || ''}" class="pure-name">
-                </div>
-                <div>
-                    <label>Qt. bouteilles</label>
-                    <input type="number" min="1" value="${nameSection.querySelector('.pure-qty').value || ''}" class="pure-qty">
-                </div>
-                <div>
-                    <label>Prix</label>
-                    <input type="number" step="0.01" min="0" value="${nameSection.querySelector('.pure-price').value || ''}" class="pure-price">
-                </div>
-                <div>
-                    <label>Max. Entrée</label>
-                    <input type="text" placeholder="Cliquez pour définir" class="pure-max-entries" readonly onclick="showMaxEntriesEditor(this)">
-                </div>
-                <div>
-                    <label>Réduc. bouteille suppl.</label>
-                    <input type="number" step="0.01" min="0" value="${nameSection.querySelector('.pure-discount').value || ''}" class="pure-discount">
-                </div>
-                <button class="delete-details-btn" onclick="deleteDetails(this)">🗑️</button>
-            `;
-            detailsSection.insertBefore(newDetailsRow, button);
-        }
+function addDetails(button) {
+    const detailsSection = button.parentElement;
+    const pureRow = detailsSection.parentElement;
+    const nameSection = pureRow.querySelector('.name-section');
+    const lastDetailsRow = detailsSection.querySelector('.details-row:last-child') || nameSection; // Use nameSection as base if no details exist
+
+    const newDetailsRow = document.createElement('div');
+    newDetailsRow.className = 'details-row';
+
+    // Get the maxEntries from the source, or provide a default if none exists
+    const sourceMaxEntries = lastDetailsRow.querySelector('.pure-max-entries')?.dataset.maxEntries || JSON.stringify({ 1: 1 });
+
+    newDetailsRow.innerHTML = `
+        <div>
+            <label>Nom</label>
+            <input type="text" value="${lastDetailsRow.querySelector('.pure-name')?.value || ''}" class="pure-name">
+        </div>
+        <div>
+            <label>Qt. bouteilles</label>
+            <input type="number" min="1" value="${lastDetailsRow.querySelector('.pure-qty')?.value || ''}" class="pure-qty">
+        </div>
+        <div>
+            <label>Prix</label>
+            <input type="number" step="0.01" min="0" value="${lastDetailsRow.querySelector('.pure-price')?.value || ''}" class="pure-price">
+        </div>
+        <div>
+            <label>Max. Entrée</label>
+            <input type="text" placeholder="Cliquez pour définir" class="pure-max-entries" readonly onclick="showMaxEntriesEditor(this)" 
+                   data-max-entries='${sourceMaxEntries}'>
+        </div>
+        <div>
+            <label>Réduc. bouteille suppl.</label>
+            <input type="number" step="0.01" min="0" value="${lastDetailsRow.querySelector('.pure-discount')?.value || ''}" class="pure-discount">
+        </div>
+        <button class="delete-details-btn" onclick="deleteDetails(this)">🗑️</button>
+    `;
+
+    // Insert the new row before the "+" button
+    detailsSection.insertBefore(newDetailsRow, button);
+
+    // Ensure the new Max. Entrée field has the same display value as the source
+    const newMaxInput = newDetailsRow.querySelector('.pure-max-entries');
+    const sourceMaxInput = lastDetailsRow.querySelector('.pure-max-entries');
+    if (sourceMaxInput && sourceMaxInput.dataset.maxEntries) {
+        newMaxInput.value = sourceMaxInput.value || 'Cliquez pour définir';
+    } else {
+        // Set a default display value if no maxEntries data exists
+        newMaxInput.value = '1=1';
+    }
+}
 
         function deleteDetails(button) {
             button.parentElement.remove();
@@ -1238,67 +1257,108 @@ function showMaxEntriesEditor(input) {
             return { isValid: (hasPresentation && hasPrice), errors };
         }
 
-        function validatePureSoiree() {
-            const pureRows = document.querySelectorAll('.pure-row');
-            let errors = [];
-            let hasValidRow = false;
-            pureRows.forEach((row, index) => {
-                const categoryInput = row.querySelector('.pure-category-input');
-                const name = row.querySelector('.name-section .pure-name');
-                const firstQty = row.querySelector('.name-section .pure-qty');
-                const firstPrice = row.querySelector('.name-section .pure-price');
-                const firstMaxEntries = row.querySelector('.name-section .pure-max-entries');
-                const firstDiscount = row.querySelector('.name-section .pure-discount');
-                categoryInput.classList.remove('error');
-                name.classList.remove('error');
-                firstQty.classList.remove('error');
-                firstPrice.classList.remove('error');
-                firstMaxEntries.classList.remove('error');
-                firstDiscount.classList.remove('error');
-                const additionalDetails = row.querySelectorAll('.details-section .details-row');
-                additionalDetails.forEach(detailRow => {
-                    detailRow.querySelector('.pure-name').classList.remove('error');
-                    detailRow.querySelector('.pure-qty').classList.remove('error');
-                    detailRow.querySelector('.pure-price').classList.remove('error');
-                    detailRow.querySelector('.pure-max-entries').classList.remove('error');
-                    detailRow.querySelector('.pure-discount').classList.remove('error');
+function validatePureSoiree() {
+    const pureRows = document.querySelectorAll('.pure-row');
+    let errors = [];
+    let hasValidRow = false;
+
+    pureRows.forEach((row, index) => {
+        const categoryInput = row.querySelector('.pure-category-input');
+        const name = row.querySelector('.name-section .pure-name');
+        const firstQty = row.querySelector('.name-section .pure-qty');
+        const firstPrice = row.querySelector('.name-section .pure-price');
+        const firstMaxEntries = row.querySelector('.name-section .pure-max-entries');
+        const firstDiscount = row.querySelector('.name-section .pure-discount');
+
+        // Remove error classes
+        categoryInput.classList.remove('error');
+        name.classList.remove('error');
+        firstQty.classList.remove('error');
+        firstPrice.classList.remove('error');
+        firstMaxEntries.classList.remove('error');
+        firstDiscount.classList.remove('error');
+
+        const additionalDetails = row.querySelectorAll('.details-section .details-row');
+        additionalDetails.forEach(detailRow => {
+            detailRow.querySelector('.pure-name').classList.remove('error');
+            detailRow.querySelector('.pure-qty').classList.remove('error');
+            detailRow.querySelector('.pure-price').classList.remove('error');
+            detailRow.querySelector('.pure-max-entries').classList.remove('error');
+            detailRow.querySelector('.pure-discount').classList.remove('error');
+        });
+
+        // Check if the main row is valid
+        const isRowValid = name.value.trim() && 
+                           firstQty.value && 
+                           firstPrice.value && 
+                           (firstMaxEntries.dataset.maxEntries && firstMaxEntries.dataset.maxEntries !== '{}');
+
+        console.log(`Validating main row ${index + 1}:`, {
+            name: name.value.trim(),
+            qty: firstQty.value,
+            price: firstPrice.value,
+            maxEntries: firstMaxEntries.dataset.maxEntries
+        });
+
+        if (isRowValid) {
+            hasValidRow = true;
+
+            // Validate additional details rows
+            additionalDetails.forEach((detailRow, detailIndex) => {
+                const nameDetail = detailRow.querySelector('.pure-name');
+                const qty = detailRow.querySelector('.pure-qty');
+                const price = detailRow.querySelector('.pure-price');
+                const maxEntries = detailRow.querySelector('.pure-max-entries');
+                const discount = detailRow.querySelector('.pure-discount');
+
+                console.log(`Validating detail row ${detailIndex + 1} in main row ${index + 1}:`, {
+                    name: nameDetail.value.trim(),
+                    qty: qty.value,
+                    price: price.value,
+                    maxEntries: maxEntries.dataset.maxEntries
                 });
-                const isRowValid = name.value.trim() && firstQty.value && firstPrice.value && firstMaxEntries.dataset.maxEntries;
-                if (isRowValid) {
-                    hasValidRow = true;
-                    additionalDetails.forEach((detailRow, detailIndex) => {
-                        const nameDetail = detailRow.querySelector('.pure-name');
-                        const qty = detailRow.querySelector('.pure-qty');
-                        const price = detailRow.querySelector('.pure-price');
-                        const maxEntries = detailRow.querySelector('.pure-max-entries');
-                        const discount = detailRow.querySelector('.pure-discount');
-                        if (!nameDetail.value.trim()) {
-                            errors.push(`Veuillez remplir le champ "Nom" dans la ligne supplémentaire ${detailIndex + 1} de la ligne ${index + 1}.`);
-                            nameDetail.classList.add('error');
-                        }
-                        if (!qty.value) {
-                            errors.push(`Veuillez remplir le champ "Qt. bouteilles" dans la ligne supplémentaire ${detailIndex + 1} de la ligne ${index + 1}.`);
-                            qty.classList.add('error');
-                        }
-                        if (!price.value) {
-                            errors.push(`Veuillez remplir le champ "Prix" dans la ligne supplémentaire ${detailIndex + 1} de la ligne ${index + 1}.`);
-                            price.classList.add('error');
-                        }
-                        if (!maxEntries.dataset.maxEntries) {
-                            errors.push(`Veuillez définir "Max. Entrée" dans la ligne supplémentaire ${detailIndex + 1} de la ligne ${index + 1}.`);
-                            maxEntries.classList.add('error');
-                        }
-                    });
-                } else if (name.value.trim() || firstQty.value || firstPrice.value || firstMaxEntries.dataset.maxEntries || firstDiscount.value) {
-                    if (!name.value.trim()) errors.push(`Veuillez remplir le champ "Nom" dans la ligne ${index + 1}.`), name.classList.add('error');
-                    if (!firstQty.value) errors.push(`Veuillez remplir le champ "Qt. bouteilles" dans la ligne ${index + 1}.`), firstQty.classList.add('error');
-                    if (!firstPrice.value) errors.push(`Veuillez remplir le champ "Prix" dans la ligne ${index + 1}.`), firstPrice.classList.add('error');
-                    if (!firstMaxEntries.dataset.maxEntries) errors.push(`Veuillez définir "Max. Entrée" dans la ligne ${index + 1}.`), firstMaxEntries.classList.add('error');
+
+                if (!nameDetail.value.trim()) {
+                    errors.push(`Veuillez remplir le champ "Nom" dans la ligne supplémentaire ${detailIndex + 1} de la ligne ${index + 1}.`);
+                    nameDetail.classList.add('error');
+                }
+                if (!qty.value) {
+                    errors.push(`Veuillez remplir le champ "Qt. bouteilles" dans la ligne supplémentaire ${detailIndex + 1} de la ligne ${index + 1}.`);
+                    qty.classList.add('error');
+                }
+                if (!price.value) {
+                    errors.push(`Veuillez remplir le champ "Prix" dans la ligne supplémentaire ${detailIndex + 1} de la ligne ${index + 1}.`);
+                    price.classList.add('error');
+                }
+                if (!maxEntries.dataset.maxEntries || maxEntries.dataset.maxEntries === '{}') {
+                    errors.push(`Veuillez définir "Max. Entrée" dans la ligne supplémentaire ${detailIndex + 1} de la ligne ${index + 1}.`);
+                    maxEntries.classList.add('error');
                 }
             });
-            return { errors, hasValidRow };
+        } else if (name.value.trim() || firstQty.value || firstPrice.value || firstMaxEntries.dataset.maxEntries || firstDiscount.value) {
+            // If the row has partial data, validate all fields
+            if (!name.value.trim()) {
+                errors.push(`Veuillez remplir le champ "Nom" dans la ligne ${index + 1}.`);
+                name.classList.add('error');
+            }
+            if (!firstQty.value) {
+                errors.push(`Veuillez remplir le champ "Qt. bouteilles" dans la ligne ${index + 1}.`);
+                firstQty.classList.add('error');
+            }
+            if (!firstPrice.value) {
+                errors.push(`Veuillez remplir le champ "Prix" dans la ligne ${index + 1}.`);
+                firstPrice.classList.add('error');
+            }
+            if (!firstMaxEntries.dataset.maxEntries || firstMaxEntries.dataset.maxEntries === '{}') {
+                errors.push(`Veuillez définir "Max. Entrée" dans la ligne ${index + 1}.`);
+                firstMaxEntries.classList.add('error');
+            }
         }
+    });
 
+    console.log('Validation result:', { hasValidRow, errors });
+    return { errors, hasValidRow };
+}
         function savePrestation() {
             const days = Array.from(document.querySelectorAll('input[name="days"]:checked')).map(checkbox => checkbox.value);
             const presentationLow = document.getElementById('access-presentation-low').value.trim();
