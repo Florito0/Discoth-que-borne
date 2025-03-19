@@ -26,7 +26,7 @@
             background-color: #1e1e1e;
             border-radius: 12px;
             width: 100%;
-            max-width: 700px;
+            max-width: 900px;
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
@@ -87,6 +87,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            margin-bottom: 10px;
         }
         
         .time-inputs {
@@ -201,7 +202,8 @@
                 <thead>
                     <tr>
                         <th>Jour</th>
-                        <th>Heures Creuses</th>
+                        <th>Heures Creuses 1</th>
+                        <th>Heures Creuses 2</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -210,12 +212,24 @@
                         <td>
                             <div class="time-row">
                                 <div class="time-inputs">
-                                    <input type="time" class="heure-debut" aria-label="Début heures creuses"> - 
-                                    <input type="time" class="heure-fin" aria-label="Fin heures creuses">
+                                    <input type="time" class="heure-debut-1" aria-label="Début heures creuses 1"> - 
+                                    <input type="time" class="heure-fin-1" aria-label="Fin heures creuses 1">
                                 </div>
                                 <div class="action-buttons">
-                                    <button class="copy-btn" data-day="lundi" title="Copier"></button>
-                                    <button class="paste-btn" data-day="lundi" title="Coller"></button>
+                                    <button class="copy-btn" data-day="lundi" data-slot="1" title="Copier"></button>
+                                    <button class="paste-btn" data-day="lundi" data-slot="1" title="Coller"></button>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="time-row">
+                                <div class="time-inputs">
+                                    <input type="time" class="heure-debut-2" aria-label="Début heures creuses 2"> - 
+                                    <input type="time" class="heure-fin-2" aria-label="Fin heures creuses 2">
+                                </div>
+                                <div class="action-buttons">
+                                    <button class="copy-btn" data-day="lundi" data-slot="2" title="Copier"></button>
+                                    <button class="paste-btn" data-day="lundi" data-slot="2" title="Coller"></button>
                                 </div>
                             </div>
                         </td>
@@ -225,12 +239,24 @@
                         <td>
                             <div class="time-row">
                                 <div class="time-inputs">
-                                    <input type="time" class="heure-debut" aria-label="Début heures creuses"> - 
-                                    <input type="time" class="heure-fin" aria-label="Fin heures creuses">
+                                    <input type="time" class="heure-debut-1" aria-label="Début heures creuses 1"> - 
+                                    <input type="time" class="heure-fin-1" aria-label="Fin heures creuses 1">
                                 </div>
                                 <div class="action-buttons">
-                                    <button class="copy-btn" data-day="mardi" title="Copier"></button>
-                                    <button class="paste-btn" data-day="mardi" title="Coller"></button>
+                                    <button class="copy-btn" data-day="mardi" data-slot="1" title="Copier"></button>
+                                    <button class="paste-btn" data-day="mardi" data-slot="1" title="Coller"></button>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="time-row">
+                                <div class="time-inputs">
+                                    <input type="time" class="heure-debut-2" aria-label="Début heures creuses 2"> - 
+                                    <input type="time" class="heure-fin-2" aria-label="Fin heures creuses 2">
+                                </div>
+                                <div class="action-buttons">
+                                    <button class="copy-btn" data-day="mardi" data-slot="2" title="Copier"></button>
+                                    <button class="paste-btn" data-day="mardi" data-slot="2" title="Coller"></button>
                                 </div>
                             </div>
                         </td>
@@ -240,12 +266,24 @@
                         <td>
                             <div class="time-row">
                                 <div class="time-inputs">
-                                    <input type="time" class="heure-debut" aria-label="Début heures creuses"> - 
-                                    <input type="time" class="heure-fin" aria-label="Fin heures creuses">
+                                    <input type="time" class="heure-debut-1" aria-label="Début heures creuses 1"> - 
+                                    <input type="time" class="heure-fin-1" aria-label="Fin heures creuses 1">
                                 </div>
                                 <div class="action-buttons">
-                                    <button class="copy-btn" data-day="mercredi" title="Copier"></button>
-                                    <button class="paste-btn" data-day="mercredi" title="Coller"></button>
+                                    <button class="copy-btn" data-day="mercredi" data-slot="1" title="Copier"></button>
+                                    <button class="paste-btn" data-day="mercredi" data-slot="1" title="Coller"></button>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="time-row">
+                                <div class="time-inputs">
+                                    <input type="time" class="heure-debut-2" aria-label="Début heures creuses 2"> - 
+                                    <input type="time" class="heure-fin-2" aria-label="Fin heures creuses 2">
+                                </div>
+                                <div class="action-buttons">
+                                    <button class="copy-btn" data-day="mercredi" data-slot="2" title="Copier"></button>
+                                    <button class="paste-btn" data-day="mercredi" data-slot="2" title="Coller"></button>
                                 </div>
                             </div>
                         </td>
@@ -255,12 +293,24 @@
                         <td>
                             <div class="time-row">
                                 <div class="time-inputs">
-                                    <input type="time" class="heure-debut" aria-label="Début heures creuses"> - 
-                                    <input type="time" class="heure-fin" aria-label="Fin heures creuses">
+                                    <input type="time" class="heure-debut-1" aria-label="Début heures creuses 1"> - 
+                                    <input type="time" class="heure-fin-1" aria-label="Fin heures creuses 1">
                                 </div>
                                 <div class="action-buttons">
-                                    <button class="copy-btn" data-day="jeudi" title="Copier"></button>
-                                    <button class="paste-btn" data-day="jeudi" title="Coller"></button>
+                                    <button class="copy-btn" data-day="jeudi" data-slot="1" title="Copier"></button>
+                                    <button class="paste-btn" data-day="jeudi" data-slot="1" title="Coller"></button>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="time-row">
+                                <div class="time-inputs">
+                                    <input type="time" class="heure-debut-2" aria-label="Début heures creuses 2"> - 
+                                    <input type="time" class="heure-fin-2" aria-label="Fin heures creuses 2">
+                                </div>
+                                <div class="action-buttons">
+                                    <button class="copy-btn" data-day="jeudi" data-slot="2" title="Copier"></button>
+                                    <button class="paste-btn" data-day="jeudi" data-slot="2" title="Coller"></button>
                                 </div>
                             </div>
                         </td>
@@ -270,12 +320,24 @@
                         <td>
                             <div class="time-row">
                                 <div class="time-inputs">
-                                    <input type="time" class="heure-debut" aria-label="Début heures creuses"> - 
-                                    <input type="time" class="heure-fin" aria-label="Fin heures creuses">
+                                    <input type="time" class="heure-debut-1" aria-label="Début heures creuses 1"> - 
+                                    <input type="time" class="heure-fin-1" aria-label="Fin heures creuses 1">
                                 </div>
                                 <div class="action-buttons">
-                                    <button class="copy-btn" data-day="vendredi" title="Copier"></button>
-                                    <button class="paste-btn" data-day="vendredi" title="Coller"></button>
+                                    <button class="copy-btn" data-day="vendredi" data-slot="1" title="Copier"></button>
+                                    <button class="paste-btn" data-day="vendredi" data-slot="1" title="Coller"></button>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="time-row">
+                                <div class="time-inputs">
+                                    <input type="time" class="heure-debut-2" aria-label="Début heures creuses 2"> - 
+                                    <input type="time" class="heure-fin-2" aria-label="Fin heures creuses 2">
+                                </div>
+                                <div class="action-buttons">
+                                    <button class="copy-btn" data-day="vendredi" data-slot="2" title="Copier"></button>
+                                    <button class="paste-btn" data-day="vendredi" data-slot="2" title="Coller"></button>
                                 </div>
                             </div>
                         </td>
@@ -285,12 +347,24 @@
                         <td>
                             <div class="time-row">
                                 <div class="time-inputs">
-                                    <input type="time" class="heure-debut" aria-label="Début heures creuses"> - 
-                                    <input type="time" class="heure-fin" aria-label="Fin heures creuses">
+                                    <input type="time" class="heure-debut-1" aria-label="Début heures creuses 1"> - 
+                                    <input type="time" class="heure-fin-1" aria-label="Fin heures creuses 1">
                                 </div>
                                 <div class="action-buttons">
-                                    <button class="copy-btn" data-day="samedi" title="Copier"></button>
-                                    <button class="paste-btn" data-day="samedi" title="Coller"></button>
+                                    <button class="copy-btn" data-day="samedi" data-slot="1" title="Copier"></button>
+                                    <button class="paste-btn" data-day="samedi" data-slot="1" title="Coller"></button>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="time-row">
+                                <div class="time-inputs">
+                                    <input type="time" class="heure-debut-2" aria-label="Début heures creuses 2"> - 
+                                    <input type="time" class="heure-fin-2" aria-label="Fin heures creuses 2">
+                                </div>
+                                <div class="action-buttons">
+                                    <button class="copy-btn" data-day="samedi" data-slot="2" title="Copier"></button>
+                                    <button class="paste-btn" data-day="samedi" data-slot="2" title="Coller"></button>
                                 </div>
                             </div>
                         </td>
@@ -300,12 +374,24 @@
                         <td>
                             <div class="time-row">
                                 <div class="time-inputs">
-                                    <input type="time" class="heure-debut" aria-label="Début heures creuses"> - 
-                                    <input type="time" class="heure-fin" aria-label="Fin heures creuses">
+                                    <input type="time" class="heure-debut-1" aria-label="Début heures creuses 1"> - 
+                                    <input type="time" class="heure-fin-1" aria-label="Fin heures creuses 1">
                                 </div>
                                 <div class="action-buttons">
-                                    <button class="copy-btn" data-day="dimanche" title="Copier"></button>
-                                    <button class="paste-btn" data-day="dimanche" title="Coller"></button>
+                                    <button class="copy-btn" data-day="dimanche" data-slot="1" title="Copier"></button>
+                                    <button class="paste-btn" data-day="dimanche" data-slot="1" title="Coller"></button>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="time-row">
+                                <div class="time-inputs">
+                                    <input type="time" class="heure-debut-2" aria-label="Début heures creuses 2"> - 
+                                    <input type="time" class="heure-fin-2" aria-label="Fin heures creuses 2">
+                                </div>
+                                <div class="action-buttons">
+                                    <button class="copy-btn" data-day="dimanche" data-slot="2" title="Copier"></button>
+                                    <button class="paste-btn" data-day="dimanche" data-slot="2" title="Coller"></button>
                                 </div>
                             </div>
                         </td>
@@ -324,13 +410,13 @@
         function loadHoraires() {
             const saved = localStorage.getItem('horaires');
             horaires = saved ? JSON.parse(saved) : {
-                lundi: {debut: '', fin: ''},
-                mardi: {debut: '', fin: ''},
-                mercredi: {debut: '', fin: ''},
-                jeudi: {debut: '', fin: ''},
-                vendredi: {debut: '', fin: ''},
-                samedi: {debut: '', fin: ''},
-                dimanche: {debut: '', fin: ''}
+                lundi: { slot1: {debut: '', fin: ''}, slot2: {debut: '', fin: ''} },
+                mardi: { slot1: {debut: '', fin: ''}, slot2: {debut: '', fin: ''} },
+                mercredi: { slot1: {debut: '', fin: ''}, slot2: {debut: '', fin: ''} },
+                jeudi: { slot1: {debut: '', fin: ''}, slot2: {debut: '', fin: ''} },
+                vendredi: { slot1: {debut: '', fin: ''}, slot2: {debut: '', fin: ''} },
+                samedi: { slot1: {debut: '', fin: ''}, slot2: {debut: '', fin: ''} },
+                dimanche: { slot1: {debut: '', fin: ''}, slot2: {debut: '', fin: ''} }
             };
             initializeForm();
         }
@@ -339,49 +425,86 @@
         function initializeForm() {
             document.querySelectorAll('tbody tr').forEach(row => {
                 const day = row.dataset.day;
-                row.querySelector('.heure-debut').value = horaires[day].debut;
-                row.querySelector('.heure-fin').value = horaires[day].fin;
+                const slot1Debut = row.querySelector('.heure-debut-1');
+                const slot1Fin = row.querySelector('.heure-fin-1');
+                const slot2Debut = row.querySelector('.heure-debut-2');
+                const slot2Fin = row.querySelector('.heure-fin-2');
+                
+                slot1Debut.value = horaires[day].slot1.debut || '';
+                slot1Fin.value = horaires[day].slot1.fin || '';
+                slot2Debut.value = horaires[day].slot2.debut || '';
+                slot2Fin.value = horaires[day].slot2.fin || '';
             });
         }
 
-        // Copier les horaires d’un jour
-        function copyHoraires(day) {
+        // Copier les horaires d’un slot spécifique
+        function copyHoraires(day, slot) {
             const row = document.querySelector(`tr[data-day="${day}"]`);
-            const debut = row.querySelector('.heure-debut').value;
-            const fin = row.querySelector('.heure-fin').value;
+            const debutInput = row.querySelector(`.heure-debut-${slot}`);
+            const finInput = row.querySelector(`.heure-fin-${slot}`);
             
-            copiedHoraires = { debut: debut, fin: fin };
-            console.log(`Copié depuis ${day}:`, copiedHoraires);
-            alert(`Horaires de ${day} copiés !`);
+            if (!debutInput.value || !finInput.value) {
+                alert('Veuillez d\'abord définir des horaires à copier.');
+                return;
+            }
+            
+            copiedHoraires = {
+                debut: debutInput.value,
+                fin: finInput.value
+            };
+            console.log(`Copié depuis ${day} slot ${slot}:`, copiedHoraires);
+            alert(`Horaires de ${day} (Plage ${slot}) copiés !`);
         }
 
-        // Coller les horaires sur un jour
-        function pasteHoraires(day) {
+        // Coller les horaires sur un slot spécifique
+        function pasteHoraires(day, slot) {
             if (!copiedHoraires) {
                 alert('Aucun horaire copié. Veuillez copier un horaire d’abord.');
                 return;
             }
 
             const row = document.querySelector(`tr[data-day="${day}"]`);
-            row.querySelector('.heure-debut').value = copiedHoraires.debut;
-            row.querySelector('.heure-fin').value = copiedHoraires.fin;
-            console.log(`Collé sur ${day}:`, copiedHoraires);
-            alert(`Horaires collés à ${day} !`);
+            const debutInput = row.querySelector(`.heure-debut-${slot}`);
+            const finInput = row.querySelector(`.heure-fin-${slot}`);
+            
+            debutInput.value = copiedHoraires.debut;
+            finInput.value = copiedHoraires.fin;
+            
+            // Mettre à jour l'objet horaires
+            horaires[day][`slot${slot}`] = {
+                debut: copiedHoraires.debut,
+                fin: copiedHoraires.fin
+            };
+            
+            console.log(`Collé sur ${day} slot ${slot}:`, copiedHoraires);
+            alert(`Horaires collés à ${day} (Plage ${slot}) !`);
         }
 
         // Sauvegarder les horaires
         function saveHoraires() {
             document.querySelectorAll('tbody tr').forEach(row => {
                 const day = row.dataset.day;
-                const debut = row.querySelector('.heure-debut').value;
-                const fin = row.querySelector('.heure-fin').value;
+                const debut1 = row.querySelector('.heure-debut-1').value;
+                const fin1 = row.querySelector('.heure-fin-1').value;
+                const debut2 = row.querySelector('.heure-debut-2').value;
+                const fin2 = row.querySelector('.heure-fin-2').value;
 
-                if (debut && fin && new Date(`2000-01-01 ${debut}`) >= new Date(`2000-01-01 ${fin}`)) {
-                    alert(`Erreur : L'heure de fin doit être après l'heure de début pour ${day}`);
+                // Vérification Plage 1
+                if (debut1 && fin1 && new Date(`2000-01-01 ${debut1}`) >= new Date(`2000-01-01 ${fin1}`)) {
+                    alert(`Erreur : L'heure de fin doit être après l'heure de début pour ${day} (Plage 1)`);
                     return;
                 }
 
-                horaires[day] = { debut, fin };
+                // Vérification Plage 2
+                if (debut2 && fin2 && new Date(`2000-01-01 ${debut2}`) >= new Date(`2000-01-01 ${fin2}`)) {
+                    alert(`Erreur : L'heure de fin doit être après l'heure de début pour ${day} (Plage 2)`);
+                    return;
+                }
+
+                horaires[day] = {
+                    slot1: { debut: debut1, fin: fin1 },
+                    slot2: { debut: debut2, fin: fin2 }
+                };
             });
 
             localStorage.setItem('horaires', JSON.stringify(horaires));
@@ -393,14 +516,16 @@
         document.querySelectorAll('.copy-btn').forEach(button => {
             button.addEventListener('click', function() {
                 const day = this.getAttribute('data-day');
-                copyHoraires(day);
+                const slot = this.getAttribute('data-slot');
+                copyHoraires(day, slot);
             });
         });
 
         document.querySelectorAll('.paste-btn').forEach(button => {
             button.addEventListener('click', function() {
                 const day = this.getAttribute('data-day');
-                pasteHoraires(day);
+                const slot = this.getAttribute('data-slot');
+                pasteHoraires(day, slot);
             });
         });
 
