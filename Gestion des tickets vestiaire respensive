@@ -19,47 +19,74 @@
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      padding: 10px; /* Réduit pour petits écrans */
+      padding: 10px;
     }
     
     .container, .admin-container {
       background-color: #1e1e1e;
       border-radius: 12px;
       width: 100%;
-      max-width: 600px; /* Limite pour grands écrans */
+      max-width: 600px;
       overflow: hidden;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-      margin: 10px auto; /* Centré avec marge réduite */
+      margin: 10px auto;
     }
     
     .header {
       background-color: #2c2c2c;
-      padding: 15px; /* Réduit pour petits écrans */
+      padding: 15px;
       text-align: center;
       border-bottom: 1px solid #333;
     }
     
     h1 {
-      font-size: clamp(18px, 4vw, 24px); /* Taille adaptable */
+      font-size: clamp(18px, 4vw, 24px);
       font-weight: 700;
       margin-bottom: 8px;
       color: #fff;
     }
     
     .subtitle {
-      font-size: clamp(12px, 3vw, 16px); /* Taille adaptable */
+      font-size: clamp(12px, 3vw, 16px);
       color: #b3b3b3;
     }
     
     .items-container, .admin-items {
-      padding: 15px; /* Réduit pour petits écrans */
+      padding: 15px;
+    }
+    
+    .empty-message {
+      text-align: center;
+      color: #b3b3b3;
+      font-size: clamp(14px, 3.5vw, 18px);
+      padding: 20px 0;
+    }
+    
+    .notification {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #333;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 6px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      font-size: clamp(12px, 3vw, 16px);
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .notification.show {
+      opacity: 1;
     }
     
     .item {
       display: grid;
-      grid-template-columns: 2fr 1fr 2fr; /* Proportion ajustée */
+      grid-template-columns: 2fr 1fr 2fr;
       align-items: center;
-      padding: 10px 0; /* Réduit pour petits écrans */
+      padding: 10px 0;
       border-bottom: 1px solid #333;
     }
     
@@ -68,25 +95,33 @@
     }
     
     .item-name {
-      font-size: clamp(14px, 3.5vw, 18px); /* Taille adaptable */
+      font-size: clamp(14px, 3.5vw, 18px);
       font-weight: 500;
+      white-space: normal; /* Permet le retour à la ligne */
+      overflow-wrap: break-word; /* Casse les mots si nécessaire */
+      word-break: break-word; /* Assure la compatibilité pour les mots très longs */
+      line-height: 1.2; /* Améliore la lisibilité avec un espacement entre les lignes */
     }
     
     .item-price {
       font-size: clamp(14px, 3.5vw, 18px);
       color: #b3b3b3;
       text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-width: 40px; /* Assure un espace minimum pour le centrage */
     }
     
     .quantity-control {
       display: flex;
       align-items: center;
       justify-content: flex-end;
-      gap: 5px; /* Espacement réduit */
+      gap: 5px;
     }
     
     .qty-btn {
-      width: clamp(28px, 8vw, 36px); /* Taille adaptable */
+      width: clamp(28px, 8vw, 36px);
       height: clamp(28px, 8vw, 36px);
       border-radius: 50%;
       border: none;
@@ -109,21 +144,21 @@
     }
     
     .qty-value {
-      width: clamp(30px, 10vw, 40px); /* Taille adaptable */
+      width: clamp(30px, 10vw, 40px);
       text-align: center;
       font-size: clamp(14px, 3.5vw, 18px);
     }
     
     .total-section {
       background-color: #2c2c2c;
-      padding: 15px; /* Réduit pour petits écrans */
+      padding: 15px;
       border-top: 1px solid #333;
     }
     
     .total-row {
       display: flex;
       justify-content: space-between;
-      font-size: clamp(16px, 4vw, 20px); /* Taille adaptable */
+      font-size: clamp(16px, 4vw, 20px);
       font-weight: 700;
       margin-bottom: 15px;
     }
@@ -131,7 +166,7 @@
     .checkout-btn {
       display: block;
       width: 100%;
-      padding: clamp(10px, 3vw, 15px); /* Taille adaptable */
+      padding: clamp(10px, 3vw, 15px);
       background: linear-gradient(to right, #9733EE, #DA22FF);
       color: white;
       border: none;
@@ -156,6 +191,30 @@
       cursor: not-allowed;
     }
 
+    .no-vestiaire-btn {
+      display: block;
+      width: 100%;
+      padding: clamp(10px, 3vw, 15px);
+      background: #444;
+      color: #b3b3b3;
+      border: 1px solid #666;
+      border-radius: 6px;
+      font-size: clamp(14px, 3.5vw, 18px);
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s, color 0.2s;
+      margin-top: 10px;
+    }
+    
+    .no-vestiaire-btn:hover {
+      background: #555;
+      color: #ccc;
+    }
+    
+    .no-vestiaire-btn:active {
+      background: #666;
+    }
+
     .admin-container {
       display: none;
     }
@@ -164,19 +223,26 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 10px 0; /* Réduit pour petits écrans */
+      padding: 10px 0;
       border-bottom: 1px solid #333;
+      cursor: move;
+      transition: background-color 0.2s;
+    }
+    
+    .admin-item.dragging {
+      opacity: 0.5;
+      background-color: #333;
     }
     
     .admin-form {
-      padding: 15px; /* Réduit pour petits écrans */
+      padding: 15px;
       display: flex;
       flex-direction: column;
       gap: 10px;
     }
     
     .admin-form input {
-      padding: clamp(6px, 2vw, 8px); /* Taille adaptable */
+      padding: clamp(6px, 2vw, 8px);
       background-color: #333;
       border: none;
       color: white;
@@ -185,7 +251,7 @@
     }
     
     .admin-btn {
-      padding: clamp(8px, 2.5vw, 10px); /* Taille adaptable */
+      padding: clamp(8px, 2.5vw, 10px);
       background-color: #9733EE;
       border: none;
       color: white;
@@ -199,7 +265,7 @@
     }
     
     .delete-btn {
-      width: clamp(28px, 8vw, 32px); /* Taille adaptable */
+      width: clamp(28px, 8vw, 32px);
       height: clamp(28px, 8vw, 32px);
       background-color: #ff4444;
       border: none;
@@ -222,58 +288,49 @@
       transform: scale(0.95);
     }
     
-    .login-section {
-      padding: 15px; /* Réduit pour petits écrans */
-      text-align: center;
-    }
-    
-    .login-section input {
-      padding: clamp(6px, 2vw, 8px); /* Taille adaptable */
-      margin-right: 10px;
-      font-size: clamp(12px, 3vw, 16px);
-    }
-
-    /* Media Queries pour ajustements spécifiques */
-    @media (max-width: 768px) { /* Tablettes */
+    @media (max-width: 768px) {
       .item {
-        grid-template-columns: 1fr 1fr 1fr; /* Plus compact */
+        grid-template-columns: 1fr 1fr 1fr;
         padding: 8px 0;
       }
       .quantity-control {
-        gap: 3px; /* Espacement réduit */
+        gap: 3px;
       }
     }
 
-    @media (max-width: 480px) { /* Téléphones */
+    @media (max-width: 480px) {
       .item {
-        grid-template-columns: 2fr 1fr 2fr; /* Proportion ajustée */
+        grid-template-columns: 2fr 1fr 2fr;
         padding: 6px 0;
       }
       .header {
         padding: 10px;
       }
-      .items-container, .admin-items, .total-section, .admin-form, .login-section {
+      .items-container, .admin-items, .total-section, .admin-form {
         padding: 10px;
       }
       .total-row {
-        flex-direction: column; /* Total en colonne sur petits écrans */
+        flex-direction: column;
         align-items: center;
         gap: 5px;
       }
       .quantity-control {
-        flex-wrap: wrap; /* Boutons en ligne ou wrap */
+        flex-wrap: wrap;
         justify-content: center;
       }
     }
   </style>
 </head>
 <body>
+  <!-- Notification -->
+  <div id="notification" class="notification"></div>
+
   <!-- Interface Client -->
   <div class="container" id="client-interface">
     <div class="header">
       <h1>VESTIAIRE</h1>
       <div class="subtitle">Sélectionnez vos articles</div>
-      <button class="admin-btn" onclick="showAdminLogin()">Accès Gérant</button>
+      <button class="admin-btn" onclick="switchToAdmin()" aria-label="Passer à l'accès gérant">Passer à l'accès gérant</button>
     </div>
     
     <div class="items-container" id="items-container"></div>
@@ -283,7 +340,8 @@
         <div>TOTAL</div>
         <div id="total-price">0€</div>
       </div>
-      <button id="checkout-btn" class="checkout-btn" disabled>VALIDER</button>
+      <button id="checkout-btn" class="checkout-btn" disabled onclick="validateSelection()" aria-label="Valider la sélection">VALIDER</button>
+      <button id="no-vestiaire-btn" class="no-vestiaire-btn" onclick="noVestiaire()" aria-label="Continuer sans vestiaire">SANS VESTIAIRE</button>
     </div>
   </div>
 
@@ -292,32 +350,29 @@
     <div class="header">
       <h1>GESTION VESTIAIRE</h1>
       <div class="subtitle">Modifier les articles</div>
+      <button class="admin-btn" onclick="switchToClient()" aria-label="Passer à l'accès client">Passer à l'accès client</button>
     </div>
     
-    <div class="login-section" id="admin-login">
-      <input type="password" id="admin-password" placeholder="Mot de passe">
-      <button class="admin-btn" onclick="loginAdmin()">Connexion</button>
-    </div>
+    <div class="admin-items" id="admin-items"></div>
     
-    <div class="admin-items" id="admin-items" style="display: none;"></div>
-    
-    <div class="admin-form" id="admin-form" style="display: none;">
-      <input type="text" id="new-item-name" placeholder="Nom de l'article">
-      <input type="number" id="new-item-price" placeholder="Prix (€)" step="0.01">
-      <button class="admin-btn" onclick="addItem()">Ajouter Article</button>
-      <button class="admin-btn" onclick="logoutAdmin()">Déconnexion</button>
+    <div class="admin-form">
+      <input type="text" id="new-item-name" placeholder="Nom de l'article" aria-label="Nom de l'article">
+      <input type="number" id="new-item-price" placeholder="Prix (€)" step="0.01" aria-label="Prix de l'article en euros">
+      <button class="admin-btn" onclick="addItem()" aria-label="Ajouter un article">Ajouter Article</button>
     </div>
   </div>
 
   <script>
-    let items = {
-      'manteau': { name: 'Manteau', price: 3, qty: 0 },
-      'echarpe': { name: 'Écharpe', price: 1, qty: 0 },
-      'sac': { name: 'Sac', price: 3, qty: 0 },
-      'sweatshirt': { name: 'Sweat-shirt', price: 2, qty: 0 }
-    };
+    let items = [];
 
-    const ADMIN_PASSWORD = "admin123";
+    function showNotification(message) {
+      const notification = document.getElementById('notification');
+      notification.textContent = message;
+      notification.classList.add('show');
+      setTimeout(() => {
+        notification.classList.remove('show');
+      }, 3000);
+    }
 
     function renderItems() {
       const container = document.getElementById('items-container');
@@ -326,44 +381,49 @@
         return;
       }
       container.innerHTML = '';
-      for (const [id, item] of Object.entries(items)) {
-        container.innerHTML += `
-          <div class="item">
-            <div class="item-name">${item.name}</div>
-            <div class="item-price">${item.price}€</div>
-            <div class="quantity-control">
-              <button class="qty-btn" data-id="${id}" data-action="decrease">-</button>
-              <div id="${id}-qty" class="qty-value">${item.qty}</div>
-              <button class="qty-btn" data-id="${id}" data-action="increase">+</button>
+      if (items.length === 0) {
+        container.innerHTML = '<div class="empty-message">Aucun article disponible pour le moment.</div>';
+      } else {
+        items.forEach(item => {
+          container.innerHTML += `
+            <div class="item">
+              <div class="item-name">${item.name}</div>
+              <div class="item-price">${item.price}€</div>
+              <div class="quantity-control">
+                <button class="qty-btn" data-id="${item.id}" data-action="decrease" aria-label="Diminuer la quantité de ${item.name}">-</button>
+                <div id="${item.id}-qty" class="qty-value">${item.qty}</div>
+                <button class="qty-btn" data-id="${item.id}" data-action="increase" aria-label="Augmenter la quantité de ${item.name}">+</button>
+              </div>
             </div>
-          </div>
-        `;
+          `;
+        });
       }
-      attachQuantityListeners();
       updateTotal();
     }
 
     function attachQuantityListeners() {
-      document.querySelectorAll('.qty-btn').forEach(button => {
-        button.removeEventListener('click', handleQuantityClick);
-        button.addEventListener('click', handleQuantityClick);
-      });
+      const container = document.getElementById('items-container');
+      container.removeEventListener('click', handleQuantityClick);
+      container.addEventListener('click', handleQuantityClick);
     }
 
-    function handleQuantityClick() {
-      const id = this.dataset.id;
-      const action = this.dataset.action;
-      updateQuantity(id, action === 'increase' ? 1 : -1);
+    function handleQuantityClick(event) {
+      if (event.target.classList.contains('qty-btn')) {
+        const id = event.target.dataset.id;
+        const action = event.target.dataset.action;
+        updateQuantity(id, action === 'increase' ? 1 : -1);
+      }
     }
 
     function updateQuantity(itemId, change) {
-      if (!items[itemId]) {
+      const item = items.find(i => i.id === itemId);
+      if (!item) {
         console.error(`Article non trouvé : ${itemId}`);
         return;
       }
-      const newQty = items[itemId].qty + change;
+      const newQty = item.qty + change;
       if (newQty >= 0) {
-        items[itemId].qty = newQty;
+        item.qty = newQty;
         const qtyElement = document.getElementById(`${itemId}-qty`);
         if (qtyElement) {
           qtyElement.textContent = newQty;
@@ -375,7 +435,7 @@
     function updateTotal() {
       let total = 0;
       let itemCount = 0;
-      for (const item of Object.values(items)) {
+      for (const item of items) {
         total += item.price * item.qty;
         itemCount += item.qty;
       }
@@ -387,27 +447,30 @@
       }
     }
 
-    function showAdminLogin() {
+    function validateSelection() {
+      for (const item of items) {
+        item.qty = 0;
+      }
+      renderItems();
+    }
+
+    function switchToAdmin() {
       document.getElementById('client-interface').style.display = 'none';
       document.getElementById('admin-interface').style.display = 'block';
+      renderAdminItems();
     }
 
-    function loginAdmin() {
-      const password = document.getElementById('admin-password').value;
-      if (password === ADMIN_PASSWORD) {
-        document.getElementById('admin-login').style.display = 'none';
-        document.getElementById('admin-items').style.display = 'block';
-        document.getElementById('admin-form').style.display = 'block';
-        renderAdminItems();
-      } else {
-        alert('Mot de passe incorrect');
-      }
-    }
-
-    function logoutAdmin() {
+    function switchToClient() {
       document.getElementById('admin-interface').style.display = 'none';
       document.getElementById('client-interface').style.display = 'block';
-      document.getElementById('admin-password').value = '';
+      renderItems();
+      attachQuantityListeners();
+    }
+
+    function noVestiaire() {
+      for (const item of items) {
+        item.qty = 0;
+      }
       renderItems();
     }
 
@@ -418,28 +481,76 @@
         return;
       }
       adminContainer.innerHTML = '';
-      for (const [id, item] of Object.entries(items)) {
-        const itemDiv = document.createElement('div');
-        itemDiv.className = 'admin-item';
-        itemDiv.innerHTML = `
-          <span>${item.name} - ${item.price}€</span>
-          <button class="delete-btn" data-id="${id}">🗑️</button>
-        `;
-        adminContainer.appendChild(itemDiv);
+      if (items.length === 0) {
+        adminContainer.innerHTML = '<div class="empty-message">Aucun article pour le moment. Ajoutez-en un ci-dessous.</div>';
+      } else {
+        items.forEach(item => {
+          const itemDiv = document.createElement('div');
+          itemDiv.className = 'admin-item';
+          itemDiv.draggable = true;
+          itemDiv.dataset.id = item.id;
+          itemDiv.innerHTML = `
+            <span>${item.name} - ${item.price}€</span>
+            <button class="delete-btn" data-id="${item.id}" aria-label="Supprimer ${item.name}">🗑️</button>
+          `;
+          adminContainer.appendChild(itemDiv);
+        });
       }
       attachDeleteListeners();
+      attachDragAndDropListeners();
     }
 
     function attachDeleteListeners() {
-      document.querySelectorAll('.delete-btn').forEach(button => {
-        button.removeEventListener('click', handleDeleteClick);
-        button.addEventListener('click', handleDeleteClick);
-      });
+      const adminContainer = document.getElementById('admin-items');
+      adminContainer.removeEventListener('click', handleDeleteClick);
+      adminContainer.addEventListener('click', handleDeleteClick);
     }
 
-    function handleDeleteClick() {
-      const id = this.dataset.id;
-      deleteItem(id);
+    function handleDeleteClick(event) {
+      if (event.target.classList.contains('delete-btn')) {
+        const id = event.target.dataset.id;
+        deleteItem(id);
+      }
+    }
+
+    function attachDragAndDropListeners() {
+      const adminContainer = document.getElementById('admin-items');
+      const adminItems = adminContainer.querySelectorAll('.admin-item');
+
+      adminItems.forEach(item => {
+        item.addEventListener('dragstart', (e) => {
+          item.classList.add('dragging');
+          e.dataTransfer.setData('text/plain', item.dataset.id);
+        });
+
+        item.addEventListener('dragend', () => {
+          item.classList.remove('dragging');
+        });
+
+        item.addEventListener('dragover', (e) => {
+          e.preventDefault();
+        });
+
+        item.addEventListener('drop', (e) => {
+          e.preventDefault();
+          const draggedId = e.dataTransfer.getData('text/plain');
+          const draggedItem = items.find(i => i.id === draggedId);
+          const targetId = item.dataset.id;
+          const targetItem = items.find(i => i.id === targetId);
+
+          if (draggedId !== targetId) {
+            const draggedIndex = items.indexOf(draggedItem);
+            const targetIndex = items.indexOf(targetItem);
+
+            items.splice(draggedIndex, 1);
+            items.splice(targetIndex, 0, draggedItem);
+
+            renderAdminItems();
+            renderItems();
+            attachQuantityListeners();
+          }
+        });
+      });
     }
 
     function addItem() {
@@ -447,33 +558,36 @@
       const price = parseFloat(document.getElementById('new-item-price').value);
       if (name && !isNaN(price) && price >= 0) {
         const id = name.toLowerCase().replace(/\s+/g, '-');
-        if (items[id]) {
-          alert('Cet article existe déjà !');
+        if (items.find(i => i.id === id)) {
+          showNotification('Cet article existe déjà !');
           return;
         }
-        items[id] = { name, price, qty: 0 };
+        items.push({ id, name, price, qty: 0 });
         document.getElementById('new-item-name').value = '';
         document.getElementById('new-item-price').value = '';
         renderAdminItems();
         renderItems();
+        attachQuantityListeners();
       } else {
-        alert('Veuillez entrer un nom valide et un prix positif.');
+        showNotification('Veuillez entrer un nom valide et un prix positif.');
       }
     }
 
     function deleteItem(itemId) {
-      if (!items[itemId]) {
+      if (!items.find(i => i.id === itemId)) {
         console.error(`Article non trouvé pour suppression : ${itemId}`);
         return;
       }
       console.log(`Suppression de l'article : ${itemId}`);
-      delete items[itemId];
+      items = items.filter(i => i.id !== itemId);
       renderAdminItems();
       renderItems();
+      attachQuantityListeners();
     }
 
     // Initialisation
     renderItems();
+    attachQuantityListeners();
   </script>
 </body>
 </html>
