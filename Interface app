@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Vertical - Discothèque</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* Style de la barre de menu verticale */
+        .sidebar {
+            width: 220px;
+            background-color: #1e1e1e;
+            padding: 20px 0;
+            position: fixed;
+            height: 100vh;
+            border-right: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+            transition: width 0.3s ease;
+        }
+
+        .sidebar.collapsed {
+            width: 60px;
+        }
+
+        .sidebar .toggle-btn {
+            width: 40px;
+            height: 40px;
+            margin: 10px auto;
+            background: #2c2c2c;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .sidebar .toggle-btn:hover {
+            background: #444;
+        }
+
+        /* Icône flèche pour le bouton de rétraction */
+        .toggle-btn .icon {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            position: relative;
+        }
+
+        .toggle-btn .icon.chevron-left::before,
+        .toggle-btn .icon.chevron-right::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 12px;
+            height: 12px;
+            border-right: 3px solid #ffffff;
+            border-bottom: 3px solid #ffffff;
+            transform: translate(-50%, -50%) rotate(45deg);
+        }
+
+        .toggle-btn .icon.chevron-left::before {
+            transform: translate(-50%, -50%) rotate(135deg);
+        }
+
+        .sidebar .menu-item {
+            width: 90%;
+            height: 40px;
+            margin: 10px auto;
+            padding: 8px;
+            background: #2c2c2c;
+            border: none;
+            border-radius: 8px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #ffffff;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+        }
+
+        .sidebar.collapsed .menu-item {
+            width: 40px;
+            justify-content: center;
+        }
+
+        .sidebar .menu-item:hover {
+            background: #444;
+            transform: scale(1.02);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .sidebar .menu-item.active {
+            background: linear-gradient(to right, #9733EE, #DA22FF);
+            box-shadow: 0 0 15px rgba(151, 51, 238, 0.7);
+        }
+
+        .sidebar .menu-item.pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(151, 51, 238, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(151, 51, 238, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(151, 51, 238, 0); }
+        }
+
+        .sidebar .menu-item .icon {
+            width: 24px;
+            height: 24px;
+            position: relative;
+        }
+
+        .sidebar .menu-item span.text {
+            font-size: 14px;
+            display: inline;
+        }
+
+        .sidebar.collapsed .menu-item span.text {
+            display: none;
+        }
+
+        /* Tooltip pour les éléments du menu lorsqu'il est réduit */
+        .sidebar.collapsed .menu-item:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            left: 60px; /* Position à droite de l'icône */
+            top: 50%;
+            transform: translateY(-50%);
+            background: #333;
+            color: #ffffff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            white-space: nowrap;
+            z-index: 10;
+            opacity: 1;
+            transition: opacity 0.2s ease;
+        }
+
+        .sidebar.collapsed .menu-item::after {
+            opacity: 0;
+        }
+
+        /* Icônes CSS pour le menu principal */
+        .icon.list::before {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 0;
+            width: 16px;
+            height: 2px;
+            background: #ffffff;
+            box-shadow: 0 6px 0 0 #ffffff, 0 12px 0 0 #ffffff;
+        }
+
+        .icon.calendar::before {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #ffffff;
+            border-radius: 2px;
+        }
+
+        .icon.calendar::after {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            width: 4px;
+            height: 4px;
+            background: #ffffff;
+            box-shadow: 6px 0 0 0 #ffffff;
+        }
+
+        .icon.users::before,
+        .icon.users::after {
+            content: '';
+            position: absolute;
+            top: 4px;
+            width: 6px;
+            height: 6px;
+            background: #ffffff;
+            border-radius: 50%;
+        }
+
+        .icon.users::before {
+            left: 4px;
+        }
+
+        .icon.users::after {
+            left: 14px;
+        }
+
+        .icon.users::before {
+            box-shadow: 0 8px 0 0 #ffffff;
+        }
+
+        .icon.users::after {
+            box-shadow: 0 8px 0 0 #ffffff;
+        }
+
+        .icon.user::before {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 9px;
+            width: 6px;
+            height: 6px;
+            background: #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 8px 0 0 #ffffff;
+        }
+
+        .icon.chart::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 4px;
+            width: 4px;
+            height: 8px;
+            background: #ffffff;
+            box-shadow: 6px -4px 0 0 #ffffff, 12px -8px 0 0 #ffffff;
+        }
+
+        .icon.gear::before {
+            content: '';
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            width: 12px;
+            height: 12px;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            background: radial-gradient(circle, transparent 0%, transparent 50%, #ffffff 50%, #ffffff 70%, transparent 70%);
+        }
+
+        /* Contenu principal */
+        .main-content {
+            margin-left: 220px;
+            padding: 30px;
+            width: calc(100% - 220px);
+            transition: all 0.3s ease;
+        }
+
+        .main-content.collapsed {
+            margin-left: 60px;
+            width: calc(100% - 60px);
+        }
+
+        .content-section {
+            display: none;
+            background-color: #1e1e1e;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .content-section h2 {
+            text-align: center;
+            margin-bottom: 10px;
+            color: #ffffff;
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .content-section .subtitle {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #cccccc;
+            font-size: 16px;
+            font-weight: 400;
+        }
+
+        /* Style pour les sous-menus dans le contenu principal */
+        .submenu-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            padding: 10px;
+        }
+
+        .submenu-content .submenu-item {
+            padding: 20px;
+            background: #2c2c2c;
+            border: none;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .submenu-content .submenu-item:hover {
+            background: #444;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .submenu-content .submenu-item .icon {
+            width: 24px;
+            height: 24px;
+            position: relative;
+        }
+
+        .submenu-content .submenu-item .description {
+            font-size: 12px;
+            color: #cccccc;
+            margin-top: 5px;
+        }
+
+        /* Icônes CSS pour les sous-menus */
+        .icon.group::before,
+        .icon.group::after {
+            content: '';
+            position: absolute;
+            top: 4px;
+            width: 6px;
+            height: 6px;
+            background: #ffffff;
+            border-radius: 50%;
+        }
+
+        .icon.group::before {
+            left: 4px;
+        }
+
+        .icon.group::after {
+            left: 14px;
+        }
+
+        .icon.group::before {
+            box-shadow: 0 8px 0 0 #ffffff;
+        }
+
+        .icon.group::after {
+            box-shadow: 0 8px 0 0 #ffffff;
+        }
+
+        .icon.ticket::before {
+            content: '';
+            position: absolute;
+            top: 6px;
+            left: 4px;
+            width: 16px;
+            height: 12px;
+            border: 2px solid #ffffff;
+            border-radius: 2px;
+        }
+
+        .icon.ticket::after {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 18px;
+            width: 4px;
+            height: 4px;
+            background: #121212;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+        }
+
+        .icon.shirt::before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 4px;
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-bottom: 8px solid #ffffff;
+        }
+
+        .icon.shirt::after {
+            content: '';
+            position: absolute;
+            top: 6px;
+            left: 10px;
+            width: 4px;
+            height: 4px;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+        }
+
+        .icon.clock::before {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+        }
+
+        .icon.clock::after {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 12px;
+            width: 2px;
+            height: 6px;
+            background: #ffffff;
+            transform: rotate(45deg);
+        }
+
+        .icon.key::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 4px;
+            width: 12px;
+            height: 2px;
+            background: #ffffff;
+            box-shadow: 0 4px 0 0 #ffffff;
+        }
+
+        .icon.key::after {
+            content: '';
+            position: absolute;
+            top: 6px;
+            left: 16px;
+            width: 6px;
+            height: 6px;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+        }
+
+        /* Bouton Retour */
+        .back-button {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background: #333;
+            border-radius: 8px;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: #444;
+        }
+
+        /* Modale de bienvenue */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #1e1e1e;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 0 20px rgba(151, 51, 238, 0.5);
+        }
+
+        .modal-content h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #ffffff;
+        }
+
+        .modal-content p {
+            font-size: 16px;
+            color: #cccccc;
+            margin-bottom: 20px;
+        }
+
+        .modal-content button {
+            padding: 10px 20px;
+            background: linear-gradient(to right, #9733EE, #DA22FF);
+            border: none;
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-content button:hover {
+            background: linear-gradient(to right, #DA22FF, #9733EE);
+        }
+
+        .modal-content .checkbox {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            color: #cccccc;
+        }
+
+        /* Responsivité */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 60px;
+            }
+
+            .sidebar:hover {
+                width: 220px;
+            }
+
+            .main-content {
+                margin-left: 60px;
+                width: calc(100% - 60px);
+            }
+
+            .main-content.collapsed {
+                margin-left: 60px;
+                width: calc(100% - 60px);
+            }
+
+            .submenu-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Modale de bienvenue -->
+    <div class="modal" id="welcomeModal" role="dialog" aria-labelledby="welcomeModalTitle" aria-describedby="welcomeModalDesc" tabindex="-1">
+        <div class="modal-content">
+            <h2 id="welcomeModalTitle">Bienvenue !</h2>
+            <p id="welcomeModalDesc">Utilisez le menu à gauche pour gérer votre discothèque. Cliquez sur "Gestion" pour commencer à configurer les paramètres essentiels comme la capacité d'accueil et les tickets d'entrée.</p>
+            <button onclick="closeModal()">Commencer</button>
+            <div class="checkbox">
+                <input type="checkbox" id="dontShowAgain">
+                <label for="dontShowAgain">Ne plus afficher</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Barre de menu verticale -->
+    <div class="sidebar" id="sidebar">
+        <!-- Bouton pour rétracter/étendre -->
+        <button class="toggle-btn" onclick="toggleSidebar()" aria-label="Réduire/Étendre le menu">
+            <span id="toggleIcon" class="icon chevron-left"></span>
+        </button>
+        <!-- Gestion -->
+        <a href="#" class="menu-item pulse active" data-target="gestion" aria-label="Gestion" data-tooltip="Gestion">
+            <span class="icon list"></span>
+            <span class="text">Gestion</span>
+        </a>
+        <!-- Réservation -->
+        <a href="#" class="menu-item" data-target="reservation" aria-label="Réservation" data-tooltip="Réservation">
+            <span class="icon calendar"></span>
+            <span class="text">Réservation</span>
+        </a>
+        <!-- Client -->
+        <a href="#" class="menu-item" data-target="client" aria-label="Client" data-tooltip="Client">
+            <span class="icon users"></span>
+            <span class="text">Client</span>
+        </a>
+        <!-- Profile -->
+        <a href="#" class="menu-item" data-target="profile" aria-label="Profile" data-tooltip="Profile">
+            <span class="icon user"></span>
+            <span class="text">Profile</span>
+        </a>
+        <!-- Rapports/Statistiques -->
+        <a href="#" class="menu-item" data-target="rapports" aria-label="Rapports/Statistiques" data-tooltip="Rapports/Statistiques">
+            <span class="icon chart"></span>
+            <span class="text">Rapports/Statistiques</span>
+        </a>
+        <!-- Configuration -->
+        <a href="#" class="menu-item" data-target="configuration" aria-label="Configuration" data-tooltip="Configuration">
+            <span class="icon gear"></span>
+            <span class="text">Configuration</span>
+        </a>
+    </div>
+
+    <!-- Contenu principal -->
+    <div class="main-content" id="mainContent">
+        <!-- Section Gestion avec les sous-menus -->
+        <div class="content-section" id="gestion">
+            <h2>Gestion</h2>
+            <div class="subtitle">Configurez les paramètres essentiels de votre discothèque</div>
+            <div class="submenu-content">
+                <a href="#" class="submenu-item" data-target="gestion-capacite">
+                    <span class="icon group"></span>
+                    Capacité d'accueil
+                    <div class="description">Définir le nombre maximum de clients</div>
+                </a>
+                <a href="#" class="submenu-item" data-target="gestion-tickets-entree">
+                    <span class="icon ticket"></span>
+                    Tickets d'entrée
+                    <div class="description">Gérer les prix et types de tickets</div>
+                </a>
+                <a href="#" class="submenu-item" data-target="gestion-tickets-vestiaire">
+                    <span class="icon shirt"></span>
+                    Tickets vestiaire
+                    <div class="description">Configurer les tickets pour le vestiaire</div>
+                </a>
+                <a href="#" class="submenu-item" data-target="gestion-heures-creuses">
+                    <span class="icon clock"></span>
+                    Heures creuses
+                    <div class="description">Définir les périodes à faible affluence</div>
+                </a>
+                <a href="#" class="submenu-item" data-target="gestion-code-jour">
+                    <span class="icon key"></span>
+                    Code jour
+                    <div class="description">Gérer les codes d'accès quotidiens</div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Sous-sections de Gestion -->
+        <div class="content-section" id="gestion-capacite">
+            <a href="#" class="back-button" data-target="gestion">← Retour</a>
+            <h2>Capacité d'Accueil</h2>
+            <div class="subtitle">Définir le nombre maximum de clients autorisés</div>
+            <p>Contenu de la gestion de la capacité d'accueil...</p>
+        </div>
+        <div class="content-section" id="gestion-tickets-entree">
+            <a href="#" class="back-button" data-target="gestion">← Retour</a>
+            <h2>Tickets d'Entrée</h2>
+            <div class="subtitle">Configurer les prix et types de tickets d'entrée</div>
+            <p>Contenu de la gestion des tickets d'entrée...</p>
+        </div>
+        <div class="content-section" id="gestion-tickets-vestiaire">
+            <a href="#" class="back-button" data-target="gestion">← Retour</a>
+            <h2>Tickets Vestiaire</h2>
+            <div class="subtitle">Gérer les tickets pour le vestiaire</div>
+            <p>Contenu de la gestion des tickets vestiaire...</p>
+        </div>
+        <div class="content-section" id="gestion-heures-creuses">
+            <a href="#" class="back-button" data-target="gestion">← Retour</a>
+            <h2>Heures Creuses</h2>
+            <div class="subtitle">Définir les périodes à faible affluence</div>
+            <p>Contenu de la gestion des heures creuses...</p>
+        </div>
+        <div class="content-section" id="gestion-code-jour">
+            <a href="#" class="back-button" data-target="gestion">← Retour</a>
+            <h2>Code Jour</h2>
+            <div class="subtitle">Gérer les codes d'accès quotidiens</div>
+            <p>Contenu de la gestion des codes jour...</p>
+        </div>
+
+        <!-- Autres sections -->
+        <div class="content-section" id="reservation">
+            <h2>Réservation</h2>
+            <div class="subtitle">Gérer les réservations des clients</div>
+            <p>Contenu de la page Réservation...</p>
+        </div>
+        <div class="content-section" id="client">
+            <h2>Client</h2>
+            <div class="subtitle">Consulter et gérer les informations des clients</div>
+            <p>Contenu de la page Client...</p>
+        </div>
+        <div class="content-section" id="profile">
+            <h2>Profile</h2>
+            <div class="subtitle">Modifier vos informations personnelles</div>
+            <p>Contenu de la page Profile...</p>
+        </div>
+        <div class="content-section" id="rapports">
+            <h2>Rapports/Statistiques</h2>
+            <div class="subtitle">Analyser les performances de votre discothèque</div>
+            <p>Contenu de la page Rapports/Statistiques...</p>
+        </div>
+        <div class="content-section" id="configuration">
+            <h2>Configuration</h2>
+            <div class="subtitle">Personnaliser les paramètres généraux</div>
+            <p>Contenu de la page Configuration...</p>
+        </div>
+    </div>
+
+    <script>
+        // Gestion des clics sur les éléments du menu
+        const menuItems = document.querySelectorAll('.menu-item');
+        const submenuItems = document.querySelectorAll('.submenu-item');
+        const backButtons = document.querySelectorAll('.back-button');
+        const contentSections = document.querySelectorAll('.content-section');
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('mainContent');
+        const toggleIcon = document.getElementById('toggleIcon');
+
+        menuItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = item.getAttribute('data-target');
+
+                // Masquer toutes les sections et afficher celle ciblée
+                contentSections.forEach(section => section.classList.remove('active'));
+                document.getElementById(target).classList.add('active');
+
+                // Gérer l'état actif des éléments du menu
+                menuItems.forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+            });
+        });
+
+        submenuItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = item.getAttribute('data-target');
+
+                // Afficher la section correspondante
+                contentSections.forEach(section => section.classList.remove('active'));
+                document.getElementById(target).classList.add('active');
+            });
+        });
+
+        backButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = button.getAttribute('data-target');
+
+                // Afficher la section correspondante
+                contentSections.forEach(section => section.classList.remove('active'));
+                document.getElementById(target).classList.add('active');
+            });
+        });
+
+        // Afficher la section "Gestion" par défaut
+        document.getElementById('gestion').classList.add('active');
+
+        // Gestion de la rétraction/expansion du menu
+        function toggleSidebar() {
+            sidebar.classList.toggle('collapsed');
+            mainContent.classList.toggle('collapsed');
+            if (sidebar.classList.contains('collapsed')) {
+                toggleIcon.classList.remove('chevron-left');
+                toggleIcon.classList.add('chevron-right');
+            } else {
+                toggleIcon.classList.remove('chevron-right');
+                toggleIcon.classList.add('chevron-left');
+            }
+        }
+
+        // Gestion de la modale de bienvenue
+        const modal = document.getElementById('welcomeModal');
+        const dontShowAgainCheckbox = document.getElementById('dontShowAgain');
+
+        // Vérifier si la modale doit être affichée
+        try {
+            if (!localStorage.getItem('dontShowWelcomeModal')) {
+                modal.style.display = 'flex';
+            }
+        } catch (e) {
+            console.error('Erreur avec localStorage :', e);
+            modal.style.display = 'flex'; // Afficher la modale par défaut si localStorage échoue
+        }
+
+        function closeModal() {
+            try {
+                if (dontShowAgainCheckbox.checked) {
+                    localStorage.setItem('dontShowWelcomeModal', 'true');
+                }
+            } catch (e) {
+                console.error('Erreur lors de l\'écriture dans localStorage :', e);
+            }
+            modal.style.display = 'none';
+            // Remettre le focus sur un élément approprié après la fermeture
+            document.querySelector('.menu-item.active').focus();
+        }
+
+        // Ajouter un focus sur la modale lorsqu'elle s'ouvre
+        modal.addEventListener('transitionend', () => {
+            if (modal.style.display === 'flex') {
+                modal.focus();
+            }
+        });
+    </script>
+</body>
+</html>
