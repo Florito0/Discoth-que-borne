@@ -223,16 +223,28 @@
             box-shadow: 0 8px 0 0 #ffffff;
         }
 
+        /* Nouvelle icône pour "Profile" */
         .icon.user::before {
             content: '';
             position: absolute;
             top: 4px;
-            left: 9px;
-            width: 6px;
-            height: 6px;
+            left: 8px;
+            width: 8px;
+            height: 8px;
             background: #ffffff;
             border-radius: 50%;
-            box-shadow: 0 8px 0 0 #ffffff;
+        }
+
+        .icon.user::after {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 4px;
+            width: 16px;
+            height: 10px;
+            background: #ffffff;
+            border-radius: 4px 4px 0 0;
+            clip-path: polygon(0 100%, 20% 0, 80% 0, 100% 100%);
         }
 
         .icon.chart::before {
