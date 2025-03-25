@@ -144,7 +144,7 @@
         .sidebar.collapsed .menu-item:hover::after {
             content: attr(data-tooltip);
             position: absolute;
-            left: 60px; /* Position à droite de l'icône */
+            left: 60px;
             top: 50%;
             transform: translateY(-50%);
             background: #333;
@@ -223,7 +223,6 @@
             box-shadow: 0 8px 0 0 #ffffff;
         }
 
-        /* Nouvelle icône pour "Profile" */
         .icon.user::before {
             content: '';
             position: absolute;
@@ -559,6 +558,306 @@
             color: #cccccc;
         }
 
+        /* Styles pour la page Profile */
+        #profile .cover-section {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #2c2c2c, #1e1e1e);
+            border-radius: 15px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        #profile .cover-section img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        #profile .cover-section .placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            color: #999;
+            font-size: 14px;
+            opacity: 0.7;
+        }
+
+        #profile .cover-section .placeholder .icon {
+            width: 40px;
+            height: 40px;
+            position: relative;
+        }
+
+        #profile .cover-section .placeholder .icon.image::before {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            width: 30px;
+            height: 20px;
+            border: 2px solid #999;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+
+        #profile .cover-section .placeholder .icon.image::after {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 10px;
+            height: 10px;
+            background: #999;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        #profile .cover-section .cover-actions {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            display: flex;
+            gap: 10px;
+        }
+
+        #profile .cover-section .cover-actions button,
+        #profile .cover-section .cover-actions label {
+            padding: 8px 16px;
+            background: #ffffff;
+            color: #121212;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        #profile .cover-section .cover-actions button:hover,
+        #profile .cover-section .cover-actions label:hover {
+            background: #e0e0e0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        #profile .cover-section input[type="file"] {
+            display: none;
+        }
+
+        #profile .cover-section .error-message {
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+            font-size: 12px;
+            color: #ff5555;
+            display: none;
+        }
+
+        #profile .cover-section.invalid .error-message {
+            display: block;
+        }
+
+        #profile .form-section {
+            display: grid;
+            gap: 30px; /* Augmenté pour plus d'aération */
+            background: #252525;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        #profile .form-section .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px; /* Augmenté pour plus d'espace */
+            position: relative;
+        }
+
+        #profile .form-section .form-group label {
+            font-size: 16px; /* Taille augmentée pour une meilleure lisibilité */
+            color: #cccccc;
+            font-weight: 500;
+        }
+
+        #profile .form-section .form-group input,
+        #profile .form-section .form-group textarea,
+        #profile .form-section .form-group select {
+            padding: 12px;
+            background: #2c2c2c;
+            border: 1px solid #444;
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        #profile .form-section .form-group input:focus,
+        #profile .form-section .form-group textarea:focus,
+        #profile .form-section .form-group select:focus {
+            outline: none;
+            border-color: #9733EE;
+            box-shadow: 0 0 8px rgba(151, 51, 238, 0.5);
+            transform: scale(1.01);
+        }
+
+        #profile .form-section .form-group .error-message {
+            font-size: 12px;
+            color: #ff5555;
+            display: none;
+        }
+
+        #profile .form-section .form-group.invalid input,
+        #profile .form-section .form-group.invalid textarea,
+        #profile .form-section .form-group.invalid select {
+            border-color: #ff5555;
+            box-shadow: 0 0 5px rgba(255, 85, 85, 0.5);
+        }
+
+        #profile .form-section .form-group.invalid .error-message {
+            display: block;
+        }
+
+        #profile .form-section .address-group,
+        #profile .form-section .contact-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        #profile .form-section .address-group .full-width {
+            grid-column: span 2;
+        }
+
+        #profile .form-section .contact-group .phone-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        #profile .form-section .contact-group .phone-group select {
+            width: 120px;
+        }
+
+        @media (max-width: 768px) {
+            #profile .form-section .address-group,
+            #profile .form-section .contact-group {
+                grid-template-columns: 1fr;
+            }
+
+            #profile .form-section .address-group .full-width {
+                grid-column: span 1;
+            }
+
+            #profile .form-section .contact-group .phone-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            #profile .form-section .contact-group .phone-group select {
+                width: 100%;
+            }
+        }
+
+        #profile .save-section {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        #profile .save-section button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        #profile .save-section .save-btn {
+            background: linear-gradient(to right, #9733EE, #DA22FF);
+            color: #ffffff;
+        }
+
+        #profile .save-section .save-btn:hover {
+            background: linear-gradient(to right, #DA22FF, #9733EE);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(151, 51, 238, 0.5);
+        }
+
+        #profile .save-section .cancel-btn {
+            background: #444;
+            color: #ffffff;
+        }
+
+        #profile .save-section .cancel-btn:hover {
+            background: #555;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Modale de confirmation */
+        .confirmation-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .confirmation-modal .modal-content {
+            background: #1e1e1e;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .confirmation-modal .modal-content p {
+            font-size: 16px;
+            color: #ffffff;
+            margin-bottom: 20px;
+        }
+
+        .confirmation-modal .modal-content button {
+            padding: 10px 20px;
+            background: linear-gradient(to right, #9733EE, #DA22FF);
+            border: none;
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .confirmation-modal .modal-content button:hover {
+            background: linear-gradient(to right, #DA22FF, #9733EE);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(151, 51, 238, 0.5);
+        }
+
         /* Responsivité */
         @media (max-width: 768px) {
             .sidebar {
@@ -596,6 +895,14 @@
                 <input type="checkbox" id="dontShowAgain">
                 <label for="dontShowAgain">Ne plus afficher</label>
             </div>
+        </div>
+    </div>
+
+    <!-- Modale de confirmation -->
+    <div class="confirmation-modal" id="confirmationModal">
+        <div class="modal-content">
+            <p>Informations enregistrées avec succès !</p>
+            <button onclick="closeConfirmationModal()">OK</button>
         </div>
     </div>
 
@@ -715,11 +1022,97 @@
             <div class="subtitle">Consulter et gérer les informations des clients</div>
             <p>Contenu de la page Client...</p>
         </div>
+
+        <!-- Section Profile améliorée -->
         <div class="content-section" id="profile">
             <h2>Profile</h2>
-            <div class="subtitle">Modifier vos informations personnelles</div>
-            <p>Contenu de la page Profile...</p>
+            <div class="subtitle">Modifier les informations de votre discothèque</div>
+
+            <!-- Section Couverture -->
+            <div class="cover-section" id="coverSection">
+                <div class="placeholder" id="coverPlaceholder">
+                    <span class="icon image"></span>
+                    Aucune couverture sélectionnée
+                </div>
+                <img id="coverImage" src="" alt="Couverture de la discothèque" style="display: none;">
+                <div class="cover-actions">
+                    <label for="coverUpload" class="upload-btn">Ajouter une couverture</label>
+                    <button id="removeCoverBtn" style="display: none;">Supprimer la couverture</button>
+                    <input type="file" id="coverUpload" accept="image/*">
+                </div>
+                <span class="error-message" id="coverError">Veuillez ajouter une couverture.</span>
+            </div>
+
+            <!-- Formulaire -->
+            <form id="profileForm" class="form-section">
+                <div class="form-group">
+                    <label for="discoName">Nom de la discothèque</label>
+                    <input type="text" id="discoName" name="discoName" placeholder="Entrez le nom de la discothèque" required>
+                    <span class="error-message" id="discoNameError">Veuillez entrer le nom de la discothèque.</span>
+                </div>
+
+                <div class="form-group address-group">
+                    <div class="form-group">
+                        <label for="country">Pays</label>
+                        <select id="country" name="country">
+                            <option value="FR" selected>France</option>
+                            <option value="US">États-Unis</option>
+                            <option value="GB">Royaume-Uni</option>
+                            <option value="DE">Allemagne</option>
+                            <option value="ES">Espagne</option>
+                            <option value="IT">Italie</option>
+                            <!-- Ajoutez d'autres pays si nécessaire -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="city">Ville</label>
+                        <input type="text" id="city" name="city" placeholder="Entrez la ville" required>
+                        <span class="error-message" id="cityError">Veuillez entrer la ville.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="postalCode">Code postal</label>
+                        <input type="text" id="postalCode" name="postalCode" placeholder="Entrez le code postal" required>
+                        <span class="error-message" id="postalCodeError">Veuillez entrer un code postal valide.</span>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="address">Adresse complète</label>
+                        <textarea id="address" name="address" rows="3" placeholder="Entrez l'adresse complète (rue, numéro, etc.)" required></textarea>
+                        <span class="error-message" id="addressError">Veuillez entrer une adresse complète.</span>
+                    </div>
+                </div>
+
+                <div class="form-group contact-group">
+                    <div class="form-group">
+                        <label for="phone">Téléphone</label>
+                        <div class="phone-group">
+                            <select id="countryCode" name="countryCode">
+                                <option value="+33" selected>+33 (FR)</option>
+                                <option value="+1">+1 (US)</option>
+                                <option value="+44">+44 (GB)</option>
+                                <option value="+49">+49 (DE)</option>
+                                <option value="+34">+34 (ES)</option>
+                                <option value="+39">+39 (IT)</option>
+                                <!-- Ajoutez d'autres codes si nécessaire -->
+                            </select>
+                            <input type="tel" id="phone" name="phone" placeholder="Entrez le numéro" required>
+                        </div>
+                        <span class="error-message" id="phoneError">Veuillez entrer un numéro de téléphone valide.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">E-mail</label>
+                        <input type="email" id="email" name="email" placeholder="Entrez l'adresse e-mail" required>
+                        <span class="error-message" id="emailError">Veuillez entrer une adresse e-mail valide.</span>
+                    </div>
+                </div>
+
+                <!-- Section Enregistrer -->
+                <div class="save-section">
+                    <button type="submit" class="save-btn">Enregistrer les informations</button>
+                    <button type="button" class="cancel-btn" onclick="resetForm()">Annuler</button>
+                </div>
+            </form>
         </div>
+
         <div class="content-section" id="rapports">
             <h2>Rapports/Statistiques</h2>
             <div class="subtitle">Analyser les performances de votre discothèque</div>
@@ -827,6 +1220,228 @@
             if (modal.style.display === 'flex') {
                 modal.focus();
             }
+        });
+
+        // Gestion de la modale de confirmation
+        const confirmationModal = document.getElementById('confirmationModal');
+
+        function showConfirmationModal() {
+            confirmationModal.style.display = 'flex';
+        }
+
+        function closeConfirmationModal() {
+            confirmationModal.style.display = 'none';
+        }
+
+        // Gestion de l'upload de la couverture
+        const coverUpload = document.getElementById('coverUpload');
+        const coverImage = document.getElementById('coverImage');
+        const coverPlaceholder = document.getElementById('coverPlaceholder');
+        const removeCoverBtn = document.getElementById('removeCoverBtn');
+        const coverSection = document.getElementById('coverSection');
+
+        coverUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    coverImage.src = event.target.result;
+                    coverImage.style.display = 'block';
+                    coverPlaceholder.style.display = 'none';
+                    removeCoverBtn.style.display = 'inline-block';
+                    coverSection.classList.remove('invalid');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        removeCoverBtn.addEventListener('click', () => {
+            coverImage.src = '';
+            coverImage.style.display = 'none';
+            coverPlaceholder.style.display = 'flex';
+            removeCoverBtn.style.display = 'none';
+            coverUpload.value = ''; // Réinitialiser l'input file
+        });
+
+        // Gestion de la validation et soumission du formulaire
+        const profileForm = document.getElementById('profileForm');
+        const discoNameInput = document.getElementById('discoName');
+        const countryInput = document.getElementById('country');
+        const cityInput = document.getElementById('city');
+        const postalCodeInput = document.getElementById('postalCode');
+        const addressInput = document.getElementById('address');
+        const countryCodeInput = document.getElementById('countryCode');
+        const phoneInput = document.getElementById('phone');
+        const emailInput = document.getElementById('email');
+
+        function validateForm() {
+            let isValid = true;
+
+            // Validation de la couverture
+            if (!coverImage.src || coverImage.style.display === 'none') {
+                coverSection.classList.add('invalid');
+                isValid = false;
+            } else {
+                coverSection.classList.remove('invalid');
+            }
+
+            // Validation du nom de la discothèque
+            if (!discoNameInput.value.trim()) {
+                discoNameInput.parentElement.classList.add('invalid');
+                isValid = false;
+            } else {
+                discoNameInput.parentElement.classList.remove('invalid');
+            }
+
+            // Validation de la ville
+            if (!cityInput.value.trim()) {
+                cityInput.parentElement.classList.add('invalid');
+                isValid = false;
+            } else {
+                cityInput.parentElement.classList.remove('invalid');
+            }
+
+            // Validation du code postal
+            const postalCodePattern = countryInput.value === 'FR' ? /^\d{5}$/ : /.*/; // 5 chiffres pour la France
+            if (!postalCodePattern.test(postalCodeInput.value.trim())) {
+                postalCodeInput.parentElement.classList.add('invalid');
+                isValid = false;
+            } else {
+                postalCodeInput.parentElement.classList.remove('invalid');
+            }
+
+            // Validation de l'adresse
+            if (!addressInput.value.trim()) {
+                addressInput.parentElement.classList.add('invalid');
+                isValid = false;
+            } else {
+                addressInput.parentElement.classList.remove('invalid');
+            }
+
+            // Validation du téléphone
+            const phonePattern = countryInput.value === 'FR' ? /^[67]\d{8}$/ : /^\d{9,15}$/; // Commence par 6 ou 7 et 9 chiffres pour la France
+            if (!phonePattern.test(phoneInput.value.trim())) {
+                phoneInput.parentElement.classList.add('invalid');
+                isValid = false;
+            } else {
+                phoneInput.parentElement.classList.remove('invalid');
+            }
+
+            // Validation de l'e-mail
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(emailInput.value.trim())) {
+                emailInput.parentElement.classList.add('invalid');
+                isValid = false;
+            } else {
+                emailInput.parentElement.classList.remove('invalid');
+            }
+
+            return isValid;
+        }
+
+        profileForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            if (validateForm()) {
+                const formData = new FormData(profileForm);
+                const data = {
+                    discoName: formData.get('discoName'),
+                    country: formData.get('country'),
+                    city: formData.get('city'),
+                    postalCode: formData.get('postalCode'),
+                    address: formData.get('address'),
+                    phone: `${formData.get('countryCode')}${formData.get('phone')}`,
+                    email: formData.get('email'),
+                    cover: coverImage.src,
+                };
+                // Simulation de sauvegarde (vous pouvez remplacer par une requête API)
+                console.log('Informations sauvegardées :', data);
+                showConfirmationModal();
+            }
+        });
+
+        // Réinitialisation du formulaire
+        function resetForm() {
+            profileForm.reset();
+            coverImage.src = '';
+            coverImage.style.display = 'none';
+            coverPlaceholder.style.display = 'flex';
+            removeCoverBtn.style.display = 'none';
+            coverUpload.value = '';
+            coverSection.classList.remove('invalid');
+            document.querySelectorAll('.form-group').forEach(group => {
+                group.classList.remove('invalid');
+            });
+            countryInput.value = 'FR'; // Remettre la France par défaut
+            countryCodeInput.value = '+33'; // Remettre +33 par défaut
+        }
+
+        // Validation en temps réel
+        discoNameInput.addEventListener('input', () => {
+            if (discoNameInput.value.trim()) {
+                discoNameInput.parentElement.classList.remove('invalid');
+            }
+        });
+
+        cityInput.addEventListener('input', () => {
+            if (cityInput.value.trim()) {
+                cityInput.parentElement.classList.remove('invalid');
+            }
+        });
+
+        postalCodeInput.addEventListener('input', () => {
+            const postalCodePattern = countryInput.value === 'FR' ? /^\d{5}$/ : /.*/;
+            if (postalCodePattern.test(postalCodeInput.value.trim())) {
+                postalCodeInput.parentElement.classList.remove('invalid');
+            }
+        });
+
+        addressInput.addEventListener('input', () => {
+            if (addressInput.value.trim()) {
+                addressInput.parentElement.classList.remove('invalid');
+            }
+        });
+
+        phoneInput.addEventListener('input', () => {
+            const phonePattern = countryInput.value === 'FR' ? /^[67]\d{8}$/ : /^\d{9,15}$/;
+            if (phonePattern.test(phoneInput.value.trim())) {
+                phoneInput.parentElement.classList.remove('invalid');
+            }
+        });
+
+        emailInput.addEventListener('input', () => {
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (emailPattern.test(emailInput.value.trim())) {
+                emailInput.parentElement.classList.remove('invalid');
+            }
+        });
+
+        // Mettre à jour la validation du code postal et du téléphone en fonction du pays
+        countryInput.addEventListener('change', () => {
+            const postalCodePattern = countryInput.value === 'FR' ? /^\d{5}$/ : /.*/;
+            if (!postalCodePattern.test(postalCodeInput.value.trim())) {
+                postalCodeInput.parentElement.classList.add('invalid');
+            } else {
+                postalCodeInput.parentElement.classList.remove('invalid');
+            }
+
+            const phonePattern = countryInput.value === 'FR' ? /^[67]\d{8}$/ : /^\d{9,15}$/;
+            if (!phonePattern.test(phoneInput.value.trim())) {
+                phoneInput.parentElement.classList.add('invalid');
+            } else {
+                phoneInput.parentElement.classList.remove('invalid');
+            }
+
+            // Synchroniser le code de pays avec le pays sélectionné
+            const countryToCodeMap = {
+                'FR': '+33',
+                'US': '+1',
+                'GB': '+44',
+                'DE': '+49',
+                'ES': '+34',
+                'IT': '+39',
+            };
+            countryCodeInput.value = countryToCodeMap[countryInput.value] || '+33';
         });
     </script>
 </body>
