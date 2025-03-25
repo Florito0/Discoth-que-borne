@@ -362,7 +362,7 @@
             margin-top: 5px;
         }
 
-        /* Icônes CSS pour les sous-menus */
+        /* Icônes CSS pour les sous-menus de Gestion */
         .icon.group::before,
         .icon.group::after {
             content: '';
@@ -478,6 +478,50 @@
             height: 6px;
             border: 2px solid #ffffff;
             border-radius: 50%;
+        }
+
+        /* Icônes CSS pour les sous-menus de Configuration */
+        .icon.payment::before {
+            content: '';
+            position: absolute;
+            top: 6px;
+            left: 4px;
+            width: 16px;
+            height: 10px;
+            border: 2px solid #ffffff;
+            border-radius: 3px;
+        }
+
+        .icon.payment::after {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 8px;
+            width: 8px;
+            height: 2px;
+            background: #ffffff;
+        }
+
+        .icon.billing::before {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #ffffff;
+            border-radius: 2px;
+        }
+
+        .icon.billing::after {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 6px;
+            width: 12px;
+            height: 2px;
+            background: #ffffff;
+            box-shadow: 0 4px 0 0 #ffffff;
         }
 
         /* Bouton Retour */
@@ -671,7 +715,7 @@
 
         #profile .form-section {
             display: grid;
-            gap: 30px; /* Augmenté pour plus d'aération */
+            gap: 30px;
             background: #252525;
             padding: 20px;
             border-radius: 15px;
@@ -681,12 +725,12 @@
         #profile .form-section .form-group {
             display: flex;
             flex-direction: column;
-            gap: 10px; /* Augmenté pour plus d'espace */
+            gap: 10px;
             position: relative;
         }
 
         #profile .form-section .form-group label {
-            font-size: 16px; /* Taille augmentée pour une meilleure lisibilité */
+            font-size: 16px;
             color: #cccccc;
             font-weight: 500;
         }
@@ -1023,7 +1067,7 @@
             <p>Contenu de la page Client...</p>
         </div>
 
-        <!-- Section Profile améliorée -->
+        <!-- Section Profile -->
         <div class="content-section" id="profile">
             <h2>Profile</h2>
             <div class="subtitle">Modifier les informations de votre discothèque</div>
@@ -1118,10 +1162,37 @@
             <div class="subtitle">Analyser les performances de votre discothèque</div>
             <p>Contenu de la page Rapports/Statistiques...</p>
         </div>
+
+        <!-- Section Configuration avec sous-menus -->
         <div class="content-section" id="configuration">
             <h2>Configuration</h2>
             <div class="subtitle">Personnaliser les paramètres généraux</div>
-            <p>Contenu de la page Configuration...</p>
+            <div class="submenu-content">
+                <a href="#" class="submenu-item" data-target="configuration-modes-paiement">
+                    <span class="icon payment"></span>
+                    Modes de paiement et Caisse
+                    <div class="description">Définissez les modes de paiement acceptés, vérifiez votre compte bancaire, et configurez les paiements en ligne</div>
+                </a>
+                <a href="#" class="submenu-item" data-target="configuration-abonnement">
+                    <span class="icon billing"></span>
+                    Abonnement et facturation
+                    <div class="description">Détails de facturation, mode de paiement</div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Sous-sections de Configuration -->
+        <div class="content-section" id="configuration-modes-paiement">
+            <a href="#" class="back-button" data-target="configuration">← Retour</a>
+            <h2>Modes de paiement et Caisse</h2>
+            <div class="subtitle">Définissez les modes de paiement acceptés, vérifiez votre compte bancaire, et configurez les paiements en ligne</div>
+            <p>Contenu de la gestion des modes de paiement et caisse...</p>
+        </div>
+        <div class="content-section" id="configuration-abonnement">
+            <a href="#" class="back-button" data-target="configuration">← Retour</a>
+            <h2>Abonnement et facturation</h2>
+            <div class="subtitle">Détails de facturation, mode de paiement</div>
+            <p>Contenu de la gestion de l'abonnement et facturation...</p>
         </div>
     </div>
 
