@@ -130,7 +130,8 @@
         }
 
         .filters select,
-        .filters input[type="number"] {
+        .filters input[type="number"],
+        .filters input[type="date"] {
             padding: 10px;
             border: 1px solid #e0e0e0;
             border-radius: 8px;
@@ -212,20 +213,43 @@
             width: 300px;
         }
 
-        .chart-details .save-btn {
-            padding: 8px 16px;
-            background: #9733EE;
+        /* === Boutons === */
+        .btn {
+            padding: 10px 20px;
             border: none;
             border-radius: 8px;
-            color: #ffffff;
             font-size: 14px;
             cursor: pointer;
             transition: all 0.3s ease;
-            margin-top: 10px;
         }
 
-        .chart-details .save-btn:hover {
-            background: #DA22FF;
+        .btn-primary {
+            background: linear-gradient(to right, #9733EE, #DA22FF);
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(to right, #DA22FF, #9733EE);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(151, 51, 238, 0.3);
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #cccccc;
+        }
+
+        .btn-danger {
+            background: #ff5555;
+            color: #ffffff;
+        }
+
+        .btn-danger:hover {
+            background: #ff7777;
         }
 
         /* === Jauge pour le vestiaire === */
@@ -240,16 +264,16 @@
         }
 
         .vestiaire-gauge progress::-webkit-progress-value {
-            background: #4CAF50; /* Vert par défaut */
+            background: #4CAF50;
             border-radius: 10px;
         }
 
         .vestiaire-gauge progress.warning::-webkit-progress-value {
-            background: #FF9800; /* Orange */
+            background: #FF9800;
         }
 
         .vestiaire-gauge progress.danger::-webkit-progress-value {
-            background: #F44336; /* Rouge */
+            background: #F44336;
         }
 
         .vestiaire-gauge p {
@@ -289,30 +313,11 @@
 
         /* === Code couleur pour les comparaisons === */
         .positive {
-            color: #4CAF50 !important; /* Vert */
+            color: #4CAF50 !important;
         }
 
         .negative {
-            color: #F44336 !important; /* Rouge */
-        }
-
-        /* === Bouton d'exportation === */
-        .export-btn {
-            padding: 10px 20px;
-            background: linear-gradient(to right, #9733EE, #DA22FF);
-            border: none;
-            border-radius: 8px;
-            color: #ffffff;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-bottom: 20px;
-        }
-
-        .export-btn:hover {
-            background: linear-gradient(to right, #DA22FF, #9733EE);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(151, 51, 238, 0.3);
+            color: #F44336 !important;
         }
 
         /* === Champ de recherche pour annulation === */
@@ -329,21 +334,6 @@
             border-radius: 8px;
             font-size: 14px;
             width: 200px;
-        }
-
-        .search-cancel button {
-            padding: 10px 20px;
-            background: #ff5555;
-            border: none;
-            border-radius: 8px;
-            color: #ffffff;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .search-cancel button:hover {
-            background: #ff7777;
         }
 
         /* === Modale de confirmation pour annulation === */
@@ -391,39 +381,37 @@
             justify-content: center;
         }
 
-        .modal-content button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .modal-content .confirm-btn {
-            background: #9733EE;
-            color: #ffffff;
-        }
-
-        .modal-content .confirm-btn:hover {
-            background: #DA22FF;
-        }
-
-        .modal-content .cancel-btn {
-            background: #e0e0e0;
-            color: #333;
-        }
-
-        .modal-content .cancel-btn:hover {
-            background: #cccccc;
-        }
-
         /* === Total cumulé === */
         .total {
             font-size: 16px;
             font-weight: 600;
             color: #333;
             margin-bottom: 20px;
+        }
+
+        /* === Indicateur de chargement === */
+        .loader {
+            font-size: 16px;
+            color: #666;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loader::before {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            border: 2px solid #9733EE;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -464,7 +452,7 @@
         <!-- Taux d'occupation -->
         <div id="occupancy" class="tab-content active">
             <h2>Taux d'occupation</h2>
-            <button class="export-btn" onclick="exportToPDF('occupancy')">Exporter en PDF</button>
+            <button class="btn btn-primary" onclick="exportToPDF('occupancy')">Exporter en PDF</button>
             <div class="filters">
                 <select id="monthSelect" onchange="updateOccupancyChart()">
                     <option value="2025-03">Mars 2025</option>
@@ -493,6 +481,9 @@
                     <label for="capacityMax">Capacité d'accueil maximum</label>
                 </div>
             </div>
+            <div class="loader" id="occupancyLoader" style="display: none; text-align: center; padding: 20px;">
+                <span>Chargement...</span>
+            </div>
             <button class="back-btn" id="backBtn" onclick="backToMonthView()">Retour à la vue par mois</button>
             <div class="chart-container">
                 <canvas id="occupancyChart"></canvas>
@@ -501,7 +492,7 @@
                 <p><strong>Date :</strong> <span id="detailDate">-</span></p>
                 <p><strong>Taux d'occupation :</strong> <span id="detailRate">-</span></p>
                 <p><strong>Information :</strong> <input type="text" id="detailInfo" value="-"></p>
-                <button class="save-btn" onclick="saveInfo()">Sauvegarder</button>
+                <button class="btn btn-primary" onclick="saveInfo()">Sauvegarder</button>
             </div>
             <div class="data-table" id="occupancyTable">
                 <table>
@@ -522,16 +513,36 @@
         <!-- Rapport tickets -->
         <div id="tickets" class="tab-content">
             <h2>Rapport tickets d'entrée et vestiaire</h2>
-            <button class="export-btn" onclick="exportToPDF('tickets')">Exporter en PDF</button>
+            <button class="btn btn-primary" onclick="exportToPDF('tickets')">Exporter en PDF</button>
             <div class="filters">
+                <!-- Ajout des sélecteurs pour période, mois, semaine et jour -->
                 <select id="ticketPeriod" onchange="updateTicketsReport()">
                     <option value="day">Jour</option>
                     <option value="week">Semaine</option>
                     <option value="month">Mois</option>
                 </select>
+                <!-- Sélecteur de mois -->
+                <select id="ticketMonth" onchange="updateTicketDays(); updateTicketsReport()">
+                    <option value="2025-03">Mars 2025</option>
+                    <option value="2025-02">Février 2025</option>
+                    <option value="2025-01">Janvier 2025</option>
+                </select>
+                <!-- Sélecteur de semaine (dépend du mois sélectionné) -->
+                <select id="ticketWeek" onchange="updateTicketsReport()" disabled>
+                    <option value="">Sélectionner une semaine</option>
+                    <!-- Options remplies dynamiquement -->
+                </select>
+                <!-- Sélecteur de jour (dépend du mois sélectionné) -->
+                <select id="ticketDay" onchange="updateTicketsReport()" disabled>
+                    <option value="">Sélectionner un jour</option>
+                    <!-- Options remplies dynamiquement -->
+                </select>
+            </div>
+            <div class="loader" id="ticketsLoader" style="display: none; text-align: center; padding: 20px;">
+                <span>Chargement...</span>
             </div>
             <div class="total" id="occupancyImpact">
-                Taux d'occupation moyen pour Mars 2025 : 75%
+                Taux d'occupation moyen : 75%
             </div>
             <div class="vestiaire-gauge">
                 <h3>Utilisation du vestiaire</h3>
@@ -544,7 +555,7 @@
                 <progress id="vestiaireProgress" value="80" max="100"></progress>
                 <p id="vestiaireText">80/100 cintres utilisés (maximum recommandé : 100)</p>
             </div>
-            <div class="data-table" id'="ticketsTable">
+            <div class="data-table" id="ticketsTable">
                 <table>
                     <thead>
                         <tr>
@@ -578,7 +589,7 @@
         <!-- Historique tickets -->
         <div id="history" class="tab-content">
             <h2>Historique des tickets</h2>
-            <button class="export-btn" onclick="exportToPDF('history')">Exporter en PDF</button>
+            <button class="btn btn-primary" onclick="exportToPDF('history')">Exporter en PDF</button>
             <div class="search-cancel">
                 <input type="text" placeholder="Rechercher par identifiant unique">
                 <select>
@@ -586,7 +597,10 @@
                     <option>Type : Entrée</option>
                     <option>Type : Vestiaire</option>
                 </select>
-                <button onclick="showCancelModal()">Annuler commande</button>
+                <button class="btn btn-danger" onclick="showCancelModal()">Annuler commande</button>
+            </div>
+            <div class="loader" id="historyLoader" style="display: none; text-align: center; padding: 20px;">
+                <span>Chargement...</span>
             </div>
             <div class="data-table" id="historyTable">
                 <table>
@@ -622,13 +636,16 @@
         <!-- Gestion trésorerie -->
         <div id="treasury" class="tab-content">
             <h2>Gestion de la trésorerie</h2>
-            <button class="export-btn" onclick="exportToPDF('treasury')">Exporter en PDF</button>
+            <button class="btn btn-primary" onclick="exportToPDF('treasury')">Exporter en PDF</button>
             <div class="filters">
                 <select onchange="filterTreasury()">
                     <option>Type : Tous</option>
                     <option>Type : Entrée</option>
                     <option>Type : Vestiaire</option>
                 </select>
+            </div>
+            <div class="loader" id="treasuryLoader" style="display: none; text-align: center; padding: 20px;">
+                <span>Chargement...</span>
             </div>
             <div class="total">
                 Total pour Mars 2025 : 3 500€
@@ -664,13 +681,16 @@
         <!-- Rapport CA -->
         <div id="revenue" class="tab-content">
             <h2>Rapport chiffre d'affaires</h2>
-            <button class="export-btn" onclick="exportToPDF('revenue')">Exporter en PDF</button>
+            <button class="btn btn-primary" onclick="exportToPDF('revenue')">Exporter en PDF</button>
             <div class="filters">
                 <select>
                     <option>Mars 2025</option>
                     <option>Février 2025</option>
                     <option>Janvier 2025</option>
                 </select>
+            </div>
+            <div class="loader" id="revenueLoader" style="display: none; text-align: center; padding: 20px;">
+                <span>Chargement...</span>
             </div>
             <div class="chart-container">
                 <canvas id="revenueChart"></canvas>
@@ -726,8 +746,8 @@
                 <h3>Confirmer l'annulation</h3>
                 <textarea placeholder="Raison de l'annulation (obligatoire)" id="cancelReason"></textarea>
                 <div class="btn-group">
-                    <button class="confirm-btn" onclick="confirmCancel()">Confirmer</button>
-                    <button class="cancel-btn" onclick="closeCancelModal()">Annuler</button>
+                    <button class="btn btn-primary" onclick="confirmCancel()">Confirmer</button>
+                    <button class="btn btn-secondary" onclick="closeCancelModal()">Annuler</button>
                 </div>
             </div>
         </div>
@@ -737,26 +757,18 @@
         // === Données simulées (à remplacer par une API) ===
         const occupancyData = {
             '2025-03': Array.from({ length: 31 }, (_, i) => {
-                const menEntry = Math.floor(Math.random() * 150) + 50; // Entre 50 et 200 hommes
-                const womenEntry = Math.floor(Math.random() * 150) + 50; // Entre 50 et 200 femmes
-                const menVestiaire = Math.floor(Math.random() * 30) + 20; // Entre 20 et 50 hommes
-                const womenVestiaire = Math.floor(Math.random() * 30) + 20; // Entre 20 et 50 femmes
+                const menEntry = Math.floor(Math.random() * 150) + 50;
+                const womenEntry = Math.floor(Math.random() * 150) + 50;
+                const menVestiaire = Math.floor(Math.random() * 30) + 20;
+                const womenVestiaire = Math.floor(Math.random() * 30) + 20;
                 return {
                     date: `2025-03-${String(i + 1).padStart(2, '0')}`,
-                    entry: {
-                        men: menEntry,
-                        women: womenEntry,
-                        total: menEntry + womenEntry
-                    },
-                    vestiaire: {
-                        men: menVestiaire,
-                        women: womenVestiaire,
-                        total: menVestiaire + womenVestiaire
-                    },
+                    entry: { men: menEntry, women: womenEntry, total: menEntry + womenEntry },
+                    vestiaire: { men: menVestiaire, women: womenVestiaire, total: menVestiaire + womenVestiaire },
                     hourlyData: Array.from({ length: 8 }, (_, h) => {
-                        const hour = 20 + h; // De 20h à 3h
+                        const hour = 20 + h;
                         const hourStr = hour >= 24 ? `0${hour - 24}:00` : `${hour}:00`;
-                        const factor = Math.sin((h / 8) * Math.PI) * 0.8 + 0.2; // Simule un pic vers 1h
+                        const factor = Math.sin((h / 8) * Math.PI) * 0.8 + 0.2;
                         return {
                             hour: hourStr,
                             entry: {
@@ -781,16 +793,8 @@
                 const womenVestiaire = Math.floor(Math.random() * 30) + 20;
                 return {
                     date: `2025-02-${String(i + 1).padStart(2, '0')}`,
-                    entry: {
-                        men: menEntry,
-                        women: womenEntry,
-                        total: menEntry + womenEntry
-                    },
-                    vestiaire: {
-                        men: menVestiaire,
-                        women: womenVestiaire,
-                        total: menVestiaire + womenVestiaire
-                    },
+                    entry: { men: menEntry, women: womenEntry, total: menEntry + womenEntry },
+                    vestiaire: { men: menVestiaire, women: womenVestiaire, total: menVestiaire + womenVestiaire },
                     hourlyData: Array.from({ length: 8 }, (_, h) => {
                         const hour = 20 + h;
                         const hourStr = hour >= 24 ? `0${hour - 24}:00` : `${hour}:00`;
@@ -819,16 +823,8 @@
                 const womenVestiaire = Math.floor(Math.random() * 30) + 20;
                 return {
                     date: `2025-01-${String(i + 1).padStart(2, '0')}`,
-                    entry: {
-                        men: menEntry,
-                        women: womenEntry,
-                        total: menEntry + womenEntry
-                    },
-                    vestiaire: {
-                        men: menVestiaire,
-                        women: womenVestiaire,
-                        total: menVestiaire + womenVestiaire
-                    },
+                    entry: { men: menEntry, women: womenEntry, total: menEntry + womenEntry },
+                    vestiaire: { men: menVestiaire, women: womenVestiaire, total: menVestiaire + womenVestiaire },
                     hourlyData: Array.from({ length: 8 }, (_, h) => {
                         const hour = 20 + h;
                         const hourStr = hour >= 24 ? `0${hour - 24}:00` : `${hour}:00`;
@@ -852,7 +848,46 @@
             })
         };
 
-        // Données annuelles (moyenne par mois pour 2025)
+        // Ajout des données simulées pour les tickets (par jour, semaine, mois)
+        const ticketsData = {
+            '2025-03': Array.from({ length: 31 }, (_, i) => {
+                const menEntry = Math.floor(Math.random() * 150) + 50;
+                const womenEntry = Math.floor(Math.random() * 150) + 50;
+                const menVestiaire = Math.floor(Math.random() * 30) + 20;
+                const womenVestiaire = Math.floor(Math.random() * 30) + 20;
+                return {
+                    date: `2025-03-${String(i + 1).padStart(2, '0')}`,
+                    entry: { men: menEntry, women: womenEntry, total: menEntry + womenEntry },
+                    vestiaire: { men: menVestiaire, women: womenVestiaire, total: menVestiaire + womenVestiaire },
+                    avgOccupancy: Math.round(((menEntry + womenEntry) / 500) * 100) // Simulé avec une capacité max de 500
+                };
+            }),
+            '2025-02': Array.from({ length: 28 }, (_, i) => {
+                const menEntry = Math.floor(Math.random() * 150) + 50;
+                const womenEntry = Math.floor(Math.random() * 150) + 50;
+                const menVestiaire = Math.floor(Math.random() * 30) + 20;
+                const womenVestiaire = Math.floor(Math.random() * 30) + 20;
+                return {
+                    date: `2025-02-${String(i + 1).padStart(2, '0')}`,
+                    entry: { men: menEntry, women: womenEntry, total: menEntry + womenEntry },
+                    vestiaire: { men: menVestiaire, women: womenVestiaire, total: menVestiaire + womenVestiaire },
+                    avgOccupancy: Math.round(((menEntry + womenEntry) / 500) * 100)
+                };
+            }),
+            '2025-01': Array.from({ length: 31 }, (_, i) => {
+                const menEntry = Math.floor(Math.random() * 150) + 50;
+                const womenEntry = Math.floor(Math.random() * 150) + 50;
+                const menVestiaire = Math.floor(Math.random() * 30) + 20;
+                const womenVestiaire = Math.floor(Math.random() * 30) + 20;
+                return {
+                    date: `2025-01-${String(i + 1).padStart(2, '0')}`,
+                    entry: { men: menEntry, women: womenEntry, total: menEntry + womenEntry },
+                    vestiaire: { men: menVestiaire, women: womenVestiaire, total: menVestiaire + womenVestiaire },
+                    avgOccupancy: Math.round(((menEntry + womenEntry) / 500) * 100)
+                };
+            })
+        };
+
         const yearlyData = Array.from({ length: 12 }, (_, i) => {
             const month = String(i + 1).padStart(2, '0');
             const monthKey = `2025-${month}`;
@@ -864,22 +899,20 @@
             const info = monthData.find(d => d.info !== '-')?.info || '-';
             return {
                 month: monthKey,
-                entry: {
-                    men: avgEntryMen,
-                    women: avgEntryWomen,
-                    total: avgEntryMen + avgEntryWomen
-                },
-                vestiaire: {
-                    men: avgVestiaireMen,
-                    women: avgVestiaireWomen,
-                    total: avgVestiaireMen + avgVestiaireWomen
-                },
+                entry: { men: avgEntryMen, women: avgEntryWomen, total: avgEntryMen + avgEntryWomen },
+                vestiaire: { men: avgVestiaireMen, women: avgVestiaireWomen, total: avgVestiaireMen + avgVestiaireWomen },
                 info: info
             };
         });
 
-        // Charger les informations sauvegardées depuis localStorage
+        // === Variables globales ===
+        let occupancyChart = null; // Instance du graphique Chart.js pour le taux d'occupation
+        let currentSelectedData = null; // Donnée actuellement sélectionnée (jour ou mois)
+        let currentView = 'month'; // Vue actuelle ('month', 'hour', 'year')
+        let selectedDayData = null; // Données du jour sélectionné pour la vue heure par heure
         const savedInfo = JSON.parse(localStorage.getItem('occupancyInfo')) || {};
+
+        // Charger les informations sauvegardées
         Object.keys(occupancyData).forEach(month => {
             occupancyData[month].forEach(entry => {
                 if (savedInfo[entry.date]) {
@@ -893,18 +926,211 @@
             }
         });
 
-        let occupancyChart;
-        let currentSelectedData = null; // Pour garder une référence à la donnée sélectionnée
-        let currentView = 'month'; // 'month', 'hour', ou 'year'
-        let selectedDayData = null; // Données du jour sélectionné pour la vue heure par heure
-
         // Charger la capacité d'accueil depuis localStorage
         const savedCapacityMax = localStorage.getItem('capacityMax');
         if (savedCapacityMax) {
             document.getElementById('capacityMax').value = savedCapacityMax;
         }
 
-        // === Gestion des onglets ===
+        // Charger la jauge maximum du vestiaire depuis localStorage
+        const savedVestiaireMax = localStorage.getItem('vestiaireMax');
+        if (savedVestiaireMax) {
+            document.getElementById('vestiaireMax').value = savedVestiaireMax;
+        }
+
+        // === Fonctions utilitaires ===
+        /**
+         * Calcule le jour de la semaine à partir d'une date.
+         * @param {string} dateStr - La date au format 'YYYY-MM-DD'.
+         * @returns {string} La première lettre du jour (ex. 'L' pour lundi).
+         */
+        function getDayInitial(dateStr) {
+            const date = new Date(dateStr);
+            const days = ['D', 'L', 'M', 'M', 'J', 'V', 'S']; // Dimanche, Lundi, ..., Samedi
+            return days[date.getDay()];
+        }
+
+        /**
+         * Calcule le taux d'occupation pour un ensemble de données.
+         * @param {Object[]} data - Les données (jours, heures, ou mois).
+         * @param {string} ticketType - Type de ticket ('entry' ou 'vestiaire').
+         * @param {boolean} genderTotal - Afficher le total.
+         * @param {boolean} genderMen - Afficher les hommes.
+         * @param {boolean} genderWomen - Afficher les femmes.
+         * @param {number} max - Capacité maximale (entrée ou vestiaire).
+         * @returns {Object[]} Les datasets pour Chart.js.
+         */
+        function calculateOccupancyRates(data, ticketType, genderTotal, genderMen, genderWomen, max) {
+            const datasets = [];
+            if (genderTotal) {
+                const rates = data.map(d => Math.round((d[ticketType].total / max) * 100));
+                datasets.push({
+                    label: `Taux d'occupation (${ticketType === 'entry' ? "Tickets d'entrée" : 'Tickets vestiaire'} - Total) (%)`,
+                    data: rates,
+                    borderColor: '#9733EE',
+                    backgroundColor: 'rgba(151, 51, 238, 0.2)',
+                    fill: true,
+                });
+            } else {
+                if (genderMen) {
+                    const rates = data.map(d => Math.round((d[ticketType].men / max) * 100));
+                    datasets.push({
+                        label: `Taux d'occupation (${ticketType === 'entry' ? "Tickets d'entrée" : 'Tickets vestiaire'} - Homme) (%)`,
+                        data: rates,
+                        borderColor: '#1E90FF', // Changement de couleur : vert -> bleu
+                        backgroundColor: 'rgba(30, 144, 255, 0.2)', // Fond bleu clair
+                        fill: true,
+                    });
+                }
+                if (genderWomen) {
+                    const rates = data.map(d => Math.round((d[ticketType].women / max) * 100));
+                    datasets.push({
+                        label: `Taux d'occupation (${ticketType === 'entry' ? "Tickets d'entrée" : 'Tickets vestiaire'} - Femme) (%)`,
+                        data: rates,
+                        borderColor: '#FF69B4', // Changement de couleur : rouge -> rose
+                        backgroundColor: 'rgba(255, 105, 180, 0.2)', // Fond rose clair
+                        fill: true,
+                    });
+                }
+            }
+            return datasets;
+        }
+
+        /**
+         * Exporte le contenu d'un onglet en PDF.
+         * @param {string} tabId - L'ID de l'onglet à exporter.
+         */
+        function exportToPDF(tabId) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const table = document.querySelector(`#${tabId}Table table`);
+            const chartCanvas = document.querySelector(`#${tabId} .chart-container canvas`);
+            const filters = document.querySelector(`#${tabId} .filters`);
+
+            doc.setFontSize(16);
+            doc.text(document.querySelector(`#${tabId} h2`).textContent, 10, 10);
+
+            let filterText = 'Filtres appliqués : ';
+            filters.querySelectorAll('select, input:checked').forEach(el => {
+                if (el.tagName === 'SELECT') {
+                    filterText += `${el.previousElementSibling?.textContent || ''}${el.options[el.selectedIndex].text}, `;
+                } else if (el.type === 'checkbox' || el.type === 'radio') {
+                    filterText += `${el.nextElementSibling.textContent}, `;
+                }
+            });
+            doc.setFontSize(12);
+            doc.text(filterText, 10, 20);
+
+            if (chartCanvas) {
+                const chartImage = chartCanvas.toDataURL('image/png');
+                doc.addImage(chartImage, 'PNG', 10, 30, 190, 100);
+            }
+
+            doc.autoTable({
+                html: table,
+                startY: chartCanvas ? 140 : 30,
+                styles: { fontSize: 10 },
+                headStyles: { fillColor: [151, 51, 238] },
+                bodyStyles: { textColor: [51, 51, 51] }
+            });
+
+            doc.save(`${tabId}-report.pdf`);
+        }
+
+        // === Fonctions de données ===
+        /**
+         * Simule un appel API pour récupérer les données d'occupation.
+         * @param {string} month - Le mois au format 'YYYY-MM'.
+         * @returns {Promise<Object[]>} Les données d'occupation.
+         */
+        async function fetchOccupancyData(month) {
+            const loader = document.getElementById('occupancyLoader');
+            loader.style.display = 'flex';
+            try {
+                // Simuler un appel API (à remplacer par un vrai fetch)
+                return new Promise(resolve => {
+                    setTimeout(() => resolve(occupancyData[month] || []), 500);
+                });
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('Impossible de charger les données. Veuillez vérifier votre connexion.');
+                return [];
+            } finally {
+                loader.style.display = 'none';
+            }
+        }
+
+        /**
+         * Simule un appel API pour récupérer les données des tickets.
+         * @param {string} period - La période ('day', 'week', 'month').
+         * @param {string} month - Le mois sélectionné (ex. '2025-03').
+         * @param {string} week - La semaine sélectionnée (ex. '1').
+         * @param {string} day - Le jour sélectionné (ex. '2025-03-25').
+         * @returns {Promise<Object>} Les données des tickets.
+         */
+        async function fetchTicketsData(period, month, week, day) {
+            const loader = document.getElementById('ticketsLoader');
+            loader.style.display = 'flex';
+            try {
+                // Simuler un appel API (à remplacer par un vrai fetch)
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                        let filteredData = ticketsData[month] || [];
+                        let result = { entry: { men: 0, women: 0, total: 0 }, vestiaire: { men: 0, women: 0, total: 0 }, avgOccupancy: 0 };
+
+                        if (period === 'day' && day) {
+                            const dayData = filteredData.find(d => d.date === day);
+                            if (dayData) {
+                                result = {
+                                    entry: dayData.entry,
+                                    vestiaire: dayData.vestiaire,
+                                    avgOccupancy: dayData.avgOccupancy
+                                };
+                            }
+                        } else if (period === 'week' && week) {
+                            const weekDays = filteredData.filter(d => {
+                                const dayNum = parseInt(d.date.split('-')[2]);
+                                const weekNum = Math.ceil(dayNum / 7);
+                                return weekNum === parseInt(week);
+                            });
+                            if (weekDays.length > 0) {
+                                result.entry.men = Math.round(weekDays.reduce((sum, d) => sum + d.entry.men, 0) / weekDays.length);
+                                result.entry.women = Math.round(weekDays.reduce((sum, d) => sum + d.entry.women, 0) / weekDays.length);
+                                result.entry.total = result.entry.men + result.entry.women;
+                                result.vestiaire.men = Math.round(weekDays.reduce((sum, d) => sum + d.vestiaire.men, 0) / weekDays.length);
+                                result.vestiaire.women = Math.round(weekDays.reduce((sum, d) => sum + d.vestiaire.women, 0) / weekDays.length);
+                                result.vestiaire.total = result.vestiaire.men + result.vestiaire.women;
+                                result.avgOccupancy = Math.round(weekDays.reduce((sum, d) => sum + d.avgOccupancy, 0) / weekDays.length);
+                            }
+                        } else if (period === 'month') {
+                            if (filteredData.length > 0) {
+                                result.entry.men = Math.round(filteredData.reduce((sum, d) => sum + d.entry.men, 0) / filteredData.length);
+                                result.entry.women = Math.round(filteredData.reduce((sum, d) => sum + d.entry.women, 0) / filteredData.length);
+                                result.entry.total = result.entry.men + result.entry.women;
+                                result.vestiaire.men = Math.round(filteredData.reduce((sum, d) => sum + d.vestiaire.men, 0) / filteredData.length);
+                                result.vestiaire.women = Math.round(filteredData.reduce((sum, d) => sum + d.vestiaire.women, 0) / filteredData.length);
+                                result.vestiaire.total = result.vestiaire.men + result.vestiaire.women;
+                                result.avgOccupancy = Math.round(filteredData.reduce((sum, d) => sum + d.avgOccupancy, 0) / filteredData.length);
+                            }
+                        }
+
+                        resolve(result);
+                    }, 500);
+                });
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('Impossible de charger les données des tickets. Veuillez vérifier votre connexion.');
+                return { entry: { men: 0, women: 0, total: 0 }, vestiaire: { men: 0, women: 0, total: 0 }, avgOccupancy: 0 };
+            } finally {
+                loader.style.display = 'none';
+            }
+        }
+
+        // === Fonctions de l'interface utilisateur ===
+        /**
+         * Ouvre un onglet spécifique.
+         * @param {string} tabId - L'ID de l'onglet à ouvrir.
+         */
         function openTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.remove('active');
@@ -916,39 +1142,60 @@
             document.querySelector(`button[onclick="openTab('${tabId}')"]`).classList.add('active');
         }
 
-        // === Mise à jour de la capacité d'accueil ===
+        /**
+         * Met à jour la capacité d'accueil.
+         */
         function updateCapacity() {
             const capacityMaxInput = document.getElementById('capacityMax');
-            let max = parseInt(capacityMaxInput.value) || 500;
-            if (max < 1) max = 1; // Éviter les valeurs invalides
+            let max = parseInt(capacityMaxInput.value);
+            if (isNaN(max) || max < 1) {
+                alert('Veuillez entrer une capacité maximale valide (minimum 1).');
+                capacityMaxInput.value = localStorage.getItem('capacityMax') || 500;
+                return;
+            }
             localStorage.setItem('capacityMax', max);
-            updateOccupancyChart(); // Mettre à jour le graphique
+            updateOccupancyChart();
         }
 
-        // === Gestion de la sélection des genres ===
+        /**
+         * Met à jour la sélection des genres.
+         * - Si "Total" est coché, désélectionne "Homme" et "Femme".
+         * - Si "Homme" ou "Femme" est coché, désélectionne "Total".
+         * - Si aucune case n'est cochée, coche "Total" par défaut.
+         */
         function updateGenderSelection() {
             const genderTotal = document.getElementById('genderTotal');
             const genderMen = document.getElementById('genderMen');
             const genderWomen = document.getElementById('genderWomen');
 
-            // Si "Homme" ou "Femme" est coché, décocher "Total"
-            if (genderMen.checked || genderWomen.checked) {
-                genderTotal.checked = false;
-            } else {
-                // Si ni "Homme" ni "Femme" n'est coché, cocher "Total" par défaut
-                genderTotal.checked = true;
-            }
+            // Récupérer l'élément qui a déclenché l'événement (pour savoir quelle case a été modifiée)
+            const target = event.target;
 
-            // Si "Total" est coché, décocher "Homme" et "Femme"
-            if (genderTotal.checked) {
+            // Si l'utilisateur coche "Total"
+            if (target.id === 'genderTotal' && genderTotal.checked) {
+                // Désélectionner "Homme" et "Femme"
                 genderMen.checked = false;
                 genderWomen.checked = false;
+            } 
+            // Si l'utilisateur coche "Homme" ou "Femme"
+            else if (target.id === 'genderMen' || target.id === 'genderWomen') {
+                // Si "Homme" ou "Femme" est coché, désélectionner "Total"
+                if (genderMen.checked || genderWomen.checked) {
+                    genderTotal.checked = false;
+                }
+                // Si ni "Homme" ni "Femme" n'est coché, cocher "Total" par défaut
+                if (!genderMen.checked && !genderWomen.checked) {
+                    genderTotal.checked = true;
+                }
             }
 
+            // Mettre à jour le graphique après la modification
             updateOccupancyChart();
         }
 
-        // === Retour à la vue par mois ===
+        /**
+         * Retourne à la vue par mois.
+         */
         function backToMonthView() {
             currentView = 'month';
             selectedDayData = null;
@@ -957,21 +1204,21 @@
             updateOccupancyChart();
         }
 
-        // === Sauvegarde de l'information ===
+        /**
+         * Sauvegarde l'information saisie.
+         */
         function saveInfo() {
             if (currentSelectedData) {
                 const newText = document.getElementById('detailInfo').value || '-';
                 if (currentSelectedData.type === 'day') {
                     currentSelectedData.data.info = newText;
                     savedInfo[currentSelectedData.data.date] = newText;
-                    // Mettre à jour le tableau
                     const tableBody = document.getElementById('occupancyTableBody');
                     const row = tableBody.rows[currentSelectedData.index];
                     row.cells[2].textContent = newText;
                 } else if (currentSelectedData.type === 'month') {
                     currentSelectedData.data.info = newText;
                     savedInfo[currentSelectedData.data.month] = newText;
-                    // Mettre à jour le tableau
                     const tableBody = document.getElementById('occupancyTableBody');
                     const row = tableBody.rows[currentSelectedData.index];
                     row.cells[2].textContent = newText;
@@ -980,10 +1227,89 @@
             }
         }
 
-        // === Mise à jour du graphique de taux d'occupation ===
-        function updateOccupancyChart() {
-            const month = document.getElementById('monthSelect').value;
-            const period = document.getElementById('periodSelect').value;
+        /**
+         * Affiche la modale d'annulation.
+         */
+        function showCancelModal() {
+            document.getElementById('cancelModal').style.display = 'flex';
+        }
+
+        /**
+         * Ferme la modale d'annulation.
+         */
+        function closeCancelModal() {
+            document.getElementById('cancelModal').style.display = 'none';
+            document.getElementById('cancelReason').value = '';
+        }
+
+        /**
+         * Confirme l'annulation d'un ticket.
+         */
+        function confirmCancel() {
+            const reason = document.getElementById('cancelReason').value;
+            if (reason) {
+                const table = document.querySelector('#historyTable tbody');
+                const row = table.querySelector('tr');
+                if (row) {
+                    row.cells[4].textContent = `Annulé (Raison : ${reason})`;
+                }
+                closeCancelModal();
+            } else {
+                alert('Veuillez entrer une raison pour l\'annulation.');
+            }
+        }
+
+        /**
+         * Met à jour les options des jours et des semaines en fonction du mois sélectionné.
+         * - Active ou désactive les sélecteurs de semaine et de jour selon la période choisie.
+         * - Remplit dynamiquement les options des jours et des semaines.
+         */
+        function updateTicketDays() {
+            const month = document.getElementById('ticketMonth').value;
+            const period = document.getElementById('ticketPeriod').value;
+            const daySelect = document.getElementById('ticketDay');
+            const weekSelect = document.getElementById('ticketWeek');
+
+            // Activer ou désactiver les sélecteurs en fonction de la période
+            daySelect.disabled = period !== 'day';
+            weekSelect.disabled = period !== 'week';
+
+            // Calculer le nombre de jours dans le mois sélectionné
+            const [year, monthNum] = month.split('-').map(Number);
+            const daysInMonth = new Date(year, monthNum, 0).getDate();
+
+            // Remplir les options des jours
+            daySelect.innerHTML = '<option value="">Sélectionner un jour</option>';
+            for (let i = 1; i <= daysInMonth; i++) {
+                const dayStr = String(i).padStart(2, '0');
+                const option = document.createElement('option');
+                option.value = `${month}-${dayStr}`;
+                option.textContent = `Jour ${i}`;
+                daySelect.appendChild(option);
+            }
+
+            // Calculer le nombre de semaines dans le mois (approximation : 7 jours par semaine)
+            const numWeeks = Math.ceil(daysInMonth / 7);
+            weekSelect.innerHTML = '<option value="">Sélectionner une semaine</option>';
+            for (let i = 1; i <= numWeeks; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = `Semaine ${i}`;
+                weekSelect.appendChild(option);
+            }
+        }
+
+        // === Fonctions de graphiques ===
+        /**
+         * Met à jour le graphique de taux d'occupation.
+         * @param {string} [month] - Le mois à afficher.
+         * @param {string} [period] - La période à afficher ('month', 'hour', 'year').
+         * @returns {Promise<void>}
+         */
+        async function updateOccupancyChart(month, period) {
+            const monthSelect = document.getElementById('monthSelect').value;
+            const selectedMonth = month || monthSelect;
+            const selectedPeriod = period || document.getElementById('periodSelect').value;
             const ticketType = document.getElementById('ticketTypeSelect').value;
             const genderTotal = document.getElementById('genderTotal').checked;
             const genderMen = document.getElementById('genderMen').checked;
@@ -992,11 +1318,10 @@
             const vestiaireMax = parseInt(document.getElementById('vestiaireMax').value) || 100;
             const chartDetails = document.getElementById('chartDetails');
             const backBtn = document.getElementById('backBtn');
-            chartDetails.style.display = 'none'; // Cacher les détails par défaut
+            chartDetails.style.display = 'none';
 
-            // Mettre à jour la vue actuelle
-            if (period !== currentView) {
-                currentView = period;
+            if (selectedPeriod !== currentView) {
+                currentView = selectedPeriod;
                 selectedDayData = null;
                 backBtn.style.display = 'none';
             }
@@ -1006,66 +1331,42 @@
             }
 
             const ctx = document.getElementById('occupancyChart').getContext('2d');
-            if (currentView === 'month') {
-                const data = occupancyData[month];
-                const datasets = [];
+            let data, labels;
 
-                if (genderTotal) {
-                    const rates = data.map(d => {
-                        const value = d[ticketType].total;
-                        const max = ticketType === 'entry' ? capacityMax : vestiaireMax;
-                        return Math.round((value / max) * 100);
-                    });
-                    datasets.push({
-                        label: `Taux d'occupation (${ticketType === 'entry' ? 'Tickets d\'entrée' : 'Tickets vestiaire'} - Total) (%)`,
-                        data: rates,
-                        borderColor: '#9733EE',
-                        backgroundColor: 'rgba(151, 51, 238, 0.2)',
-                        fill: true,
-                    });
-                } else {
-                    if (genderMen) {
-                        const rates = data.map(d => {
-                            const value = d[ticketType].men;
-                            const max = ticketType === 'entry' ? capacityMax : vestiaireMax;
-                            return Math.round((value / max) * 100);
-                        });
-                        datasets.push({
-                            label: `Taux d'occupation (${ticketType === 'entry' ? 'Tickets d\'entrée' : 'Tickets vestiaire'} - Homme) (%)`,
-                            data: rates,
-                            borderColor: '#4CAF50',
-                            backgroundColor: 'rgba(76, 175, 80, 0.2)',
-                            fill: true,
-                        });
-                    }
-                    if (genderWomen) {
-                        const rates = data.map(d => {
-                            const value = d[ticketType].women;
-                            const max = ticketType === 'entry' ? capacityMax : vestiaireMax;
-                            return Math.round((value / max) * 100);
-                        });
-                        datasets.push({
-                            label: `Taux d'occupation (${ticketType === 'entry' ? 'Tickets d\'entrée' : 'Tickets vestiaire'} - Femme) (%)`,
-                            data: rates,
-                            borderColor: '#F44336',
-                            backgroundColor: 'rgba(244, 67, 54, 0.2)',
-                            fill: true,
-                        });
-                    }
-                }
+            if (currentView === 'month') {
+                data = await fetchOccupancyData(selectedMonth);
+                labels = data.map(d => d.date.split('-')[2]); // Les jours (01, 02, ..., 31)
+
+                // Créer les étiquettes pour les jours de la semaine (L, M, M, J, etc.)
+                const dayLabels = data.map(d => getDayInitial(d.date));
+
+                const datasets = calculateOccupancyRates(data, ticketType, genderTotal, genderMen, genderWomen, ticketType === 'entry' ? capacityMax : vestiaireMax);
 
                 occupancyChart = new Chart(ctx, {
                     type: 'line',
-                    data: {
-                        labels: data.map(d => d.date.split('-')[2]),
-                        datasets: datasets
-                    },
+                    data: { labels, datasets },
                     options: {
                         responsive: true,
                         scales: {
                             y: {
                                 beginAtZero: true,
-                                max: 100
+                                max: 100,
+                                title: {
+                                    display: true,
+                                    text: 'Taux d\'occupation (%)'
+                                }
+                            },
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Jours'
+                                },
+                                ticks: {
+                                    callback: function(value, index, values) {
+                                        // Afficher le jour et la première lettre du jour de la semaine en dessous
+                                        return [labels[index], dayLabels[index]];
+                                    }
+                                }
                             }
                         },
                         onClick: (e, elements) => {
@@ -1074,13 +1375,11 @@
                                 const datasetIndex = elements[0].datasetIndex;
                                 const selectedData = data[index];
                                 currentSelectedData = { data: selectedData, type: 'day', index, datasetIndex };
-                                // Basculer vers la vue heure par heure
                                 currentView = 'hour';
                                 selectedDayData = selectedData;
                                 backBtn.style.display = 'block';
                                 document.getElementById('periodSelect').value = 'hour';
                                 updateOccupancyChart();
-                                // Afficher les détails
                                 const detailDate = document.getElementById('detailDate');
                                 const detailRate = document.getElementById('detailRate');
                                 const detailInfo = document.getElementById('detailInfo');
@@ -1113,10 +1412,9 @@
                     }
                 });
 
-                // Mettre à jour le tableau (jours du mois)
                 const tableBody = document.getElementById('occupancyTableBody');
                 tableBody.innerHTML = '';
-                data.forEach(d => {
+                data.forEach((d, index) => {
                     const row = tableBody.insertRow();
                     let rateText = '';
                     if (genderTotal) {
@@ -1143,79 +1441,34 @@
                         <td>${rateText}</td>
                         <td class="editable">${d.info}</td>
                     `;
-                    // Rendre la colonne "Information" éditable
                     row.cells[2].addEventListener('dblclick', function() {
-                        const currentText = this.textContent;
-                        currentSelectedData = { data: d, type: 'day', index: row.rowIndex - 1 };
+                        currentSelectedData = { data: d, type: 'day', index };
                         const detailDate = document.getElementById('detailDate');
                         const detailRate = document.getElementById('detailRate');
                         const detailInfo = document.getElementById('detailInfo');
                         detailDate.textContent = d.date.split('-').reverse().join('/');
                         detailRate.textContent = rateText;
-                        detailInfo.value = currentText === '-' ? '' : currentText;
+                        detailInfo.value = d.info === '-' ? '' : d.info;
                         chartDetails.style.display = 'block';
                     });
                 });
             } else if (currentView === 'hour' && selectedDayData) {
-                const data = selectedDayData.hourlyData;
-                const datasets = [];
-
-                if (genderTotal) {
-                    const rates = data.map(d => {
-                        const value = d[ticketType].total;
-                        const max = ticketType === 'entry' ? capacityMax : vestiaireMax;
-                        return Math.round((value / max) * 100);
-                    });
-                    datasets.push({
-                        label: `Taux d'occupation (${ticketType === 'entry' ? 'Tickets d\'entrée' : 'Tickets vestiaire'} - Total) (%)`,
-                        data: rates,
-                        borderColor: '#9733EE',
-                        backgroundColor: 'rgba(151, 51, 238, 0.2)',
-                        fill: true,
-                    });
-                } else {
-                    if (genderMen) {
-                        const rates = data.map(d => {
-                            const value = d[ticketType].men;
-                            const max = ticketType === 'entry' ? capacityMax : vestiaireMax;
-                            return Math.round((value / max) * 100);
-                        });
-                        datasets.push({
-                            label: `Taux d'occupation (${ticketType === 'entry' ? 'Tickets d\'entrée' : 'Tickets vestiaire'} - Homme) (%)`,
-                            data: rates,
-                            borderColor: '#4CAF50',
-                            backgroundColor: 'rgba(76, 175, 80, 0.2)',
-                            fill: true,
-                        });
-                    }
-                    if (genderWomen) {
-                        const rates = data.map(d => {
-                            const value = d[ticketType].women;
-                            const max = ticketType === 'entry' ? capacityMax : vestiaireMax;
-                            return Math.round((value / max) * 100);
-                        });
-                        datasets.push({
-                            label: `Taux d'occupation (${ticketType === 'entry' ? 'Tickets d\'entrée' : 'Tickets vestiaire'} - Femme) (%)`,
-                            data: rates,
-                            borderColor: '#F44336',
-                            backgroundColor: 'rgba(244, 67, 54, 0.2)',
-                            fill: true,
-                        });
-                    }
-                }
+                data = selectedDayData.hourlyData;
+                labels = data.map(d => d.hour);
+                const datasets = calculateOccupancyRates(data, ticketType, genderTotal, genderMen, genderWomen, ticketType === 'entry' ? capacityMax : vestiaireMax);
 
                 occupancyChart = new Chart(ctx, {
                     type: 'line',
-                    data: {
-                        labels: data.map(d => d.hour),
-                        datasets: datasets
-                    },
+                    data: { labels, datasets },
                     options: {
                         responsive: true,
                         scales: {
-                            y: {
-                                beginAtZero: true,
-                                max: 100
+                            y: { beginAtZero: true, max: 100 },
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Heures'
+                                }
                             }
                         },
                         onClick: (e, elements) => {
@@ -1224,7 +1477,6 @@
                                 const datasetIndex = elements[0].datasetIndex;
                                 const selectedHourData = data[index];
                                 currentSelectedData = { data: selectedDayData, type: 'day', index: 0, hourIndex: index };
-                                // Afficher les détails
                                 const detailDate = document.getElementById('detailDate');
                                 const detailRate = document.getElementById('detailRate');
                                 const detailInfo = document.getElementById('detailInfo');
@@ -1257,7 +1509,6 @@
                     }
                 });
 
-                // Mettre à jour le tableau (heures du jour sélectionné)
                 const tableBody = document.getElementById('occupancyTableBody');
                 tableBody.innerHTML = '';
                 data.forEach(d => {
@@ -1300,64 +1551,22 @@
                     });
                 });
             } else if (currentView === 'year') {
-                const datasets = [];
-
-                if (genderTotal) {
-                    const rates = yearlyData.map(d => {
-                        const value = d[ticketType].total;
-                        const max = ticketType === 'entry' ? capacityMax : vestiaireMax;
-                        return Math.round((value / max) * 100);
-                    });
-                    datasets.push({
-                        label: `Taux d'occupation moyen (${ticketType === 'entry' ? 'Tickets d\'entrée' : 'Tickets vestiaire'} - Total) (%)`,
-                        data: rates,
-                        borderColor: '#9733EE',
-                        backgroundColor: 'rgba(151, 51, 238, 0.2)',
-                        fill: true,
-                    });
-                } else {
-                    if (genderMen) {
-                        const rates = yearlyData.map(d => {
-                            const value = d[ticketType].men;
-                            const max = ticketType === 'entry' ? capacityMax : vestiaireMax;
-                            return Math.round((value / max) * 100);
-                        });
-                        datasets.push({
-                            label: `Taux d'occupation moyen (${ticketType === 'entry' ? 'Tickets d\'entrée' : 'Tickets vestiaire'} - Homme) (%)`,
-                            data: rates,
-                            borderColor: '#4CAF50',
-                            backgroundColor: 'rgba(76, 175, 80, 0.2)',
-                            fill: true,
-                        });
-                    }
-                    if (genderWomen) {
-                        const rates = yearlyData.map(d => {
-                            const value = d[ticketType].women;
-                            const max = ticketType === 'entry' ? capacityMax : vestiaireMax;
-                            return Math.round((value / max) * 100);
-                        });
-                        datasets.push({
-                            label: `Taux d'occupation moyen (${ticketType === 'entry' ? 'Tickets d\'entrée' : 'Tickets vestiaire'} - Femme) (%)`,
-                            data: rates,
-                            borderColor: '#F44336',
-                            backgroundColor: 'rgba(244, 67, 54, 0.2)',
-                            fill: true,
-                        });
-                    }
-                }
+                data = yearlyData;
+                labels = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sept', 'Oct', 'Nov', 'Déc'];
+                const datasets = calculateOccupancyRates(data, ticketType, genderTotal, genderMen, genderWomen, ticketType === 'entry' ? capacityMax : vestiaireMax);
 
                 occupancyChart = new Chart(ctx, {
                     type: 'line',
-                    data: {
-                        labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sept', 'Oct', 'Nov', 'Déc'],
-                        datasets: datasets
-                    },
+                    data: { labels, datasets },
                     options: {
                         responsive: true,
                         scales: {
-                            y: {
-                                beginAtZero: true,
-                                max: 100
+                            y: { beginAtZero: true, max: 100 },
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Mois'
+                                }
                             }
                         },
                         onClick: (e, elements) => {
@@ -1366,7 +1575,6 @@
                                 const datasetIndex = elements[0].datasetIndex;
                                 const selectedData = yearlyData[index];
                                 currentSelectedData = { data: selectedData, type: 'month', index, datasetIndex };
-                                // Afficher les détails
                                 const detailDate = document.getElementById('detailDate');
                                 const detailRate = document.getElementById('detailRate');
                                 const detailInfo = document.getElementById('detailInfo');
@@ -1399,10 +1607,9 @@
                     }
                 });
 
-                // Mettre à jour le tableau (mois de l'année)
                 const tableBody = document.getElementById('occupancyTableBody');
                 tableBody.innerHTML = '';
-                yearlyData.forEach(d => {
+                yearlyData.forEach((d, index) => {
                     const row = tableBody.insertRow();
                     let rateText = '';
                     if (genderTotal) {
@@ -1429,10 +1636,9 @@
                         <td>${rateText}</td>
                         <td class="editable">${d.info}</td>
                     `;
-                    // Rendre la colonne "Information" éditable
                     row.cells[2].addEventListener('dblclick', function() {
                         const currentText = this.textContent;
-                        currentSelectedData = { data: d, type: 'month', index: row.rowIndex - 1 };
+                        currentSelectedData = { data: d, type: 'month', index };
                         const detailDate = document.getElementById('detailDate');
                         const detailRate = document.getElementById('detailRate');
                         const detailInfo = document.getElementById('detailInfo');
@@ -1445,50 +1651,77 @@
             }
         }
 
-        // === Graphique pour le CA ===
-        const revenueCtx = document.getElementById('revenueChart').getContext('2d');
-        new Chart(revenueCtx, {
-            type: 'bar',
-            data: {
-                labels: ['Jan', 'Fév', 'Mar', 'Avr'],
-                datasets: [
-                    {
-                        label: 'Entrées (€)',
-                        data: [8000, 9500, 12000, 10000],
-                        backgroundColor: '#9733EE',
-                    },
-                    {
-                        label: 'Vestiaire (€)',
-                        data: [2000, 2500, 3000, 2000],
-                        backgroundColor: '#DA22FF',
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-
-        // === Mise à jour du rapport tickets ===
-        function updateTicketsReport() {
+        /**
+         * Met à jour le rapport des tickets.
+         * - Récupère les valeurs des filtres (période, mois, semaine, jour).
+         * - Affiche les données correspondantes dans le tableau.
+         * - Met à jour le taux d'occupation moyen en fonction de la période sélectionnée.
+         * @returns {Promise<void>}
+         */
+        async function updateTicketsReport() {
             const period = document.getElementById('ticketPeriod').value;
+            const month = document.getElementById('ticketMonth').value;
+            const week = document.getElementById('ticketWeek').value;
+            const day = document.getElementById('ticketDay').value;
             const occupancyImpact = document.getElementById('occupancyImpact');
-            // Simuler un taux d'occupation moyen pour la période
-            const avgOccupancy = period === 'month' ? 75 : period === 'week' ? 70 : 65;
-            occupancyImpact.textContent = `Taux d'occupation moyen pour ${period === 'month' ? 'Mars 2025' : period === 'week' ? 'Semaine 12' : '25/03/2025'} : ${avgOccupancy}%`;
+
+            // Mettre à jour les options des jours et des semaines
+            updateTicketDays();
+
+            // Récupérer les données filtrées
+            const data = await fetchTicketsData(period, month, week, day);
+
+            // Déterminer la période affichée pour le texte
+            let periodText = '';
+            if (period === 'month') {
+                periodText = month === '2025-03' ? 'Mars 2025' : month === '2025-02' ? 'Février 2025' : 'Janvier 2025';
+            } else if (period === 'week') {
+                periodText = `Semaine ${week} de ${month === '2025-03' ? 'Mars 2025' : month === '2025-02' ? 'Février 2025' : 'Janvier 2025'}`;
+            } else if (period === 'day' && day) {
+                periodText = day.split('-').reverse().join('/');
+            } else {
+                periodText = 'Non spécifié';
+            }
+
+            // Mettre à jour le texte du taux d'occupation
+            occupancyImpact.textContent = `Taux d'occupation moyen pour ${periodText} : ${data.avgOccupancy}%`;
+
+            // Mettre à jour le tableau des tickets
+            const tableBody = document.querySelector('#ticketsTable tbody');
+            tableBody.innerHTML = `
+                <tr>
+                    <td>Entrée</td>
+                    <td>${data.entry.men}</td>
+                    <td>${data.entry.women}</td>
+                    <td>${data.entry.total}</td>
+                    <td>${data.avgOccupancy}% (0.375% par entrée)</td>
+                </tr>
+                <tr>
+                    <td>Vestiaire</td>
+                    <td>${data.vestiaire.men}</td>
+                    <td>${data.vestiaire.women}</td>
+                    <td>${data.vestiaire.total}</td>
+                    <td>-</td>
+                </tr>
+            `;
+
+            // Mettre à jour la jauge du vestiaire
             updateVestiaireGauge();
         }
 
-        // === Mise à jour de la jauge du vestiaire ===
+        /**
+         * Met à jour la jauge du vestiaire.
+         * - Récupère la valeur maximale définie par l'utilisateur.
+         * - Met à jour l'affichage de la jauge et du texte associé.
+         */
         function updateVestiaireGauge() {
             const vestiaireMaxInput = document.getElementById('vestiaireMax');
             let max = parseInt(vestiaireMaxInput.value) || 100;
-            if (max < 1) max = 1; // Éviter les valeurs invalides
+            if (max < 1) {
+                alert('Veuillez entrer une jauge maximale valide (minimum 1).');
+                vestiaireMaxInput.value = localStorage.getItem('vestiaireMax') || 100;
+                return;
+            }
             localStorage.setItem('vestiaireMax', max);
 
             const usage = 80; // Simulé
@@ -1508,58 +1741,162 @@
 
             vestiaireText.textContent = `${usage}/${max} cintres utilisés (maximum recommandé : ${max})`;
             vestiaireUsage.textContent = `${usage}/${max}`;
-            updateOccupancyChart(); // Mettre à jour le graphique si on est dans "Tickets vestiaire"
+            updateOccupancyChart();
         }
 
-        // === Filtrer la trésorerie ===
+        /**
+         * Filtre les données de trésorerie en fonction du type sélectionné.
+         * - Récupère le type de filtre sélectionné (Tous, Entrée, Vestiaire).
+         * - Met à jour le tableau de trésorerie avec les données filtrées.
+         * - Calcule et affiche le total des montants pour le mois.
+         */
         function filterTreasury() {
-            // Placeholder pour le filtrage (à implémenter avec une API)
-            console.log('Filtrer par type');
+            const typeFilter = document.querySelector('#treasury select').value;
+            const tableBody = document.querySelector('#treasuryTable tbody');
+            const totalElement = document.querySelector('#treasury .total');
+            const loader = document.getElementById('treasuryLoader');
+            loader.style.display = 'flex';
+
+            // Simuler un appel API (à remplacer par un vrai fetch)
+            setTimeout(() => {
+                const treasuryData = [
+                    { date: '25/03/2025', type: 'Entrée', amount: 3000, status: 'Confirmé' },
+                    { date: '25/03/2025', type: 'Vestiaire', amount: 500, status: 'Confirmé' }
+                ];
+
+                // Filtrer les données selon le type sélectionné
+                const filteredData = typeFilter === 'Type : Tous' 
+                    ? treasuryData 
+                    : treasuryData.filter(item => item.type === typeFilter.split(' : ')[1]);
+
+                // Calculer le total des montants pour le mois
+                const total = filteredData.reduce((sum, item) => sum + item.amount, 0);
+
+                // Vider le tableau avant de le remplir avec les nouvelles données
+                tableBody.innerHTML = '';
+
+                // Remplir le tableau avec les données filtrées
+                filteredData.forEach(item => {
+                    const row = tableBody.insertRow();
+                    row.innerHTML = `
+                        <td>${item.date}</td>
+                        <td>${item.type}</td>
+                        <td>${item.amount}€</td>
+                        <td>${item.status}</td>
+                    `;
+                });
+
+                // Mettre à jour l'élément affichant le total
+                totalElement.textContent = `Total pour Mars 2025 : ${total}€`;
+
+                // Cacher le loader une fois les données chargées
+                loader.style.display = 'none';
+            }, 500);
         }
 
-        // === Modale d'annulation ===
-        function showCancelModal() {
-            document.getElementById('cancelModal').style.display = 'flex';
-        }
-
-        function closeCancelModal() {
-            document.getElementById('cancelModal').style.display = 'none';
-            document.getElementById('cancelReason').value = '';
-        }
-
-        function confirmCancel() {
-            const reason = document.getElementById('cancelReason').value;
-            if (reason) {
-                const table = document.querySelector('#historyTable tbody');
-                const row = table.querySelector('tr'); // Simule la première ligne pour l'exemple
-                if (row) {
-                    row.cells[4].textContent = `Annulé (Raison : ${reason})`;
+        // === Graphique pour le CA ===
+        /**
+         * Initialise et affiche le graphique du chiffre d'affaires (CA).
+         * - Utilise Chart.js pour créer un graphique en barres.
+         * - Affiche les données des entrées et du vestiaire pour chaque mois.
+         */
+        const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+        new Chart(revenueCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Jan', 'Fév', 'Mar', 'Avr'],
+                datasets: [
+                    {
+                        label: 'Entrées (€)',
+                        data: [8000, 9500, 12000, 10000],
+                        backgroundColor: '#9733EE',
+                        borderColor: '#9733EE',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Vestiaire (€)',
+                        data: [2000, 2500, 3000, 2000],
+                        backgroundColor: '#DA22FF',
+                        borderColor: '#DA22FF',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Chiffre d\'affaires (€)'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Mois'
+                        }
+                    }
                 }
-                closeCancelModal();
-            } else {
-                alert('Veuillez entrer une raison pour l\'annulation.');
             }
-        }
-
-        // === Exportation en PDF ===
-        function exportToPDF(tabId) {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            const table = document.querySelector(`#${tabId}Table table`);
-            doc.text(document.querySelector(`#${tabId} h2`).textContent, 10, 10);
-            doc.autoTable({ html: table });
-            doc.save(`${tabId}-report.pdf`);
-        }
+        });
 
         // === Initialisation ===
-        // Charger la jauge maximum du vestiaire depuis localStorage
-        const savedVestiaireMax = localStorage.getItem('vestiaireMax');
-        if (savedVestiaireMax) {
-            document.getElementById('vestiaireMax').value = savedVestiaireMax;
-        }
+        /**
+         * Initialise l'application au chargement de la page.
+         * - Met à jour les graphiques et les tableaux.
+         * - Charge les données initiales pour chaque onglet.
+         * - Initialise les options des jours et des semaines pour l'onglet "Rapport tickets".
+         */
+        document.addEventListener('DOMContentLoaded', () => {
+            updateOccupancyChart();
+            updateTicketsReport();
+            updateVestiaireGauge();
+            filterTreasury();
+            updateTicketDays(); // Initialiser les options des jours et des semaines
+        });
 
-        updateOccupancyChart();
-        updateTicketsReport();
+        // === Raccourcis clavier pour une meilleure ergonomie ===
+        /**
+         * Ajoute des raccourcis clavier pour naviguer et interagir avec l'interface.
+         * - Flèches gauche/droite : navigation entre les onglets.
+         * - Ctrl + P : exporte l'onglet actif en PDF.
+         * - Ctrl + Flèche haut/bas : change le mois dans l'onglet "Taux d'occupation".
+         */
+        document.addEventListener('keydown', (e) => {
+            const tabs = document.querySelectorAll('.tab');
+            const activeTab = document.querySelector('.tab.active');
+            let currentIndex = Array.from(tabs).indexOf(activeTab);
+
+            // Navigation entre les onglets avec les flèches gauche et droite
+            if (e.key === 'ArrowRight' && currentIndex < tabs.length - 1) {
+                tabs[currentIndex + 1].click();
+            } else if (e.key === 'ArrowLeft' && currentIndex > 0) {
+                tabs[currentIndex - 1].click();
+            }
+
+            // Exporter en PDF avec Ctrl + P
+            if (e.ctrlKey && e.key === 'p') {
+                e.preventDefault();
+                const activeTabId = document.querySelector('.tab-content.active').id;
+                exportToPDF(activeTabId);
+            }
+
+            // Changer le mois avec Ctrl + Flèches haut/bas
+            const monthSelect = document.getElementById('monthSelect');
+            if (e.ctrlKey && e.key === 'ArrowUp') {
+                if (monthSelect.selectedIndex > 0) {
+                    monthSelect.selectedIndex -= 1;
+                    updateOccupancyChart();
+                }
+            } else if (e.ctrlKey && e.key === 'ArrowDown') {
+                if (monthSelect.selectedIndex < monthSelect.options.length - 1) {
+                    monthSelect.selectedIndex += 1;
+                    updateOccupancyChart();
+                }
+            }
+        });
     </script>
 </body>
 </html>
