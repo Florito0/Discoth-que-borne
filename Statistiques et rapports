@@ -1,0 +1,1565 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rapports et Statistiques - Discothèque</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        /* === Styles généraux === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background-color: #ffffff;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        .main-content {
+            margin-left: 220px;
+            padding: 30px;
+            width: calc(100% - 220px);
+            transition: all 0.3s ease;
+        }
+
+        .main-content.collapsed {
+            margin-left: 60px;
+            width: calc(100% - 60px);
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        /* === Tableau de bord global === */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .dashboard-card {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .dashboard-card h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .dashboard-card p {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        /* === Menu horizontal === */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #f5f5f5;
+            border: none;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #666;
+            transition: all 0.3s ease;
+        }
+
+        .tab:hover {
+            background: #e0e0e0;
+        }
+
+        .tab.active {
+            background: #ffffff;
+            color: #9733EE;
+            border-bottom: 2px solid #9733EE;
+        }
+
+        /* === Contenu des onglets === */
+        .tab-content {
+            display: none;
+            background: #ffffff;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .tab-content h2 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        /* === Filtres === */
+        .filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filters select,
+        .filters input[type="number"] {
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .filters label {
+            font-size: 14px;
+            color: #666;
+            margin-left: 5px;
+            margin-right: 10px;
+        }
+
+        .filters .gender-filter {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .filters .gender-filter input[type="checkbox"],
+        .filters .gender-filter input[type="radio"] {
+            margin-right: 5px;
+        }
+
+        .filters .input-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            flex-wrap: nowrap;
+        }
+
+        /* === Graphiques === */
+        .chart-container {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        /* === Bouton Retour === */
+        .back-btn {
+            padding: 8px 16px;
+            background: #e0e0e0;
+            border: none;
+            border-radius: 8px;
+            color: #333;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 10px;
+            display: none;
+        }
+
+        .back-btn:hover {
+            background: #cccccc;
+        }
+
+        /* === Détails affichés au clic sur le graphique === */
+        .chart-details {
+            background: #f9f9f9;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .chart-details p {
+            font-size: 14px;
+            margin: 5px 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .chart-details input[type="text"] {
+            margin-left: 10px;
+            padding: 5px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+            width: 300px;
+        }
+
+        .chart-details .save-btn {
+            padding: 8px 16px;
+            background: #9733EE;
+            border: none;
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .chart-details .save-btn:hover {
+            background: #DA22FF;
+        }
+
+        /* === Jauge pour le vestiaire === */
+        .vestiaire-gauge {
+            margin-bottom: 20px;
+        }
+
+        .vestiaire-gauge progress {
+            width: 100%;
+            height: 20px;
+            border-radius: 10px;
+        }
+
+        .vestiaire-gauge progress::-webkit-progress-value {
+            background: #4CAF50; /* Vert par défaut */
+            border-radius: 10px;
+        }
+
+        .vestiaire-gauge progress.warning::-webkit-progress-value {
+            background: #FF9800; /* Orange */
+        }
+
+        .vestiaire-gauge progress.danger::-webkit-progress-value {
+            background: #F44336; /* Rouge */
+        }
+
+        .vestiaire-gauge p {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        /* === Tableaux === */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .data-table th {
+            background: #f5f5f5;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .data-table td {
+            color: #666;
+        }
+
+        .data-table td.editable:hover {
+            background: #f0f0f0;
+            cursor: pointer;
+        }
+
+        /* === Code couleur pour les comparaisons === */
+        .positive {
+            color: #4CAF50 !important; /* Vert */
+        }
+
+        .negative {
+            color: #F44336 !important; /* Rouge */
+        }
+
+        /* === Bouton d'exportation === */
+        .export-btn {
+            padding: 10px 20px;
+            background: linear-gradient(to right, #9733EE, #DA22FF);
+            border: none;
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .export-btn:hover {
+            background: linear-gradient(to right, #DA22FF, #9733EE);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(151, 51, 238, 0.3);
+        }
+
+        /* === Champ de recherche pour annulation === */
+        .search-cancel {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-cancel input,
+        .search-cancel select {
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            width: 200px;
+        }
+
+        .search-cancel button {
+            padding: 10px 20px;
+            background: #ff5555;
+            border: none;
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .search-cancel button:hover {
+            background: #ff7777;
+        }
+
+        /* === Modale de confirmation pour annulation === */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .modal-content textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .modal-content .btn-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .modal-content button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-content .confirm-btn {
+            background: #9733EE;
+            color: #ffffff;
+        }
+
+        .modal-content .confirm-btn:hover {
+            background: #DA22FF;
+        }
+
+        .modal-content .cancel-btn {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .modal-content .cancel-btn:hover {
+            background: #cccccc;
+        }
+
+        /* === Total cumulé === */
+        .total {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-content">
+        <h1>Statistiques et rapports</h1>
+
+        <!-- Tableau de bord global -->
+        <div class="dashboard">
+            <div class="dashboard-card">
+                <h3>Taux d'occupation</h3>
+                <p>75%</p>
+            </div>
+            <div class="dashboard-card">
+                <h3>CA aujourd'hui</h3>
+                <p>3 500€</p>
+            </div>
+            <div class="dashboard-card">
+                <h3>Tickets vendus</h3>
+                <p>200</p>
+            </div>
+            <div class="dashboard-card">
+                <h3>Vestiaire utilisé</h3>
+                <p id="vestiaireUsage">80/100</p>
+            </div>
+        </div>
+
+        <!-- Menu horizontal -->
+        <div class="tabs">
+            <button class="tab active" onclick="openTab('occupancy')">Taux d'occupation</button>
+            <button class="tab" onclick="openTab('tickets')">Rapport tickets</button>
+            <button class="tab" onclick="openTab('history')">Historique tickets</button>
+            <button class="tab" onclick="openTab('treasury')">Gestion trésorerie</button>
+            <button class="tab" onclick="openTab('revenue')">Rapport CA</button>
+        </div>
+
+        <!-- Contenu des onglets -->
+        <!-- Taux d'occupation -->
+        <div id="occupancy" class="tab-content active">
+            <h2>Taux d'occupation</h2>
+            <button class="export-btn" onclick="exportToPDF('occupancy')">Exporter en PDF</button>
+            <div class="filters">
+                <select id="monthSelect" onchange="updateOccupancyChart()">
+                    <option value="2025-03">Mars 2025</option>
+                    <option value="2025-02">Février 2025</option>
+                    <option value="2025-01">Janvier 2025</option>
+                </select>
+                <select id="periodSelect" onchange="updateOccupancyChart()">
+                    <option value="month">Par mois</option>
+                    <option value="hour">Par heure</option>
+                    <option value="year">Par année</option>
+                </select>
+                <select id="ticketTypeSelect" onchange="updateOccupancyChart()">
+                    <option value="entry">Tickets d'entrée</option>
+                    <option value="vestiaire">Tickets vestiaire</option>
+                </select>
+                <div class="gender-filter">
+                    <input type="radio" id="genderTotal" name="gender" value="total" checked onchange="updateGenderSelection()">
+                    <label for="genderTotal">Total</label>
+                    <input type="checkbox" id="genderMen" name="genderMen" value="men" onchange="updateGenderSelection()">
+                    <label for="genderMen">Homme</label>
+                    <input type="checkbox" id="genderWomen" name="genderWomen" value="women" onchange="updateGenderSelection()">
+                    <label for="genderWomen">Femme</label>
+                </div>
+                <div class="input-group">
+                    <input type="number" id="capacityMax" min="1" value="500" onchange="updateCapacity()">
+                    <label for="capacityMax">Capacité d'accueil maximum</label>
+                </div>
+            </div>
+            <button class="back-btn" id="backBtn" onclick="backToMonthView()">Retour à la vue par mois</button>
+            <div class="chart-container">
+                <canvas id="occupancyChart"></canvas>
+            </div>
+            <div class="chart-details" id="chartDetails">
+                <p><strong>Date :</strong> <span id="detailDate">-</span></p>
+                <p><strong>Taux d'occupation :</strong> <span id="detailRate">-</span></p>
+                <p><strong>Information :</strong> <input type="text" id="detailInfo" value="-"></p>
+                <button class="save-btn" onclick="saveInfo()">Sauvegarder</button>
+            </div>
+            <div class="data-table" id="occupancyTable">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Taux d'occupation</th>
+                            <th>Information</th>
+                        </tr>
+                    </thead>
+                    <tbody id="occupancyTableBody">
+                        <!-- Rempli dynamiquement -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Rapport tickets -->
+        <div id="tickets" class="tab-content">
+            <h2>Rapport tickets d'entrée et vestiaire</h2>
+            <button class="export-btn" onclick="exportToPDF('tickets')">Exporter en PDF</button>
+            <div class="filters">
+                <select id="ticketPeriod" onchange="updateTicketsReport()">
+                    <option value="day">Jour</option>
+                    <option value="week">Semaine</option>
+                    <option value="month">Mois</option>
+                </select>
+            </div>
+            <div class="total" id="occupancyImpact">
+                Taux d'occupation moyen pour Mars 2025 : 75%
+            </div>
+            <div class="vestiaire-gauge">
+                <h3>Utilisation du vestiaire</h3>
+                <div class="filters">
+                    <div class="input-group">
+                        <input type="number" id="vestiaireMax" min="1" value="100" onchange="updateVestiaireGauge()">
+                        <label for="vestiaireMax">Définir la jauge maximum</label>
+                    </div>
+                </div>
+                <progress id="vestiaireProgress" value="80" max="100"></progress>
+                <p id="vestiaireText">80/100 cintres utilisés (maximum recommandé : 100)</p>
+            </div>
+            <div class="data-table" id'="ticketsTable">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Homme</th>
+                            <th>Femme</th>
+                            <th>Total</th>
+                            <th>Impact sur le taux d'occupation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Entrée</td>
+                            <td>120</td>
+                            <td>80</td>
+                            <td>200</td>
+                            <td>75% (0.375% par entrée)</td>
+                        </tr>
+                        <tr>
+                            <td>Vestiaire</td>
+                            <td>50</td>
+                            <td>30</td>
+                            <td>80</td>
+                            <td>-</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Historique tickets -->
+        <div id="history" class="tab-content">
+            <h2>Historique des tickets</h2>
+            <button class="export-btn" onclick="exportToPDF('history')">Exporter en PDF</button>
+            <div class="search-cancel">
+                <input type="text" placeholder="Rechercher par identifiant unique">
+                <select>
+                    <option>Type : Tous</option>
+                    <option>Type : Entrée</option>
+                    <option>Type : Vestiaire</option>
+                </select>
+                <button onclick="showCancelModal()">Annuler commande</button>
+            </div>
+            <div class="data-table" id="historyTable">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Type</th>
+                            <th>Date</th>
+                            <th>Montant</th>
+                            <th>Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>#12345</td>
+                            <td>Entrée</td>
+                            <td>25/03/2025 22:00</td>
+                            <td>15€</td>
+                            <td>Confirmé</td>
+                        </tr>
+                        <tr>
+                            <td>#12346</td>
+                            <td>Vestiaire</td>
+                            <td>25/03/2025 22:05</td>
+                            <td>5€</td>
+                            <td>Annulé (Raison : Erreur de saisie)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Gestion trésorerie -->
+        <div id="treasury" class="tab-content">
+            <h2>Gestion de la trésorerie</h2>
+            <button class="export-btn" onclick="exportToPDF('treasury')">Exporter en PDF</button>
+            <div class="filters">
+                <select onchange="filterTreasury()">
+                    <option>Type : Tous</option>
+                    <option>Type : Entrée</option>
+                    <option>Type : Vestiaire</option>
+                </select>
+            </div>
+            <div class="total">
+                Total pour Mars 2025 : 3 500€
+            </div>
+            <div class="data-table" id="treasuryTable">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Montant</th>
+                            <th>Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>25/03/2025</td>
+                            <td>Entrée</td>
+                            <td>3000€</td>
+                            <td>Confirmé</td>
+                        </tr>
+                        <tr>
+                            <td>25/03/2025</td>
+                            <td>Vestiaire</td>
+                            <td>500€</td>
+                            <td>Confirmé</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Rapport CA -->
+        <div id="revenue" class="tab-content">
+            <h2>Rapport chiffre d'affaires</h2>
+            <button class="export-btn" onclick="exportToPDF('revenue')">Exporter en PDF</button>
+            <div class="filters">
+                <select>
+                    <option>Mars 2025</option>
+                    <option>Février 2025</option>
+                    <option>Janvier 2025</option>
+                </select>
+            </div>
+            <div class="chart-container">
+                <canvas id="revenueChart"></canvas>
+            </div>
+            <div class="data-table" id="revenueTable">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Mois</th>
+                            <th>Entrées (€)</th>
+                            <th>Vestiaire (€)</th>
+                            <th>Total (€)</th>
+                            <th>Comparaison</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Janvier 2025</td>
+                            <td>8 000€</td>
+                            <td>2 000€</td>
+                            <td>10 000€</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>Février 2025</td>
+                            <td>9 500€</td>
+                            <td>2 500€</td>
+                            <td>12 000€</td>
+                            <td class="positive">+20%</td>
+                        </tr>
+                        <tr>
+                            <td>Mars 2025</td>
+                            <td>12 000€</td>
+                            <td>3 000€</td>
+                            <td>15 000€</td>
+                            <td class="positive">+25%</td>
+                        </tr>
+                        <tr>
+                            <td>Avril 2025</td>
+                            <td>10 000€</td>
+                            <td>2 000€</td>
+                            <td>12 000€</td>
+                            <td class="negative">-20%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Modale de confirmation pour annulation -->
+        <div id="cancelModal" class="modal">
+            <div class="modal-content">
+                <h3>Confirmer l'annulation</h3>
+                <textarea placeholder="Raison de l'annulation (obligatoire)" id="cancelReason"></textarea>
+                <div class="btn-group">
+                    <button class="confirm-btn" onclick="confirmCancel()">Confirmer</button>
+                    <button class="cancel-btn" onclick="closeCancelModal()">Annuler</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // === Données simulées (à remplacer par une API) ===
+        const occupancyData = {
+            '2025-03': Array.from({ length: 31 }, (_, i) => {
+                const menEntry = Math.floor(Math.random() * 150) + 50; // Entre 50 et 200 hommes
+                const womenEntry = Math.floor(Math.random() * 150) + 50; // Entre 50 et 200 femmes
+                const menVestiaire = Math.floor(Math.random() * 30) + 20; // Entre 20 et 50 hommes
+                const womenVestiaire = Math.floor(Math.random() * 30) + 20; // Entre 20 et 50 femmes
+                return {
+                    date: `2025-03-${String(i + 1).padStart(2, '0')}`,
+                    entry: {
+                        men: menEntry,
+                        women: womenEntry,
+                        total: menEntry + womenEntry
+                    },
+                    vestiaire: {
+                        men: menVestiaire,
+                        women: womenVestiaire,
+                        total: menVestiaire + womenVestiaire
+                    },
+                    hourlyData: Array.from({ length: 8 }, (_, h) => {
+                        const hour = 20 + h; // De 20h à 3h
+                        const hourStr = hour >= 24 ? `0${hour - 24}:00` : `${hour}:00`;
+                        const factor = Math.sin((h / 8) * Math.PI) * 0.8 + 0.2; // Simule un pic vers 1h
+                        return {
+                            hour: hourStr,
+                            entry: {
+                                men: Math.round(menEntry * factor),
+                                women: Math.round(womenEntry * factor),
+                                total: Math.round((menEntry + womenEntry) * factor)
+                            },
+                            vestiaire: {
+                                men: Math.round(menVestiaire * factor),
+                                women: Math.round(womenVestiaire * factor),
+                                total: Math.round((menVestiaire + womenVestiaire) * factor)
+                            }
+                        };
+                    }),
+                    info: i + 1 === 25 ? 'Soirée spéciale : forte affluence' : '-'
+                };
+            }),
+            '2025-02': Array.from({ length: 28 }, (_, i) => {
+                const menEntry = Math.floor(Math.random() * 150) + 50;
+                const womenEntry = Math.floor(Math.random() * 150) + 50;
+                const menVestiaire = Math.floor(Math.random() * 30) + 20;
+                const womenVestiaire = Math.floor(Math.random() * 30) + 20;
+                return {
+                    date: `2025-02-${String(i + 1).padStart(2, '0')}`,
+                    entry: {
+                        men: menEntry,
+                        women: womenEntry,
+                        total: menEntry + womenEntry
+                    },
+                    vestiaire: {
+                        men: menVestiaire,
+                        women: womenVestiaire,
+                        total: menVestiaire + womenVestiaire
+                    },
+                    hourlyData: Array.from({ length: 8 }, (_, h) => {
+                        const hour = 20 + h;
+                        const hourStr = hour >= 24 ? `0${hour - 24}:00` : `${hour}:00`;
+                        const factor = Math.sin((h / 8) * Math.PI) * 0.8 + 0.2;
+                        return {
+                            hour: hourStr,
+                            entry: {
+                                men: Math.round(menEntry * factor),
+                                women: Math.round(womenEntry * factor),
+                                total: Math.round((menEntry + womenEntry) * factor)
+                            },
+                            vestiaire: {
+                                men: Math.round(menVestiaire * factor),
+                                women: Math.round(womenVestiaire * factor),
+                                total: Math.round((menVestiaire + womenVestiaire) * factor)
+                            }
+                        };
+                    }),
+                    info: '-'
+                };
+            }),
+            '2025-01': Array.from({ length: 31 }, (_, i) => {
+                const menEntry = Math.floor(Math.random() * 150) + 50;
+                const womenEntry = Math.floor(Math.random() * 150) + 50;
+                const menVestiaire = Math.floor(Math.random() * 30) + 20;
+                const womenVestiaire = Math.floor(Math.random() * 30) + 20;
+                return {
+                    date: `2025-01-${String(i + 1).padStart(2, '0')}`,
+                    entry: {
+                        men: menEntry,
+                        women: womenEntry,
+                        total: menEntry + womenEntry
+                    },
+                    vestiaire: {
+                        men: menVestiaire,
+                        women: womenVestiaire,
+                        total: menVestiaire + womenVestiaire
+                    },
+                    hourlyData: Array.from({ length: 8 }, (_, h) => {
+                        const hour = 20 + h;
+                        const hourStr = hour >= 24 ? `0${hour - 24}:00` : `${hour}:00`;
+                        const factor = Math.sin((h / 8) * Math.PI) * 0.8 + 0.2;
+                        return {
+                            hour: hourStr,
+                            entry: {
+                                men: Math.round(menEntry * factor),
+                                women: Math.round(womenEntry * factor),
+                                total: Math.round((menEntry + womenEntry) * factor)
+                            },
+                            vestiaire: {
+                                men: Math.round(menVestiaire * factor),
+                                women: Math.round(womenVestiaire * factor),
+                                total: Math.round((menVestiaire + womenVestiaire) * factor)
+                            }
+                        };
+                    }),
+                    info: '-'
+                };
+            })
+        };
+
+        // Données annuelles (moyenne par mois pour 2025)
+        const yearlyData = Array.from({ length: 12 }, (_, i) => {
+            const month = String(i + 1).padStart(2, '0');
+            const monthKey = `2025-${month}`;
+            const monthData = occupancyData[monthKey] || [];
+            const avgEntryMen = monthData.length ? Math.round(monthData.reduce((sum, d) => sum + d.entry.men, 0) / monthData.length) : 0;
+            const avgEntryWomen = monthData.length ? Math.round(monthData.reduce((sum, d) => sum + d.entry.women, 0) / monthData.length) : 0;
+            const avgVestiaireMen = monthData.length ? Math.round(monthData.reduce((sum, d) => sum + d.vestiaire.men, 0) / monthData.length) : 0;
+            const avgVestiaireWomen = monthData.length ? Math.round(monthData.reduce((sum, d) => sum + d.vestiaire.women, 0) / monthData.length) : 0;
+            const info = monthData.find(d => d.info !== '-')?.info || '-';
+            return {
+                month: monthKey,
+                entry: {
+                    men: avgEntryMen,
+                    women: avgEntryWomen,
+                    total: avgEntryMen + avgEntryWomen
+                },
+                vestiaire: {
+                    men: avgVestiaireMen,
+                    women: avgVestiaireWomen,
+                    total: avgVestiaireMen + avgVestiaireWomen
+                },
+                info: info
+            };
+        });
+
+        // Charger les informations sauvegardées depuis localStorage
+        const savedInfo = JSON.parse(localStorage.getItem('occupancyInfo')) || {};
+        Object.keys(occupancyData).forEach(month => {
+            occupancyData[month].forEach(entry => {
+                if (savedInfo[entry.date]) {
+                    entry.info = savedInfo[entry.date];
+                }
+            });
+        });
+        yearlyData.forEach(entry => {
+            if (savedInfo[entry.month]) {
+                entry.info = savedInfo[entry.month];
+            }
+        });
+
+        let occupancyChart;
+        let currentSelectedData = null; // Pour garder une référence à la donnée sélectionnée
+        let currentView = 'month'; // 'month', 'hour', ou 'year'
+        let selectedDayData = null; // Données du jour sélectionné pour la vue heure par heure
+
+        // Charger la capacité d'accueil depuis localStorage
+        const savedCapacityMax = localStorage.getItem('capacityMax');
+        if (savedCapacityMax) {
+            document.getElementById('capacityMax').value = savedCapacityMax;
+        }
+
+        // === Gestion des onglets ===
+        function openTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.getElementById(tabId).classList.add('active');
+            document.querySelector(`button[onclick="openTab('${tabId}')"]`).classList.add('active');
+        }
+
+        // === Mise à jour de la capacité d'accueil ===
+        function updateCapacity() {
+            const capacityMaxInput = document.getElementById('capacityMax');
+            let max = parseInt(capacityMaxInput.value) || 500;
+            if (max < 1) max = 1; // Éviter les valeurs invalides
+            localStorage.setItem('capacityMax', max);
+            updateOccupancyChart(); // Mettre à jour le graphique
+        }
+
+        // === Gestion de la sélection des genres ===
+        function updateGenderSelection() {
+            const genderTotal = document.getElementById('genderTotal');
+            const genderMen = document.getElementById('genderMen');
+            const genderWomen = document.getElementById('genderWomen');
+
+            // Si "Homme" ou "Femme" est coché, décocher "Total"
+            if (genderMen.checked || genderWomen.checked) {
+                genderTotal.checked = false;
+            } else {
+                // Si ni "Homme" ni "Femme" n'est coché, cocher "Total" par défaut
+                genderTotal.checked = true;
+            }
+
+            // Si "Total" est coché, décocher "Homme" et "Femme"
+            if (genderTotal.checked) {
+                genderMen.checked = false;
+                genderWomen.checked = false;
+            }
+
+            updateOccupancyChart();
+        }
+
+        // === Retour à la vue par mois ===
+        function backToMonthView() {
+            currentView = 'month';
+            selectedDayData = null;
+            document.getElementById('backBtn').style.display = 'none';
+            document.getElementById('periodSelect').value = 'month';
+            updateOccupancyChart();
+        }
+
+        // === Sauvegarde de l'information ===
+        function saveInfo() {
+            if (currentSelectedData) {
+                const newText = document.getElementById('detailInfo').value || '-';
+                if (currentSelectedData.type === 'day') {
+                    currentSelectedData.data.info = newText;
+                    savedInfo[currentSelectedData.data.date] = newText;
+                    // Mettre à jour le tableau
+                    const tableBody = document.getElementById('occupancyTableBody');
+                    const row = tableBody.rows[currentSelectedData.index];
+                    row.cells[2].textContent = newText;
+                } else if (currentSelectedData.type === 'month') {
+                    currentSelectedData.data.info = newText;
+                    savedInfo[currentSelectedData.data.month] = newText;
+                    // Mettre à jour le tableau
+                    const tableBody = document.getElementById('occupancyTableBody');
+                    const row = tableBody.rows[currentSelectedData.index];
+                    row.cells[2].textContent = newText;
+                }
+                localStorage.setItem('occupancyInfo', JSON.stringify(savedInfo));
+            }
+        }
+
+        // === Mise à jour du graphique de taux d'occupation ===
+        function updateOccupancyChart() {
+            const month = document.getElementById('monthSelect').value;
+            const period = document.getElementById('periodSelect').value;
+            const ticketType = document.getElementById('ticketTypeSelect').value;
+            const genderTotal = document.getElementById('genderTotal').checked;
+            const genderMen = document.getElementById('genderMen').checked;
+            const genderWomen = document.getElementById('genderWomen').checked;
+            const capacityMax = parseInt(document.getElementById('capacityMax').value) || 500;
+            const vestiaireMax = parseInt(document.getElementById('vestiaireMax').value) || 100;
+            const chartDetails = document.getElementById('chartDetails');
+            const backBtn = document.getElementById('backBtn');
+            chartDetails.style.display = 'none'; // Cacher les détails par défaut
+
+            // Mettre à jour la vue actuelle
+            if (period !== currentView) {
+                currentView = period;
+                selectedDayData = null;
+                backBtn.style.display = 'none';
+            }
+
+            if (occupancyChart) {
+                occupancyChart.destroy();
+            }
+
+            const ctx = document.getElementById('occupancyChart').getContext('2d');
+            if (currentView === 'month') {
+                const data = occupancyData[month];
+                const datasets = [];
+
+                if (genderTotal) {
+                    const rates = data.map(d => {
+                        const value = d[ticketType].total;
+                        const max = ticketType === 'entry' ? capacityMax : vestiaireMax;
+                        return Math.round((value / max) * 100);
+                    });
+                    datasets.push({
+                        label: `Taux d'occupation (${ticketType === 'entry' ? 'Tickets d\'entrée' : 'Tickets vestiaire'} - Total) (%)`,
+                        data: rates,
+                        borderColor: '#9733EE',
+                        backgroundColor: 'rgba(151, 51, 238, 0.2)',
+                        fill: true,
+                    });
+                } else {
+                    if (genderMen) {
+                        const rates = data.map(d => {
+                            const value = d[ticketType].men;
+                            const max = ticketType === 'entry' ? capacityMax : vestiaireMax;
+                            return Math.round((value / max) * 100);
+                        });
+                        datasets.push({
+                            label: `Taux d'occupation (${ticketType === 'entry' ? 'Tickets d\'entrée' : 'Tickets vestiaire'} - Homme) (%)`,
+                            data: rates,
+                            borderColor: '#4CAF50',
+                            backgroundColor: 'rgba(76, 175, 80, 0.2)',
+                            fill: true,
+                        });
+                    }
+                    if (genderWomen) {
+                        const rates = data.map(d => {
+                            const value = d[ticketType].women;
+                            const max = ticketType === 'entry' ? capacityMax : vestiaireMax;
+                            return Math.round((value / max) * 100);
+                        });
+                        datasets.push({
+                            label: `Taux d'occupation (${ticketType === 'entry' ? 'Tickets d\'entrée' : 'Tickets vestiaire'} - Femme) (%)`,
+                            data: rates,
+                            borderColor: '#F44336',
+                            backgroundColor: 'rgba(244, 67, 54, 0.2)',
+                            fill: true,
+                        });
+                    }
+                }
+
+                occupancyChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: data.map(d => d.date.split('-')[2]),
+                        datasets: datasets
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100
+                            }
+                        },
+                        onClick: (e, elements) => {
+                            if (elements.length > 0) {
+                                const index = elements[0].index;
+                                const datasetIndex = elements[0].datasetIndex;
+                                const selectedData = data[index];
+                                currentSelectedData = { data: selectedData, type: 'day', index, datasetIndex };
+                                // Basculer vers la vue heure par heure
+                                currentView = 'hour';
+                                selectedDayData = selectedData;
+                                backBtn.style.display = 'block';
+                                document.getElementById('periodSelect').value = 'hour';
+                                updateOccupancyChart();
+                                // Afficher les détails
+                                const detailDate = document.getElementById('detailDate');
+                                const detailRate = document.getElementById('detailRate');
+                                const detailInfo = document.getElementById('detailInfo');
+                                detailDate.textContent = selectedData.date.split('-').reverse().join('/');
+                                let rateText = '';
+                                if (genderTotal) {
+                                    const value = selectedData[ticketType].total;
+                                    const max = ticketType === 'entry' ? capacityMax : vestiaireMax;
+                                    const rate = Math.round((value / max) * 100);
+                                    rateText = `${rate}% (${value}/${max})`;
+                                } else {
+                                    if (genderMen) {
+                                        const value = selectedData[ticketType].men;
+                                        const max = ticketType === 'entry' ? capacityMax : vestiaireMax;
+                                        const rate = Math.round((value / max) * 100);
+                                        rateText += `Homme: ${rate}% (${value}/${max})`;
+                                    }
+                                    if (genderWomen) {
+                                        const value = selectedData[ticketType].women;
+                                        const max = ticketType === 'entry' ? capacityMax : vestiaireMax;
+                                        const rate = Math.round((value / max) * 100);
+                                        rateText += (rateText ? ' | ' : '') + `Femme: ${rate}% (${value}/${max})`;
+                                    }
+                                }
+                                detailRate.textContent = rateText;
+                                detailInfo.value = selectedData.info === '-' ? '' : selectedData.info;
+                                chartDetails.style.display = 'block';
+                            }
+                        }
+                    }
+                });
+
+                // Mettre à jour le tableau (jours du mois)
+                const tableBody = document.getElementById('occupancyTableBody');
+                tableBody.innerHTML = '';
+                data.forEach(d => {
+                    const row = tableBody.insertRow();
+                    let rateText = '';
+                    if (genderTotal) {
+                        const value = d[ticketType].total;
+                        const max = ticketType === 'entry' ? capacityMax : vestiaireMax;
+                        const rate = Math.round((value / max) * 100);
+                        rateText = `${rate}% (${value}/${max})`;
+                    } else {
+                        if (genderMen) {
+                            const value = d[ticketType].men;
+                            const max = ticketType === 'entry' ? capacityMax : vestiaireMax;
+                            const rate = Math.round((value / max) * 100);
+                            rateText += `Homme: ${rate}% (${value}/${max})`;
+                        }
+                        if (genderWomen) {
+                            const value = d[ticketType].women;
+                            const max = ticketType === 'entry' ? capacityMax : vestiaireMax;
+                            const rate = Math.round((value / max) * 100);
+                            rateText += (rateText ? ' | ' : '') + `Femme: ${rate}% (${value}/${max})`;
+                        }
+                    }
+                    row.innerHTML = `
+                        <td>${d.date.split('-').reverse().join('/')}</td>
+                        <td>${rateText}</td>
+                        <td class="editable">${d.info}</td>
+                    `;
+                    // Rendre la colonne "Information" éditable
+                    row.cells[2].addEventListener('dblclick', function() {
+                        const currentText = this.textContent;
+                        currentSelectedData = { data: d, type: 'day', index: row.rowIndex - 1 };
+                        const detailDate = document.getElementById('detailDate');
+                        const detailRate = document.getElementById('detailRate');
+                        const detailInfo = document.getElementById('detailInfo');
+                        detailDate.textContent = d.date.split('-').reverse().join('/');
+                        detailRate.textContent = rateText;
+                        detailInfo.value = currentText === '-' ? '' : currentText;
+                        chartDetails.style.display = 'block';
+                    });
+                });
+            } else if (currentView === 'hour' && selectedDayData) {
+                const data = selectedDayData.hourlyData;
+                const datasets = [];
+
+                if (genderTotal) {
+                    const rates = data.map(d => {
+                        const value = d[ticketType].total;
+                        const max = ticketType === 'entry' ? capacityMax : vestiaireMax;
+                        return Math.round((value / max) * 100);
+                    });
+                    datasets.push({
+                        label: `Taux d'occupation (${ticketType === 'entry' ? 'Tickets d\'entrée' : 'Tickets vestiaire'} - Total) (%)`,
+                        data: rates,
+                        borderColor: '#9733EE',
+                        backgroundColor: 'rgba(151, 51, 238, 0.2)',
+                        fill: true,
+                    });
+                } else {
+                    if (genderMen) {
+                        const rates = data.map(d => {
+                            const value = d[ticketType].men;
+                            const max = ticketType === 'entry' ? capacityMax : vestiaireMax;
+                            return Math.round((value / max) * 100);
+                        });
+                        datasets.push({
+                            label: `Taux d'occupation (${ticketType === 'entry' ? 'Tickets d\'entrée' : 'Tickets vestiaire'} - Homme) (%)`,
+                            data: rates,
+                            borderColor: '#4CAF50',
+                            backgroundColor: 'rgba(76, 175, 80, 0.2)',
+                            fill: true,
+                        });
+                    }
+                    if (genderWomen) {
+                        const rates = data.map(d => {
+                            const value = d[ticketType].women;
+                            const max = ticketType === 'entry' ? capacityMax : vestiaireMax;
+                            return Math.round((value / max) * 100);
+                        });
+                        datasets.push({
+                            label: `Taux d'occupation (${ticketType === 'entry' ? 'Tickets d\'entrée' : 'Tickets vestiaire'} - Femme) (%)`,
+                            data: rates,
+                            borderColor: '#F44336',
+                            backgroundColor: 'rgba(244, 67, 54, 0.2)',
+                            fill: true,
+                        });
+                    }
+                }
+
+                occupancyChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: data.map(d => d.hour),
+                        datasets: datasets
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100
+                            }
+                        },
+                        onClick: (e, elements) => {
+                            if (elements.length > 0) {
+                                const index = elements[0].index;
+                                const datasetIndex = elements[0].datasetIndex;
+                                const selectedHourData = data[index];
+                                currentSelectedData = { data: selectedDayData, type: 'day', index: 0, hourIndex: index };
+                                // Afficher les détails
+                                const detailDate = document.getElementById('detailDate');
+                                const detailRate = document.getElementById('detailRate');
+                                const detailInfo = document.getElementById('detailInfo');
+                                detailDate.textContent = `${selectedDayData.date.split('-').reverse().join('/')} à ${selectedHourData.hour}`;
+                                let rateText = '';
+                                if (genderTotal) {
+                                    const value = selectedHourData[ticketType].total;
+                                    const max = ticketType === 'entry' ? capacityMax : vestiaireMax;
+                                    const rate = Math.round((value / max) * 100);
+                                    rateText = `${rate}% (${value}/${max})`;
+                                } else {
+                                    if (genderMen) {
+                                        const value = selectedHourData[ticketType].men;
+                                        const max = ticketType === 'entry' ? capacityMax : vestiaireMax;
+                                        const rate = Math.round((value / max) * 100);
+                                        rateText += `Homme: ${rate}% (${value}/${max})`;
+                                    }
+                                    if (genderWomen) {
+                                        const value = selectedHourData[ticketType].women;
+                                        const max = ticketType === 'entry' ? capacityMax : vestiaireMax;
+                                        const rate = Math.round((value / max) * 100);
+                                        rateText += (rateText ? ' | ' : '') + `Femme: ${rate}% (${value}/${max})`;
+                                    }
+                                }
+                                detailRate.textContent = rateText;
+                                detailInfo.value = selectedDayData.info === '-' ? '' : selectedDayData.info;
+                                chartDetails.style.display = 'block';
+                            }
+                        }
+                    }
+                });
+
+                // Mettre à jour le tableau (heures du jour sélectionné)
+                const tableBody = document.getElementById('occupancyTableBody');
+                tableBody.innerHTML = '';
+                data.forEach(d => {
+                    const row = tableBody.insertRow();
+                    let rateText = '';
+                    if (genderTotal) {
+                        const value = d[ticketType].total;
+                        const max = ticketType === 'entry' ? capacityMax : vestiaireMax;
+                        const rate = Math.round((value / max) * 100);
+                        rateText = `${rate}% (${value}/${max})`;
+                    } else {
+                        if (genderMen) {
+                            const value = d[ticketType].men;
+                            const max = ticketType === 'entry' ? capacityMax : vestiaireMax;
+                            const rate = Math.round((value / max) * 100);
+                            rateText += `Homme: ${rate}% (${value}/${max})`;
+                        }
+                        if (genderWomen) {
+                            const value = d[ticketType].women;
+                            const max = ticketType === 'entry' ? capacityMax : vestiaireMax;
+                            const rate = Math.round((value / max) * 100);
+                            rateText += (rateText ? ' | ' : '') + `Femme: ${rate}% (${value}/${max})`;
+                        }
+                    }
+                    row.innerHTML = `
+                        <td>${selectedDayData.date.split('-').reverse().join('/')} ${d.hour}</td>
+                        <td>${rateText}</td>
+                        <td class="editable">${selectedDayData.info}</td>
+                    `;
+                    row.cells[2].addEventListener('dblclick', function() {
+                        const currentText = this.textContent;
+                        currentSelectedData = { data: selectedDayData, type: 'day', index: 0 };
+                        const detailDate = document.getElementById('detailDate');
+                        const detailRate = document.getElementById('detailRate');
+                        const detailInfo = document.getElementById('detailInfo');
+                        detailDate.textContent = `${selectedDayData.date.split('-').reverse().join('/')} à ${d.hour}`;
+                        detailRate.textContent = rateText;
+                        detailInfo.value = currentText === '-' ? '' : currentText;
+                        chartDetails.style.display = 'block';
+                    });
+                });
+            } else if (currentView === 'year') {
+                const datasets = [];
+
+                if (genderTotal) {
+                    const rates = yearlyData.map(d => {
+                        const value = d[ticketType].total;
+                        const max = ticketType === 'entry' ? capacityMax : vestiaireMax;
+                        return Math.round((value / max) * 100);
+                    });
+                    datasets.push({
+                        label: `Taux d'occupation moyen (${ticketType === 'entry' ? 'Tickets d\'entrée' : 'Tickets vestiaire'} - Total) (%)`,
+                        data: rates,
+                        borderColor: '#9733EE',
+                        backgroundColor: 'rgba(151, 51, 238, 0.2)',
+                        fill: true,
+                    });
+                } else {
+                    if (genderMen) {
+                        const rates = yearlyData.map(d => {
+                            const value = d[ticketType].men;
+                            const max = ticketType === 'entry' ? capacityMax : vestiaireMax;
+                            return Math.round((value / max) * 100);
+                        });
+                        datasets.push({
+                            label: `Taux d'occupation moyen (${ticketType === 'entry' ? 'Tickets d\'entrée' : 'Tickets vestiaire'} - Homme) (%)`,
+                            data: rates,
+                            borderColor: '#4CAF50',
+                            backgroundColor: 'rgba(76, 175, 80, 0.2)',
+                            fill: true,
+                        });
+                    }
+                    if (genderWomen) {
+                        const rates = yearlyData.map(d => {
+                            const value = d[ticketType].women;
+                            const max = ticketType === 'entry' ? capacityMax : vestiaireMax;
+                            return Math.round((value / max) * 100);
+                        });
+                        datasets.push({
+                            label: `Taux d'occupation moyen (${ticketType === 'entry' ? 'Tickets d\'entrée' : 'Tickets vestiaire'} - Femme) (%)`,
+                            data: rates,
+                            borderColor: '#F44336',
+                            backgroundColor: 'rgba(244, 67, 54, 0.2)',
+                            fill: true,
+                        });
+                    }
+                }
+
+                occupancyChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sept', 'Oct', 'Nov', 'Déc'],
+                        datasets: datasets
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100
+                            }
+                        },
+                        onClick: (e, elements) => {
+                            if (elements.length > 0) {
+                                const index = elements[0].index;
+                                const datasetIndex = elements[0].datasetIndex;
+                                const selectedData = yearlyData[index];
+                                currentSelectedData = { data: selectedData, type: 'month', index, datasetIndex };
+                                // Afficher les détails
+                                const detailDate = document.getElementById('detailDate');
+                                const detailRate = document.getElementById('detailRate');
+                                const detailInfo = document.getElementById('detailInfo');
+                                detailDate.textContent = selectedData.month;
+                                let rateText = '';
+                                if (genderTotal) {
+                                    const value = selectedData[ticketType].total;
+                                    const max = ticketType === 'entry' ? capacityMax : vestiaireMax;
+                                    const rate = Math.round((value / max) * 100);
+                                    rateText = `${rate}% (${value}/${max})`;
+                                } else {
+                                    if (genderMen) {
+                                        const value = selectedData[ticketType].men;
+                                        const max = ticketType === 'entry' ? capacityMax : vestiaireMax;
+                                        const rate = Math.round((value / max) * 100);
+                                        rateText += `Homme: ${rate}% (${value}/${max})`;
+                                    }
+                                    if (genderWomen) {
+                                        const value = selectedData[ticketType].women;
+                                        const max = ticketType === 'entry' ? capacityMax : vestiaireMax;
+                                        const rate = Math.round((value / max) * 100);
+                                        rateText += (rateText ? ' | ' : '') + `Femme: ${rate}% (${value}/${max})`;
+                                    }
+                                }
+                                detailRate.textContent = rateText;
+                                detailInfo.value = selectedData.info === '-' ? '' : selectedData.info;
+                                chartDetails.style.display = 'block';
+                            }
+                        }
+                    }
+                });
+
+                // Mettre à jour le tableau (mois de l'année)
+                const tableBody = document.getElementById('occupancyTableBody');
+                tableBody.innerHTML = '';
+                yearlyData.forEach(d => {
+                    const row = tableBody.insertRow();
+                    let rateText = '';
+                    if (genderTotal) {
+                        const value = d[ticketType].total;
+                        const max = ticketType === 'entry' ? capacityMax : vestiaireMax;
+                        const rate = Math.round((value / max) * 100);
+                        rateText = `${rate}% (${value}/${max})`;
+                    } else {
+                        if (genderMen) {
+                            const value = d[ticketType].men;
+                            const max = ticketType === 'entry' ? capacityMax : vestiaireMax;
+                            const rate = Math.round((value / max) * 100);
+                            rateText += `Homme: ${rate}% (${value}/${max})`;
+                        }
+                        if (genderWomen) {
+                            const value = d[ticketType].women;
+                            const max = ticketType === 'entry' ? capacityMax : vestiaireMax;
+                            const rate = Math.round((value / max) * 100);
+                            rateText += (rateText ? ' | ' : '') + `Femme: ${rate}% (${value}/${max})`;
+                        }
+                    }
+                    row.innerHTML = `
+                        <td>${d.month}</td>
+                        <td>${rateText}</td>
+                        <td class="editable">${d.info}</td>
+                    `;
+                    // Rendre la colonne "Information" éditable
+                    row.cells[2].addEventListener('dblclick', function() {
+                        const currentText = this.textContent;
+                        currentSelectedData = { data: d, type: 'month', index: row.rowIndex - 1 };
+                        const detailDate = document.getElementById('detailDate');
+                        const detailRate = document.getElementById('detailRate');
+                        const detailInfo = document.getElementById('detailInfo');
+                        detailDate.textContent = d.month;
+                        detailRate.textContent = rateText;
+                        detailInfo.value = currentText === '-' ? '' : currentText;
+                        chartDetails.style.display = 'block';
+                    });
+                });
+            }
+        }
+
+        // === Graphique pour le CA ===
+        const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+        new Chart(revenueCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Jan', 'Fév', 'Mar', 'Avr'],
+                datasets: [
+                    {
+                        label: 'Entrées (€)',
+                        data: [8000, 9500, 12000, 10000],
+                        backgroundColor: '#9733EE',
+                    },
+                    {
+                        label: 'Vestiaire (€)',
+                        data: [2000, 2500, 3000, 2000],
+                        backgroundColor: '#DA22FF',
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // === Mise à jour du rapport tickets ===
+        function updateTicketsReport() {
+            const period = document.getElementById('ticketPeriod').value;
+            const occupancyImpact = document.getElementById('occupancyImpact');
+            // Simuler un taux d'occupation moyen pour la période
+            const avgOccupancy = period === 'month' ? 75 : period === 'week' ? 70 : 65;
+            occupancyImpact.textContent = `Taux d'occupation moyen pour ${period === 'month' ? 'Mars 2025' : period === 'week' ? 'Semaine 12' : '25/03/2025'} : ${avgOccupancy}%`;
+            updateVestiaireGauge();
+        }
+
+        // === Mise à jour de la jauge du vestiaire ===
+        function updateVestiaireGauge() {
+            const vestiaireMaxInput = document.getElementById('vestiaireMax');
+            let max = parseInt(vestiaireMaxInput.value) || 100;
+            if (max < 1) max = 1; // Éviter les valeurs invalides
+            localStorage.setItem('vestiaireMax', max);
+
+            const usage = 80; // Simulé
+            const vestiaireProgress = document.getElementById('vestiaireProgress');
+            const vestiaireText = document.getElementById('vestiaireText');
+            const vestiaireUsage = document.getElementById('vestiaireUsage');
+
+            vestiaireProgress.max = max;
+            vestiaireProgress.value = usage;
+            vestiaireProgress.className = '';
+            const percentage = (usage / max) * 100;
+            if (percentage >= 80 && percentage <= 100) {
+                vestiaireProgress.classList.add('warning');
+            } else if (percentage > 100) {
+                vestiaireProgress.classList.add('danger');
+            }
+
+            vestiaireText.textContent = `${usage}/${max} cintres utilisés (maximum recommandé : ${max})`;
+            vestiaireUsage.textContent = `${usage}/${max}`;
+            updateOccupancyChart(); // Mettre à jour le graphique si on est dans "Tickets vestiaire"
+        }
+
+        // === Filtrer la trésorerie ===
+        function filterTreasury() {
+            // Placeholder pour le filtrage (à implémenter avec une API)
+            console.log('Filtrer par type');
+        }
+
+        // === Modale d'annulation ===
+        function showCancelModal() {
+            document.getElementById('cancelModal').style.display = 'flex';
+        }
+
+        function closeCancelModal() {
+            document.getElementById('cancelModal').style.display = 'none';
+            document.getElementById('cancelReason').value = '';
+        }
+
+        function confirmCancel() {
+            const reason = document.getElementById('cancelReason').value;
+            if (reason) {
+                const table = document.querySelector('#historyTable tbody');
+                const row = table.querySelector('tr'); // Simule la première ligne pour l'exemple
+                if (row) {
+                    row.cells[4].textContent = `Annulé (Raison : ${reason})`;
+                }
+                closeCancelModal();
+            } else {
+                alert('Veuillez entrer une raison pour l\'annulation.');
+            }
+        }
+
+        // === Exportation en PDF ===
+        function exportToPDF(tabId) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const table = document.querySelector(`#${tabId}Table table`);
+            doc.text(document.querySelector(`#${tabId} h2`).textContent, 10, 10);
+            doc.autoTable({ html: table });
+            doc.save(`${tabId}-report.pdf`);
+        }
+
+        // === Initialisation ===
+        // Charger la jauge maximum du vestiaire depuis localStorage
+        const savedVestiaireMax = localStorage.getItem('vestiaireMax');
+        if (savedVestiaireMax) {
+            document.getElementById('vestiaireMax').value = savedVestiaireMax;
+        }
+
+        updateOccupancyChart();
+        updateTicketsReport();
+    </script>
+</body>
+</html>
