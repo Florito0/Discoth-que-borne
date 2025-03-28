@@ -887,7 +887,7 @@
 
         .confirmation-modal .modal-content button {
             padding: 10px 20px;
-            background: linear-gradient(to right, #9733EE, #DA22FF);
+            background: linear-gradient(to right, #9733EE, #DA le-gradient(to right, #DA22FF, #9733EE);
             border: none;
             border-radius: 8px;
             color: #ffffff;
@@ -1186,334 +1186,611 @@
             <a href="#" class="back-button" data-target="configuration">← Retour</a>
             <h2>Modes de paiement et Caisse</h2>
             <div class="subtitle">Définissez les modes de paiement acceptés, vérifiez votre compte bancaire, et configurez les paiements en ligne</div>
-            <p>Contenu de la gestion des modes de paiement et caisse...</p>
+            <div class="submenu-content">
+                <!-- Nouvelle cellule Paramètres de caisse -->
+                <a href="#" class="submenu-item" data-target="configuration-caisse-parametres">
+                    <span class="icon payment"></span>
+                    Paramètres de caisse
+                    <div class="description">Configurez vos paramètres fiscaux de vos prestations, personnalisez vos tickets</div>
+                </a>
+                <!-- Nouvelle cellule Vérification du compte -->
+                <a href="#" class="submenu-item" data-target="configuration-verification-compte">
+                    <span class="icon payment"></span>
+                    Vérification du compte
+                    <div class="description">Commencer à percevoir vos versements</div>
+                </a>
+            </div>
         </div>
-        <div class="content-section" id="configuration-abonnement">
-            <a href="#" class="back-button" data-target="configuration">← Retour</a>
-            <h2>Abonnement et facturation</h2>
-            <div class="subtitle">Détails de facturation, mode de paiement</div>
-            <p>Contenu de la gestion de l'abonnement et facturation...</p>
+
+        <!-- Nouvelles sous-sections pour Paramètres de caisse -->
+        <div class="content-section" id="configuration-caisse-parametres">
+            <a href="#" class="back-button" data-target="configuration-modes-paiement">← Retour</a>
+            <h2>Paramètres de caisse</h2>
+            <div class="subtitle">Configurez vos paramètres fiscaux de vos prestations, personnalisez vos tickets</div>
+            <div class="submenu-content">
+                <a href="#" class="submenu-item" data-target="configuration-taxes">
+                    <span class="icon payment"></span>
+                    Paramètres de taxes
+                    <div class="description">Gérer les paramètres fiscaux</div>
+                </a>
+                <a href="#" class="submenu-item" data-target="configuration-tickets">
+                    <span class="icon ticket"></span>
+                    Paramètres des tickets
+                    <div class="description">Personnaliser vos tickets</div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Sous-sections supplémentaires -->
+        <div class="content-section" id="configuration-verification-compte">
+            <a href="#" class="back-button" data-target="configuration-modes-paiement">← Retour</a>
+            <h2>Vérification du compte</h2>
+            <div class="subtitle">Commencer à percevoir vos versements</div>
+            <p>Contenu de la vérification du compte...</p>
+        </div>
+
+<div class="content-section" id="configuration-taxes">
+    <a href="#" class="back-button" data-target="configuration-caisse-parametres">← Retour</a>
+    <h2>Paramètres de taxes</h2>
+    <div class="subtitle">Gérer les paramètres fiscaux</div>
+    
+    <!-- Section Taux de TVA -->
+    <div class="tax-section" style="margin-bottom: 30px;">
+        <h3 style="font-size: 20px; margin-bottom: 15px;">Taux de TVA</h3>
+        <div class="tax-rates" style="display: flex; flex-direction: column; gap: 10px;">
+            <div class="tax-rate-item" style="display: flex; align-items: center; justify-content: space-between; background: #2c2c2c; padding: 10px; border-radius: 8px;">
+                <span>5.5%</span>
+                <button class="delete-btn" style="background: none; border: none; color: #ff5555; cursor: pointer;">
+                    <span class="icon trash" style="width: 16px; height: 16px; position: relative; display: inline-block;">
+                        <span style="position: absolute; top: 2px; left: 2px; width: 12px; height: 2px; background: #ff5555;"></span>
+                        <span style="position: absolute; top: 6px; left: 0; width: 16px; height: 8px; border: 2px solid #ff5555; border-top: none; border-radius: 0 0 4px 4px;"></span>
+                    </span>
+                </button>
+            </div>
+            <div class="tax-rate-item" style="display: flex; align-items: center; justify-content: space-between; background: #2c2c2c; padding: 10px; border-radius: 8px;">
+                <span>10%</span>
+                <button class="delete-btn" style="background: none; border: none; color: #ff5555; cursor: pointer;">
+                    <span class="icon trash" style="width: 16px; height: 16px; position: relative; display: inline-block;">
+                        <span style="position: absolute; top: 2px; left: 2px; width: 12px; height: 2px; background: #ff5555;"></span>
+                        <span style="position: absolute; top: 6px; left: 0; width: 16px; height: 8px; border: 2px solid #ff5555; border-top: none; border-radius: 0 0 4px 4px;"></span>
+                    </span>
+                </button>
+            </div>
+            <div class="tax-rate-item" style="display: flex; align-items: center; justify-content: space-between; background: #2c2c2c; padding: 10px; border-radius: 8px;">
+                <span>20%</span>
+                <button class="delete-btn" style="background: none; border: none; color: #ff5555; cursor: pointer;">
+                    <span class="icon trash" style="width: 16px; height: 16px; position: relative; display: inline-block;">
+                        <span style="position: absolute; top: 2px; left: 2px; width: 12px; height: 2px; background: #ff5555;"></span>
+                        <span style="position: absolute; top: 6px; left: 0; width: 16px; height: 8px; border: 2px solid #ff5555; border-top: none; border-radius: 0 0 4px 4px;"></span>
+                    </span>
+                </button>
+            </div>
+        </div>
+        <button class="add-tax-btn" style="margin-top: 15px; padding: 8px 16px; background: #444; border: none; border-radius: 8px; color: #ffffff; cursor: pointer; transition: background 0.3s ease;">
+            + Ajouter un taux de TVA
+        </button>
+    </div>
+
+    <!-- Section Ticket -->
+    <div class="ticket-section" style="margin-bottom: 30px;">
+        <h3 style="font-size: 20px; margin-bottom: 15px;">Ticket</h3>
+        <div class="ticket-items" style="display: flex; flex-direction: column; gap: 10px;">
+            <div class="ticket-item" style="display: flex; align-items: center; justify-content: space-between; background: #2c2c2c; padding: 10px; border-radius: 8px;">
+                <span>Accès Entrée sans Boisson</span>
+                <select style="padding: 5px; background: #333; border: 1px solid #444; border-radius: 5px; color: #ffffff;">
+                    <option value="5.5" selected>5.5%</option>
+                    <option value="10">10%</option>
+                    <option value="20">20%</option>
+                </select>
+            </div>
+            <div class="ticket-item" style="display: flex; align-items: center; justify-content: space-between; background: #2c2c2c; padding: 10px; border-radius: 8px;">
+                <span>Accès Entrée + Alcool et bouteille</span>
+                <select style="padding: 5px; background: #333; border: 1px solid #444; border-radius: 5px; color: #ffffff;">
+                    <option value="5.5">5.5%</option>
+                    <option value="10">10%</option>
+                    <option value="20" selected>20%</option>
+                </select>
+            </div>
+            <div class="ticket-item" style="display: flex; align-items: center; justify-content: space-between; background: #2c2c2c; padding: 10px; border-radius: 8px;">
+                <span>Accès Heure Creuse</span>
+                <select style="padding: 5px; background: #333; border: 1px solid #444; border-radius: 5px; color: #ffffff;">
+                    <option value="5.5">5.5%</option>
+                    <option value="10">10%</option>
+                    <option value="20" selected>20%</option>
+                </select>
+            </div>
+            <div class="ticket-item" style="display: flex; align-items: center; justify-content: space-between; background: #2c2c2c; padding: 10px; border-radius: 8px;">
+                <span>Accès Entrée + Soft</span>
+                <select style="padding: 5px; background: #333; border: 1px solid #444; border-radius: 5px; color: #ffffff;">
+                    <option value="5.5">5.5%</option>
+                    <option value="10" selected>10%</option>
+                    <option value="20">20%</option>
+                </select>
+            </div>
         </div>
     </div>
 
-    <script>
-        // Gestion des clics sur les éléments du menu
-        const menuItems = document.querySelectorAll('.menu-item');
-        const submenuItems = document.querySelectorAll('.submenu-item');
-        const backButtons = document.querySelectorAll('.back-button');
-        const contentSections = document.querySelectorAll('.content-section');
-        const sidebar = document.getElementById('sidebar');
-        const mainContent = document.getElementById('mainContent');
-        const toggleIcon = document.getElementById('toggleIcon');
+    <!-- Section Vestiaire -->
+    <div class="vestiaire-section">
+        <h3 style="font-size: 20px; margin-bottom: 15px;">Vestiaire</h3>
+        <div class="vestiaire-items" style="display: flex; flex-direction: column; gap: 10px;">
+            <div class="vestiaire-item" style="display: flex; align-items: center; justify-content: space-between; background: #2c2c2c; padding: 10px; border-radius: 8px;">
+                <span>Vestiaire</span>
+                <select style="padding: 5px; background: #333; border: 1px solid #444; border-radius: 5px; color: #ffffff;">
+                    <option value="5.5">5.5%</option>
+                    <option value="10" selected>10%</option>
+                    <option value="20">20%</option>
+                </select>
+            </div>
+        </div>
+    </div>
 
-        menuItems.forEach(item => {
-            item.addEventListener('click', (e) => {
-                e.preventDefault();
-                const target = item.getAttribute('data-target');
+    <!-- Bouton Enregistrer -->
+    <div class="save-section" style="display: flex; justify-content: center; margin-top: 30px;">
+        <button id="saveTaxSettingsBtn" class="save-btn">Enregistrer les paramètres</button>
+    </div>
+</div>
 
-                // Masquer toutes les sections et afficher celle ciblée
-                contentSections.forEach(section => section.classList.remove('active'));
-                document.getElementById(target).classList.add('active');
+<div class="content-section" id="configuration-tickets">
+    <a href="#" class="back-button" data-target="configuration-caisse-parametres">← Retour</a>
+    <h2>Paramètres des tickets</h2>
+    <div class="subtitle">Personnaliser vos tickets</div>
+    <p>Contenu de la personnalisation des tickets...</p>
+</div>
 
-                // Gérer l'état actif des éléments du menu
-                menuItems.forEach(i => i.classList.remove('active'));
-                item.classList.add('active');
-            });
-        });
+<div class="content-section" id="configuration-abonnement">
+    <a href="#" class="back-button" data-target="configuration">← Retour</a>
+    <h2>Abonnement et facturation</h2>
+    <div class="subtitle">Détails de facturation, mode de paiement</div>
+    <p>Contenu de la gestion de l'abonnement et facturation...</p>
+</div>
+</div>
 
-        submenuItems.forEach(item => {
-            item.addEventListener('click', (e) => {
-                e.preventDefault();
-                const target = item.getAttribute('data-target');
+<script>
+// Gestion des clics sur les éléments du menu
+const menuItems = document.querySelectorAll('.menu-item');
+const submenuItems = document.querySelectorAll('.submenu-item');
+const backButtons = document.querySelectorAll('.back-button');
+const contentSections = document.querySelectorAll('.content-section');
+const sidebar = document.getElementById('sidebar');
+const mainContent = document.getElementById('mainContent');
+const toggleIcon = document.getElementById('toggleIcon');
 
-                // Afficher la section correspondante
-                contentSections.forEach(section => section.classList.remove('active'));
-                document.getElementById(target).classList.add('active');
-            });
-        });
+menuItems.forEach(item => {
+    item.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = item.getAttribute('data-target');
 
-        backButtons.forEach(button => {
-            button.addEventListener('click', (e) => {
-                e.preventDefault();
-                const target = button.getAttribute('data-target');
+        // Masquer toutes les sections et afficher celle ciblée
+        contentSections.forEach(section => section.classList.remove('active'));
+        document.getElementById(target).classList.add('active');
 
-                // Afficher la section correspondante
-                contentSections.forEach(section => section.classList.remove('active'));
-                document.getElementById(target).classList.add('active');
-            });
-        });
+        // Gérer l'état actif des éléments du menu
+        menuItems.forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+    });
+});
 
-        // Afficher la section "Gestion" par défaut
-        document.getElementById('gestion').classList.add('active');
+submenuItems.forEach(item => {
+    item.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = item.getAttribute('data-target');
 
-        // Gestion de la rétraction/expansion du menu
-        function toggleSidebar() {
-            sidebar.classList.toggle('collapsed');
-            mainContent.classList.toggle('collapsed');
-            if (sidebar.classList.contains('collapsed')) {
-                toggleIcon.classList.remove('chevron-left');
-                toggleIcon.classList.add('chevron-right');
-            } else {
-                toggleIcon.classList.remove('chevron-right');
-                toggleIcon.classList.add('chevron-left');
-            }
+        // Afficher la section correspondante
+        contentSections.forEach(section => section.classList.remove('active'));
+        document.getElementById(target).classList.add('active');
+    });
+});
+
+backButtons.forEach(button => {
+    button.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = button.getAttribute('data-target');
+
+        // Afficher la section correspondante
+        contentSections.forEach(section => section.classList.remove('active'));
+        document.getElementById(target).classList.add('active');
+    });
+});
+
+// Afficher la section "Gestion" par défaut
+document.getElementById('gestion').classList.add('active');
+
+// Gestion de la rétraction/expansion du menu
+function toggleSidebar() {
+    sidebar.classList.toggle('collapsed');
+    mainContent.classList.toggle('collapsed');
+    if (sidebar.classList.contains('collapsed')) {
+        toggleIcon.classList.remove('chevron-left');
+        toggleIcon.classList.add('chevron-right');
+    } else {
+        toggleIcon.classList.remove('chevron-right');
+        toggleIcon.classList.add('chevron-left');
+    }
+}
+
+// Gestion de la modale de bienvenue
+const modal = document.getElementById('welcomeModal');
+const dontShowAgainCheckbox = document.getElementById('dontShowAgain');
+
+// Vérifier si la modale doit être affichée
+try {
+    if (!localStorage.getItem('dontShowWelcomeModal')) {
+        modal.style.display = 'flex';
+    }
+} catch (e) {
+    console.error('Erreur avec localStorage :', e);
+    modal.style.display = 'flex'; // Afficher la modale par défaut si localStorage échoue
+}
+
+function closeModal() {
+    try {
+        if (dontShowAgainCheckbox.checked) {
+            localStorage.setItem('dontShowWelcomeModal', 'true');
         }
+    } catch (e) {
+        console.error('Erreur lors de l\'écriture dans localStorage :', e);
+    }
+    modal.style.display = 'none';
+    // Remettre le focus sur un élément approprié après la fermeture
+    document.querySelector('.menu-item.active').focus();
+}
 
-        // Gestion de la modale de bienvenue
-        const modal = document.getElementById('welcomeModal');
-        const dontShowAgainCheckbox = document.getElementById('dontShowAgain');
+// Ajouter un focus sur la modale lorsqu'elle s'ouvre
+modal.addEventListener('transitionend', () => {
+    if (modal.style.display === 'flex') {
+        modal.focus();
+    }
+});
 
-        // Vérifier si la modale doit être affichée
-        try {
-            if (!localStorage.getItem('dontShowWelcomeModal')) {
-                modal.style.display = 'flex';
-            }
-        } catch (e) {
-            console.error('Erreur avec localStorage :', e);
-            modal.style.display = 'flex'; // Afficher la modale par défaut si localStorage échoue
-        }
+// Gestion de la modale de confirmation
+const confirmationModal = document.getElementById('confirmationModal');
 
-        function closeModal() {
-            try {
-                if (dontShowAgainCheckbox.checked) {
-                    localStorage.setItem('dontShowWelcomeModal', 'true');
-                }
-            } catch (e) {
-                console.error('Erreur lors de l\'écriture dans localStorage :', e);
-            }
-            modal.style.display = 'none';
-            // Remettre le focus sur un élément approprié après la fermeture
-            document.querySelector('.menu-item.active').focus();
-        }
+function showConfirmationModal() {
+    confirmationModal.style.display = 'flex';
+}
 
-        // Ajouter un focus sur la modale lorsqu'elle s'ouvre
-        modal.addEventListener('transitionend', () => {
-            if (modal.style.display === 'flex') {
-                modal.focus();
-            }
-        });
+function closeConfirmationModal() {
+    confirmationModal.style.display = 'none';
+}
 
-        // Gestion de la modale de confirmation
-        const confirmationModal = document.getElementById('confirmationModal');
+// Gestion de l'upload de la couverture
+const coverUpload = document.getElementById('coverUpload');
+const coverImage = document.getElementById('coverImage');
+const coverPlaceholder = document.getElementById('coverPlaceholder');
+const removeCoverBtn = document.getElementById('removeCoverBtn');
+const coverSection = document.getElementById('coverSection');
 
-        function showConfirmationModal() {
-            confirmationModal.style.display = 'flex';
-        }
-
-        function closeConfirmationModal() {
-            confirmationModal.style.display = 'none';
-        }
-
-        // Gestion de l'upload de la couverture
-        const coverUpload = document.getElementById('coverUpload');
-        const coverImage = document.getElementById('coverImage');
-        const coverPlaceholder = document.getElementById('coverPlaceholder');
-        const removeCoverBtn = document.getElementById('removeCoverBtn');
-        const coverSection = document.getElementById('coverSection');
-
-        coverUpload.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    coverImage.src = event.target.result;
-                    coverImage.style.display = 'block';
-                    coverPlaceholder.style.display = 'none';
-                    removeCoverBtn.style.display = 'inline-block';
-                    coverSection.classList.remove('invalid');
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
-        removeCoverBtn.addEventListener('click', () => {
-            coverImage.src = '';
-            coverImage.style.display = 'none';
-            coverPlaceholder.style.display = 'flex';
-            removeCoverBtn.style.display = 'none';
-            coverUpload.value = ''; // Réinitialiser l'input file
-        });
-
-        // Gestion de la validation et soumission du formulaire
-        const profileForm = document.getElementById('profileForm');
-        const discoNameInput = document.getElementById('discoName');
-        const countryInput = document.getElementById('country');
-        const cityInput = document.getElementById('city');
-        const postalCodeInput = document.getElementById('postalCode');
-        const addressInput = document.getElementById('address');
-        const countryCodeInput = document.getElementById('countryCode');
-        const phoneInput = document.getElementById('phone');
-        const emailInput = document.getElementById('email');
-
-        function validateForm() {
-            let isValid = true;
-
-            // Validation de la couverture
-            if (!coverImage.src || coverImage.style.display === 'none') {
-                coverSection.classList.add('invalid');
-                isValid = false;
-            } else {
-                coverSection.classList.remove('invalid');
-            }
-
-            // Validation du nom de la discothèque
-            if (!discoNameInput.value.trim()) {
-                discoNameInput.parentElement.classList.add('invalid');
-                isValid = false;
-            } else {
-                discoNameInput.parentElement.classList.remove('invalid');
-            }
-
-            // Validation de la ville
-            if (!cityInput.value.trim()) {
-                cityInput.parentElement.classList.add('invalid');
-                isValid = false;
-            } else {
-                cityInput.parentElement.classList.remove('invalid');
-            }
-
-            // Validation du code postal
-            const postalCodePattern = countryInput.value === 'FR' ? /^\d{5}$/ : /.*/; // 5 chiffres pour la France
-            if (!postalCodePattern.test(postalCodeInput.value.trim())) {
-                postalCodeInput.parentElement.classList.add('invalid');
-                isValid = false;
-            } else {
-                postalCodeInput.parentElement.classList.remove('invalid');
-            }
-
-            // Validation de l'adresse
-            if (!addressInput.value.trim()) {
-                addressInput.parentElement.classList.add('invalid');
-                isValid = false;
-            } else {
-                addressInput.parentElement.classList.remove('invalid');
-            }
-
-            // Validation du téléphone
-            const phonePattern = countryInput.value === 'FR' ? /^[67]\d{8}$/ : /^\d{9,15}$/; // Commence par 6 ou 7 et 9 chiffres pour la France
-            if (!phonePattern.test(phoneInput.value.trim())) {
-                phoneInput.parentElement.classList.add('invalid');
-                isValid = false;
-            } else {
-                phoneInput.parentElement.classList.remove('invalid');
-            }
-
-            // Validation de l'e-mail
-            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailPattern.test(emailInput.value.trim())) {
-                emailInput.parentElement.classList.add('invalid');
-                isValid = false;
-            } else {
-                emailInput.parentElement.classList.remove('invalid');
-            }
-
-            return isValid;
-        }
-
-        profileForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-
-            if (validateForm()) {
-                const formData = new FormData(profileForm);
-                const data = {
-                    discoName: formData.get('discoName'),
-                    country: formData.get('country'),
-                    city: formData.get('city'),
-                    postalCode: formData.get('postalCode'),
-                    address: formData.get('address'),
-                    phone: `${formData.get('countryCode')}${formData.get('phone')}`,
-                    email: formData.get('email'),
-                    cover: coverImage.src,
-                };
-                // Simulation de sauvegarde (vous pouvez remplacer par une requête API)
-                console.log('Informations sauvegardées :', data);
-                showConfirmationModal();
-            }
-        });
-
-        // Réinitialisation du formulaire
-        function resetForm() {
-            profileForm.reset();
-            coverImage.src = '';
-            coverImage.style.display = 'none';
-            coverPlaceholder.style.display = 'flex';
-            removeCoverBtn.style.display = 'none';
-            coverUpload.value = '';
+coverUpload.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            coverImage.src = event.target.result;
+            coverImage.style.display = 'block';
+            coverPlaceholder.style.display = 'none';
+            removeCoverBtn.style.display = 'inline-block';
             coverSection.classList.remove('invalid');
-            document.querySelectorAll('.form-group').forEach(group => {
-                group.classList.remove('invalid');
-            });
-            countryInput.value = 'FR'; // Remettre la France par défaut
-            countryCodeInput.value = '+33'; // Remettre +33 par défaut
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+removeCoverBtn.addEventListener('click', () => {
+    coverImage.src = '';
+    coverImage.style.display = 'none';
+    coverPlaceholder.style.display = 'flex';
+    removeCoverBtn.style.display = 'none';
+    coverUpload.value = ''; // Réinitialiser l'input file
+});
+
+// Gestion de la validation et soumission du formulaire
+const profileForm = document.getElementById('profileForm');
+const discoNameInput = document.getElementById('discoName');
+const countryInput = document.getElementById('country');
+const cityInput = document.getElementById('city');
+const postalCodeInput = document.getElementById('postalCode');
+const addressInput = document.getElementById('address');
+const countryCodeInput = document.getElementById('countryCode');
+const phoneInput = document.getElementById('phone');
+const emailInput = document.getElementById('email');
+
+function validateForm() {
+    let isValid = true;
+
+    // Validation de la couverture
+    if (!coverImage.src || coverImage.style.display === 'none') {
+        coverSection.classList.add('invalid');
+        isValid = false;
+    } else {
+        coverSection.classList.remove('invalid');
+    }
+
+    // Validation du nom de la discothèque
+    if (!discoNameInput.value.trim()) {
+        discoNameInput.parentElement.classList.add('invalid');
+        isValid = false;
+    } else {
+        discoNameInput.parentElement.classList.remove('invalid');
+    }
+
+    // Validation de la ville
+    if (!cityInput.value.trim()) {
+        cityInput.parentElement.classList.add('invalid');
+        isValid = false;
+    } else {
+        cityInput.parentElement.classList.remove('invalid');
+    }
+
+    // Validation du code postal
+    const postalCodePattern = countryInput.value === 'FR' ? /^\d{5}$/ : /.*/; // 5 chiffres pour la France
+    if (!postalCodePattern.test(postalCodeInput.value.trim())) {
+        postalCodeInput.parentElement.classList.add('invalid');
+        isValid = false;
+    } else {
+        postalCodeInput.parentElement.classList.remove('invalid');
+    }
+
+    // Validation de l'adresse
+    if (!addressInput.value.trim()) {
+        addressInput.parentElement.classList.add('invalid');
+        isValid = false;
+    } else {
+        addressInput.parentElement.classList.remove('invalid');
+    }
+
+    // Validation du téléphone
+    const phonePattern = countryInput.value === 'FR' ? /^[67]\d{8}$/ : /^\d{9,15}$/; // Commence par 6 ou 7 et 9 chiffres pour la France
+    if (!phonePattern.test(phoneInput.value.trim())) {
+        phoneInput.parentElement.classList.add('invalid');
+        isValid = false;
+    } else {
+        phoneInput.parentElement.classList.remove('invalid');
+    }
+
+    // Validation de l'e-mail
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(emailInput.value.trim())) {
+        emailInput.parentElement.classList.add('invalid');
+        isValid = false;
+    } else {
+        emailInput.parentElement.classList.remove('invalid');
+    }
+
+    return isValid;
+}
+
+profileForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    if (validateForm()) {
+        const formData = new FormData(profileForm);
+        const data = {
+            discoName: formData.get('discoName'),
+            country: formData.get('country'),
+            city: formData.get('city'),
+            postalCode: formData.get('postalCode'),
+            address: formData.get('address'),
+            phone: `${formData.get('countryCode')}${formData.get('phone')}`,
+            email: formData.get('email'),
+            cover: coverImage.src,
+        };
+        // Simulation de sauvegarde (vous pouvez remplacer par une requête API)
+        console.log('Informations sauvegardées :', data);
+        showConfirmationModal();
+    }
+});
+
+// Réinitialisation du formulaire
+function resetForm() {
+    profileForm.reset();
+    coverImage.src = '';
+    coverImage.style.display = 'none';
+    coverPlaceholder.style.display = 'flex';
+    removeCoverBtn.style.display = 'none';
+    coverUpload.value = '';
+    coverSection.classList.remove('invalid');
+    document.querySelectorAll('.form-group').forEach(group => {
+        group.classList.remove('invalid');
+    });
+    countryInput.value = 'FR'; // Remettre la France par défaut
+    countryCodeInput.value = '+33'; // Remettre +33 par défaut
+}
+
+// Validation en temps réel
+discoNameInput.addEventListener('input', () => {
+    if (discoNameInput.value.trim()) {
+        discoNameInput.parentElement.classList.remove('invalid');
+    }
+});
+
+cityInput.addEventListener('input', () => {
+    if (cityInput.value.trim()) {
+        cityInput.parentElement.classList.remove('invalid');
+    }
+});
+
+postalCodeInput.addEventListener('input', () => {
+    const postalCodePattern = countryInput.value === 'FR' ? /^\d{5}$/ : /.*/;
+    if (postalCodePattern.test(postalCodeInput.value.trim())) {
+        postalCodeInput.parentElement.classList.remove('invalid');
+    }
+});
+
+addressInput.addEventListener('input', () => {
+    if (addressInput.value.trim()) {
+        addressInput.parentElement.classList.remove('invalid');
+    }
+});
+
+phoneInput.addEventListener('input', () => {
+    const phonePattern = countryInput.value === 'FR' ? /^[67]\d{8}$/ : /^\d{9,15}$/;
+    if (phonePattern.test(phoneInput.value.trim())) {
+        phoneInput.parentElement.classList.remove('invalid');
+    }
+});
+
+emailInput.addEventListener('input', () => {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (emailPattern.test(emailInput.value.trim())) {
+        emailInput.parentElement.classList.remove('invalid');
+    }
+});
+
+// Mettre à jour la validation du code postal et du téléphone en fonction du pays
+countryInput.addEventListener('change', () => {
+    const postalCodePattern = countryInput.value === 'FR' ? /^\d{5}$/ : /.*/;
+    if (!postalCodePattern.test(postalCodeInput.value.trim())) {
+        postalCodeInput.parentElement.classList.add('invalid');
+    } else {
+        postalCodeInput.parentElement.classList.remove('invalid');
+    }
+
+    const phonePattern = countryInput.value === 'FR' ? /^[67]\d{8}$/ : /^\d{9,15}$/;
+    if (!phonePattern.test(phoneInput.value.trim())) {
+        phoneInput.parentElement.classList.add('invalid');
+    } else {
+        phoneInput.parentElement.classList.remove('invalid');
+    }
+
+    // Synchroniser le code de pays avec le pays sélectionné
+    const countryToCodeMap = {
+        'FR': '+33',
+        'US': '+1',
+        'GB': '+44',
+        'DE': '+49',
+        'ES': '+34',
+        'IT': '+39',
+    };
+    countryCodeInput.value = countryToCodeMap[countryInput.value] || '+33';
+});
+
+// Gestion de la section "Paramètres de taxes"
+const taxRatesContainer = document.querySelector('.tax-rates');
+const addTaxBtn = document.querySelector('.add-tax-btn');
+const ticketItems = document.querySelectorAll('.ticket-item select');
+const vestiaireItem = document.querySelector('.vestiaire-item select');
+const saveTaxSettingsBtn = document.getElementById('saveTaxSettingsBtn');
+
+// Liste des taux de TVA disponibles (initialisée avec les taux par défaut)
+let taxRates = ['5.5', '10', '20'];
+
+// Fonction pour mettre à jour les options des menus déroulants
+function updateTaxSelects() {
+    const selects = document.querySelectorAll('.ticket-item select, .vestiaire-item select');
+    selects.forEach(select => {
+        const currentValue = select.value;
+        select.innerHTML = ''; // Vider les options actuelles
+        taxRates.forEach(rate => {
+            const option = document.createElement('option');
+            option.value = rate;
+            option.textContent = `${rate}%`;
+            if (rate === currentValue) {
+                option.selected = true;
+            }
+            select.appendChild(option);
+        });
+    });
+}
+
+// Ajouter un nouveau taux de TVA
+addTaxBtn.addEventListener('click', () => {
+    const newRate = prompt('Entrez un nouveau taux de TVA (ex: 15 pour 15%) :');
+    if (newRate && !isNaN(newRate) && newRate > 0 && !taxRates.includes(newRate)) {
+        taxRates.push(newRate);
+        taxRates.sort((a, b) => parseFloat(a) - parseFloat(b)); // Trier les taux par ordre croissant
+
+        // Mettre à jour l'affichage des taux
+        taxRatesContainer.innerHTML = '';
+        taxRates.forEach(rate => {
+            const rateItem = document.createElement('div');
+            rateItem.classList.add('tax-rate-item');
+            rateItem.style.display = 'flex';
+            rateItem.style.alignItems = 'center';
+            rateItem.style.justifyContent = 'space-between';
+            rateItem.style.background = '#2c2c2c';
+            rateItem.style.padding = '10px';
+            rateItem.style.borderRadius = '8px';
+            rateItem.innerHTML = `
+                <span>${rate}%</span>
+                <button class="delete-btn" style="background: none; border: none; color: #ff5555; cursor: pointer;">
+                    <span class="icon trash" style="width: 16px; height: 16px; position: relative; display: inline-block;">
+                        <span style="position: absolute; top: 2px; left: 2px; width: 12px; height: 2px; background: #ff5555;"></span>
+                        <span style="position: absolute; top: 6px; left: 0; width: 16px; height: 8px; border: 2px solid #ff5555; border-top: none; border-radius: 0 0 4px 4px;"></span>
+                    </span>
+                </button>
+            `;
+            taxRatesContainer.appendChild(rateItem);
+        });
+
+        // Mettre à jour les menus déroulants
+        updateTaxSelects();
+
+        // Ajouter les gestionnaires d'événements pour les nouveaux boutons de suppression
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', handleDeleteTaxRate);
+        });
+    } else if (newRate) {
+        alert('Veuillez entrer un taux valide et non existant.');
+    }
+});
+
+// Supprimer un taux de TVA
+function handleDeleteTaxRate(e) {
+    const rateItem = e.target.closest('.tax-rate-item');
+    const rate = rateItem.querySelector('span').textContent.replace('%', '');
+    
+    // Vérifier si le taux est utilisé dans les tickets ou le vestiaire
+    let isUsed = false;
+    ticketItems.forEach(select => {
+        if (select.value === rate) {
+            isUsed = true;
         }
+    });
+    if (vestiaireItem.value === rate) {
+        isUsed = true;
+    }
 
-        // Validation en temps réel
-        discoNameInput.addEventListener('input', () => {
-            if (discoNameInput.value.trim()) {
-                discoNameInput.parentElement.classList.remove('invalid');
-            }
-        });
+    if (isUsed) {
+        alert('Ce taux est actuellement utilisé dans les tickets ou le vestiaire. Veuillez modifier les sélections avant de supprimer ce taux.');
+        return;
+    }
 
-        cityInput.addEventListener('input', () => {
-            if (cityInput.value.trim()) {
-                cityInput.parentElement.classList.remove('invalid');
-            }
-        });
+    // Supprimer le taux de la liste
+    taxRates = taxRates.filter(r => r !== rate);
+    rateItem.remove();
 
-        postalCodeInput.addEventListener('input', () => {
-            const postalCodePattern = countryInput.value === 'FR' ? /^\d{5}$/ : /.*/;
-            if (postalCodePattern.test(postalCodeInput.value.trim())) {
-                postalCodeInput.parentElement.classList.remove('invalid');
-            }
-        });
+    // Mettre à jour les menus déroulants
+    updateTaxSelects();
+}
 
-        addressInput.addEventListener('input', () => {
-            if (addressInput.value.trim()) {
-                addressInput.parentElement.classList.remove('invalid');
-            }
-        });
+// Ajouter les gestionnaires d'événements pour les boutons de suppression existants
+document.querySelectorAll('.delete-btn').forEach(btn => {
+    btn.addEventListener('click', handleDeleteTaxRate);
+});
 
-        phoneInput.addEventListener('input', () => {
-            const phonePattern = countryInput.value === 'FR' ? /^[67]\d{8}$/ : /^\d{9,15}$/;
-            if (phonePattern.test(phoneInput.value.trim())) {
-                phoneInput.parentElement.classList.remove('invalid');
-            }
-        });
+// Sauvegarder les paramètres de taxes
+saveTaxSettingsBtn.addEventListener('click', () => {
+    const ticketSettings = {};
+    ticketItems.forEach((select, index) => {
+        const ticketType = select.closest('.ticket-item').querySelector('span').textContent;
+        ticketSettings[ticketType] = select.value;
+    });
 
-        emailInput.addEventListener('input', () => {
-            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (emailPattern.test(emailInput.value.trim())) {
-                emailInput.parentElement.classList.remove('invalid');
-            }
-        });
+    const vestiaireSettings = {
+        'Vestiaire': vestiaireItem.value
+    };
 
-        // Mettre à jour la validation du code postal et du téléphone en fonction du pays
-        countryInput.addEventListener('change', () => {
-            const postalCodePattern = countryInput.value === 'FR' ? /^\d{5}$/ : /.*/;
-            if (!postalCodePattern.test(postalCodeInput.value.trim())) {
-                postalCodeInput.parentElement.classList.add('invalid');
-            } else {
-                postalCodeInput.parentElement.classList.remove('invalid');
-            }
+    const taxData = {
+        taxRates: taxRates,
+        ticketSettings: ticketSettings,
+        vestiaireSettings: vestiaireSettings
+    };
 
-            const phonePattern = countryInput.value === 'FR' ? /^[67]\d{8}$/ : /^\d{9,15}$/;
-            if (!phonePattern.test(phoneInput.value.trim())) {
-                phoneInput.parentElement.classList.add('invalid');
-            } else {
-                phoneInput.parentElement.classList.remove('invalid');
-            }
-
-            // Synchroniser le code de pays avec le pays sélectionné
-            const countryToCodeMap = {
-                'FR': '+33',
-                'US': '+1',
-                'GB': '+44',
-                'DE': '+49',
-                'ES': '+34',
-                'IT': '+39',
-            };
-            countryCodeInput.value = countryToCodeMap[countryInput.value] || '+33';
-        });
-    </script>
+    // Simulation de sauvegarde (vous pouvez remplacer par une requête API)
+    console.log('Paramètres de taxes sauvegardés :', taxData);
+    showConfirmationModal();
+});
+</script>
 </body>
 </html>
