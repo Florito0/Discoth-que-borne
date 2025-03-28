@@ -637,6 +637,14 @@
         .even-row { background-color: rgba(255, 255, 255, 0.05); }
         .odd-row { background-color: rgba(0, 0, 0, 0.1); }
 
+        .tooltip-icon {
+            cursor: pointer;
+            color: #00D4FF;
+            margin-left: 5px;
+            font-size: 14px;
+            vertical-align: middle;
+        }
+
         .tooltip {
             position: absolute;
             background-color: #333;
@@ -649,7 +657,10 @@
             display: none;
             max-width: 300px;
             pointer-events: none;
+            white-space: normal;
+            line-height: 1.4;
         }
+
         .tooltip.visible {
             display: block;
         }
@@ -837,19 +848,19 @@
                     <h3>Les entrées</h3>
                     <div class="presentation-fields">
                         <div>
-                            <label>Accès Entrée sans Boisson:</label>
+                            <label>Accès Entrée sans Boisson: <span class="tooltip-icon" data-tooltip="TVA incluse, personnalisez dans Configuration > Mode de paiement et caisse > Paramètres de caisse > Paramètres des taxes. L'outil 'Statistique et rapport' calcule automatiquement le prix HT et la TVA à partir du prix TTC saisi.">ℹ️</span></label>
                             <input type="text" placeholder="Ex: Entrée seule" id="access-presentation-normal">
                         </div>
                         <div>
-                            <label>Accès Entrée + Alcool:</label>
+                            <label>Accès Entrée + Alcool: <span class="tooltip-icon" data-tooltip="TVA incluse, personnalisez dans Configuration > Mode de paiement et caisse > Paramètres de caisse > Paramètres des taxes. L'outil 'Statistique et rapport' calcule automatiquement le prix HT et la TVA à partir du prix TTC saisi.">ℹ️</span></label>
                             <input type="text" placeholder="Ex: Entrée avec boisson alcoolisée" id="access-presentation-alcohol">
                         </div>
                         <div>
-                            <label>Accès Heure Creuse:</label>
+                            <label>Accès Heure Creuse: <span class="tooltip-icon" data-tooltip="TVA incluse, personnalisez dans Configuration > Mode de paiement et caisse > Paramètres de caisse > Paramètres des taxes. L'outil 'Statistique et rapport' calcule automatiquement le prix HT et la TVA à partir du prix TTC saisi.">ℹ️</span></label>
                             <input type="text" placeholder="Ex: Entrée Gratuit" id="access-presentation-low">
                         </div>
                         <div>
-                            <label>Accès Entrée + Soft:</label>
+                            <label>Accès Entrée + Soft: <span class="tooltip-icon" data-tooltip="TVA incluse, personnalisez dans Configuration > Mode de paiement et caisse > Paramètres de caisse > Paramètres des taxes. L'outil 'Statistique et rapport' calcule automatiquement le prix HT et la TVA à partir du prix TTC saisi.">ℹ️</span></label>
                             <input type="text" placeholder="Ex: Entrée avec boisson soft" id="access-presentation-soft">
                         </div>
                         <div class="price-container">
@@ -868,7 +879,7 @@
                 </div>
                 
                 <div class="form-group pure-group">
-                    <h3>Les entrées avec bouteille</h3>
+                    <h3>Les entrées avec bouteille <span class="tooltip-icon" data-tooltip="TVA incluse, personnalisez dans Configuration > Mode de paiement et caisse > Paramètres de caisse > Paramètres des taxes. L'outil 'Statistique et rapport' calcule automatiquement le prix HT et la TVA à partir du prix TTC saisi.">ℹ️</span></h3>
                     <div class="pure-container" id="pure-container">
                         <div class="pure-row" draggable="true">
                             <div class="category-section">
@@ -1006,7 +1017,7 @@
             container.appendChild(pureDiv);
             addDragEvents(pureDiv);
         }
-      </script>
+    </script>
 </body>
 <script>
     function addDetails(button) {
@@ -1879,7 +1890,7 @@
         previewSection.innerHTML = html;
     }
 
-    const today = new Date('2025-03-28'); // Date ajustée au 28 mars 2025 comme demandé
+    const today = new Date('2025-03-28'); // Date ajustée au 28 mars 2025
     const daysOfWeek = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
     const currentDay = daysOfWeek[today.getDay()];
     document.getElementById('kiosk-subtitle').textContent = `Aujourd'hui : ${currentDay} ${today.toLocaleDateString('fr-FR')}`;
@@ -2136,5 +2147,10 @@
     window.onload = () => {
         addPure();
         renderKioskItems();
+        document.querySelectorAll('.tooltip-icon').forEach(icon => {
+            icon.addEventListener('mouseenter', showTooltip);
+            icon.addEventListener('mouseleave', hideTooltip);
+            icon.addEventListener('mousemove', positionTooltip);
+        });
     };
 </script>
