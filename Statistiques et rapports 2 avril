@@ -7,7 +7,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
-        /* Styles inchangés */
+        /* Styles généraux */
         * {
             margin: 0;
             padding: 0;
@@ -277,7 +277,7 @@
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
-            overflow-x: auto; /* Ajout pour la barre de défilement horizontale */
+            overflow-x: auto;
         }
 
         .data-table th,
@@ -418,6 +418,72 @@
         .sub-row.visible {
             display: table-row;
         }
+
+/* Style pour l'info-bulle de "Taux TVA" */
+.tooltip {
+    position: relative; /* Position relative pour que l'info-bulle soit positionnée par rapport à cet élément */
+    display: inline-block; /* Permet à l'élément de s'intégrer dans le flux du texte */
+    margin-left: 5px; /* Espace à gauche pour l'esthétique */
+}
+
+/* Style de l'icône "?" */
+.tooltip .tooltip-icon {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background-color: rgba(151, 51, 238, 0.2); /* Couleur de fond violet clair */
+    color: #333; /* Couleur du texte */
+    border-radius: 50%; /* Forme circulaire */
+    text-align: center;
+    line-height: 16px; /* Centre verticalement le "?" */
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer; /* Indique que l'élément est interactif */
+    transition: background-color 0.3s ease; /* Transition fluide pour le survol */
+}
+
+/* Changement de couleur au survol de l'icône */
+.tooltip .tooltip-icon:hover {
+    background-color: rgba(151, 51, 238, 0.4); /* Couleur plus foncée au survol */
+}
+
+/* Style de l'info-bulle */
+.tooltip .tooltip-text {
+    visibility: hidden; /* Masquée par défaut */
+    width: 300px; /* Largeur fixe */
+    background-color: #333; /* Fond sombre pour meilleure lisibilité */
+    color: #fff; /* Texte blanc pour contraste */
+    text-align: center;
+    border-radius: 6px;
+    padding: 10px;
+    position: absolute; /* Position absolue par rapport à .tooltip */
+    z-index: 10000; /* z-index très élevé pour passer au-dessus du graphique */
+    top: -110%; /* Positionne l'info-bulle au-dessus de l'icône (ajusté pour éviter les débordements) */
+    left: 50%;
+    transform: translateX(-50%); /* Centre horizontalement */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Ombre pour effet de profondeur */
+    font-size: 12px;
+    opacity: 0; /* Invisible par défaut */
+    transition: opacity 0.3s ease, visibility 0.3s ease; /* Transition fluide pour l'apparition */
+}
+
+/* Affiche l'info-bulle au survol */
+.tooltip:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+.tooltip:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+@media (max-width: 600px) {
+    .tooltip .tooltip-text {
+        width: 200px;
+        font-size: 11px;
+    }
+}
     </style>
 </head>
 <body>
@@ -719,7 +785,7 @@
             <div class="total" id="revenueTotal">
                 Total : 0€
             </div>
-            <div class="chart-container">
+            <div class="chart-container" style="height: 400px; width: 100%;">
                 <canvas id="revenueChart"></canvas>
             </div>
             <div class="data-table" id="revenueTable">
@@ -729,10 +795,10 @@
                             <th>Mois</th>
                             <th>Catégorie</th>
                             <th>Montant HT (€)</th>
-                            <th>Taux TVA</th>
+                            <th>Taux TVA <span class="tooltip"><span class="tooltip-icon">?</span><span class="tooltip-text">Vous pouvez configurer la TVA en allant dans : Configuration > Mode de paiement et Caisse > Paramètres de caisse > Paramètres de taxes.</span></span></th>
                             <th>TVA (€)</th>
                             <th>Montant TTC (€)</th>
-                            <th>Comparaison (€)</th> <!-- Nouvelle colonne pour la comparaison -->
+                            <th>Comparaison (€)</th>
                         </tr>
                     </thead>
                     <tbody id="revenueTableBody">
@@ -1234,8 +1300,16 @@
             try {
                 return new Promise(resolve => {
                     setTimeout(() => {
+                        // Vérifie que l'année existe dans revenueData
+                        if (!revenueData[year]) {
+                            throw new Error(`Aucune donnée disponible pour l'année ${year}`);
+                        }
+
                         let filteredData = revenueData[year] || [];
                         if (mode === 'range') {
+                            if (!fromMonth || !toMonth) {
+                                throw new Error('Les mois de début et de fin doivent être définis pour le mode "range"');
+                            }
                             filteredData = filteredData.filter(d => {
                                 const monthDate = new Date(d.month);
                                 const fromDate = new Date(fromMonth);
@@ -1243,11 +1317,28 @@
                                 return monthDate >= fromDate && monthDate <= toDate;
                             });
                         } else if (mode === 'single') {
+                            if (!singleMonth) {
+                                throw new Error('Un mois doit être défini pour le mode "single"');
+                            }
                             filteredData = filteredData.filter(d => d.month === singleMonth);
                         }
+
+                        // Validation des données filtrées
+                        filteredData = filteredData.map(item => ({
+                            month: item.month || '',
+                            noDrink: Number(item.noDrink) || 0,
+                            withAlcoholBottle: Number(item.withAlcoholBottle) || 0,
+                            offPeak: Number(item.offPeak) || 0,
+                            withSoft: Number(item.withSoft) || 0,
+                            vestiaire: Number(item.vestiaire) || 0
+                        }));
+
                         resolve(filteredData);
                     }, 500);
                 });
+            } catch (error) {
+                console.error('Erreur dans fetchRevenueData :', error);
+                throw error;
             } finally {
                 loader.style.display = 'none';
             }
@@ -1489,322 +1580,408 @@
                             }
                         }
                     },
-                    onClick: (event, elements) => {
-                        if (elements.length > 0) {
-                            const index = elements[0].index;
-                            const details = document.getElementById('chartDetails');
-                            details.style.display = 'block';
-                            document.getElementById('backBtn').style.display = period === 'month' ? 'inline-block' : 'none';
+// Gestion du clic sur le graphique pour afficher les détails
+onClick: (event, elements) => {
+    // Vérifie si un élément du graphique a été cliqué
+    if (elements.length > 0) {
+        const index = elements[0].index; // Récupère l'index de l'élément cliqué
+        const details = document.getElementById('chartDetails'); // Récupère le conteneur des détails
+        details.style.display = 'block'; // Affiche les détails
 
-                            if (period === 'month') {
-                                currentSelectedData = { type: 'day', data: data[index] };
-                                document.getElementById('detailDate').textContent = data[index].date;
-                                document.getElementById('detailRate').textContent = `${Math.round((data[index][ticketType].total / capacityMax) * 100)}%`;
-                                document.getElementById('detailInfo').value = data[index].info || '-';
-                            } else if (period === 'year') {
-                                currentSelectedData = { type: 'month', data: data[index] };
-                                document.getElementById('detailDate').textContent = data[index].month;
-                                document.getElementById('detailRate').textContent = `${Math.round((data[index][ticketType].total / capacityMax) * 100)}%`;
-                                document.getElementById('detailInfo').value = data[index].info || '-';
-                            } else if (period === 'hour') {
-                                currentSelectedData = null;
-                                details.style.display = 'none';
+        // Affiche le bouton "Retour" uniquement si on est en vue par mois
+        document.getElementById('backBtn').style.display = period === 'month' ? 'inline-block' : 'none';
+
+        // Si la période est "mois", on affiche les détails d'un jour spécifique
+        if (period === 'month') {
+            currentSelectedData = { type: 'day', data: data[index] }; // Stocke les données du jour sélectionné
+            document.getElementById('detailDate').textContent = data[index].date; // Affiche la date du jour
+            // Calcule et affiche le taux d'occupation pour ce jour
+            document.getElementById('detailRate').textContent = `${Math.round((data[index][ticketType].total / capacityMax) * 100)}%`;
+            document.getElementById('detailInfo').value = data[index].info || '-'; // Affiche les informations associées
+        }
+        // Si la période est "année", on affiche les détails d'un mois spécifique
+        else if (period === 'year') {
+            currentSelectedData = { type: 'month', data: data[index] }; // Stocke les données du mois sélectionné
+            document.getElementById('detailDate').textContent = data[index].month; // Affiche le mois
+            // Calcule et affiche le taux d'occupation pour ce mois
+            document.getElementById('detailRate').textContent = `${Math.round((data[index][ticketType].total / capacityMax) * 100)}%`;
+            document.getElementById('detailInfo').value = data[index].info || '-'; // Affiche les informations associées
+        }
+        // Si la période est "heure", on masque les détails (pas de détails à afficher pour les heures)
+        else if (period === 'hour') {
+            currentSelectedData = null; // Réinitialise les données sélectionnées
+            details.style.display = 'none'; // Masque les détails
+        }
+    }
+}
+            }
+        });
+
+        // Mise à jour du tableau des données d'occupation
+        const tableBody = document.getElementById('occupancyTableBody'); // Récupère le corps du tableau
+        tableBody.innerHTML = ''; // Vide le tableau avant de le remplir
+
+        // Si la période est "mois", on affiche les données par jour
+        if (period === 'month') {
+            data.forEach(d => {
+                const row = document.createElement('tr'); // Crée une nouvelle ligne
+                // Ajoute les données dans les colonnes : date, taux d'occupation, et information
+                row.innerHTML = `
+                    <td>${d.date}</td>
+                    <td>${Math.round((d[ticketType].total / capacityMax) * 100)}%</td>
+                    <td class="editable">${d.info || '-'}</td>
+                `;
+                tableBody.appendChild(row); // Ajoute la ligne au tableau
+            });
+        }
+        // Si la période est "année", on affiche les données par mois
+        else if (period === 'year') {
+            data.forEach(d => {
+                const row = document.createElement('tr'); // Crée une nouvelle ligne
+                // Ajoute les données dans les colonnes : mois, taux d'occupation, et information
+                row.innerHTML = `
+                    <td>${d.month}</td>
+                    <td>${Math.round((d[ticketType].total / capacityMax) * 100)}%</td>
+                    <td class="editable">${d.info || '-'}</td>
+                `;
+                tableBody.appendChild(row); // Ajoute la ligne au tableau
+            });
+        }
+        // Si la période est "heure", on n'affiche pas de tableau (données horaires non adaptées ici)
+    }
+
+    // Fonction pour mettre à jour les filtres du rapport CA
+    function updateRevenueFilters() {
+        const year = document.getElementById('revenueYear').value; // Récupère l'année sélectionnée
+        const fromMonthSelect = document.getElementById('revenueFromMonth'); // Sélecteur "De"
+        const toMonthSelect = document.getElementById('revenueToMonth'); // Sélecteur "À"
+        const singleMonthSelect = document.getElementById('revenueSingleMonth'); // Sélecteur de mois unique
+
+        // Vide les options des sélecteurs
+        fromMonthSelect.innerHTML = '';
+        toMonthSelect.innerHTML = '';
+        singleMonthSelect.innerHTML = '';
+
+        // Récupère les données de l'année sélectionnée
+        const yearData = revenueData[year] || [];
+        // Crée une liste des mois disponibles
+        const months = yearData.map(d => d.month).sort();
+
+        // Remplit les sélecteurs "De", "À" et "Mois unique" avec les mois disponibles
+        months.forEach(month => {
+            const option1 = document.createElement('option');
+            option1.value = month;
+            option1.textContent = new Date(month).toLocaleString('fr-FR', { month: 'long', year: 'numeric' });
+            fromMonthSelect.appendChild(option1);
+
+            const option2 = document.createElement('option');
+            option2.value = month;
+            option2.textContent = new Date(month).toLocaleString('fr-FR', { month: 'long', year: 'numeric' });
+            toMonthSelect.appendChild(option2);
+
+            const option3 = document.createElement('option');
+            option3.value = month;
+            option3.textContent = new Date(month).toLocaleString('fr-FR', { month: 'long', year: 'numeric' });
+            singleMonthSelect.appendChild(option3);
+        });
+
+        // Met à jour le rapport après avoir changé les filtres
+        updateRevenueReport();
+    }
+
+    // Fonction pour basculer entre les filtres "Période" et "Mois unique"
+    function toggleRevenueFilters() {
+        const mode = document.getElementById('revenueMode').value; // Récupère le mode sélectionné
+        const rangeFilters = document.getElementById('rangeFilters'); // Conteneur des filtres "De - À"
+        const singleMonthFilter = document.getElementById('singleMonthFilter'); // Conteneur du filtre "Mois unique"
+
+        // Affiche ou masque les filtres en fonction du mode
+        if (mode === 'range') {
+            rangeFilters.style.display = 'flex';
+            singleMonthFilter.style.display = 'none';
+        } else {
+            rangeFilters.style.display = 'none';
+            singleMonthFilter.style.display = 'flex';
+        }
+
+        // Met à jour le rapport après avoir changé le mode
+        updateRevenueReport();
+    }
+
+    // Fonction pour mettre à jour le rapport CA
+    async function updateRevenueReport() {
+        // Récupération des valeurs des filtres
+        const year = document.getElementById('revenueYear').value; // Année sélectionnée
+        const mode = document.getElementById('revenueMode').value; // Mode ("range" ou "single")
+        const fromMonth = document.getElementById('revenueFromMonth').value; // Mois de début (pour mode "range")
+        const toMonth = document.getElementById('revenueToMonth').value; // Mois de fin (pour mode "range")
+        const singleMonth = document.getElementById('revenueSingleMonth').value; // Mois unique (pour mode "single")
+
+        // Validation des entrées pour s'assurer que les filtres sont bien définis
+        if (!year || !mode || (!fromMonth && mode === 'range') || (!toMonth && mode === 'range') || (!singleMonth && mode === 'single')) {
+            console.error('Erreur : Les filtres ne sont pas correctement définis.');
+            document.getElementById('revenueTotal').textContent = 'Erreur : Filtres invalides';
+            return;
+        }
+
+        // Récupération des données avec gestion des erreurs
+        let data;
+        try {
+            data = await fetchRevenueData(year, mode, fromMonth, toMonth, singleMonth);
+        } catch (error) {
+            console.error('Erreur lors de la récupération des données CA :', error);
+            document.getElementById('revenueTotal').textContent = 'Erreur : Impossible de charger les données';
+            return;
+        }
+
+        // Vérification que les données existent et ne sont pas vides
+        if (!data || data.length === 0) {
+            console.warn('Aucune donnée disponible pour les filtres sélectionnés.');
+            document.getElementById('revenueTotal').textContent = 'Aucune donnée disponible';
+            const tableBody = document.getElementById('revenueTableBody');
+            tableBody.innerHTML = '<tr><td colspan="7">Aucune donnée à afficher</td></tr>';
+            if (revenueChart) revenueChart.destroy(); // Détruit le graphique existant
+            return;
+        }
+
+        // Calcule le total global avec gestion des valeurs manquantes
+        let totalRevenue = 0;
+        data.forEach(d => {
+            const noDrink = Number(d.noDrink) || 0; // Montant des entrées sans boisson
+            const withAlcoholBottle = Number(d.withAlcoholBottle) || 0; // Montant des entrées avec alcool/bouteille
+            const offPeak = Number(d.offPeak) || 0; // Montant des entrées en heure creuse
+            const withSoft = Number(d.withSoft) || 0; // Montant des entrées avec soft
+            const vestiaire = Number(d.vestiaire) || 0; // Montant du vestiaire
+            totalRevenue += noDrink + withAlcoholBottle + offPeak + withSoft + vestiaire; // Additionne tous les montants
+        });
+        // Affiche le total global
+        document.getElementById('revenueTotal').textContent = `Total : ${totalRevenue.toFixed(2)}€`;
+
+        // Préparation des données pour le graphique
+        const labels = data.map(d => {
+            if (!d.month) return 'Inconnu'; // Gestion des mois manquants
+            return new Date(d.month).toLocaleString('fr-FR', { month: 'short' }); // Formate les mois pour l'affichage
+        });
+
+        // Calcule les données pour les entrées (somme des différentes catégories sauf vestiaire)
+        const entryData = data.map(d => {
+            const total = (Number(d.noDrink) || 0) + (Number(d.withAlcoholBottle) || 0) + (Number(d.offPeak) || 0) + (Number(d.withSoft) || 0);
+            return total;
+        });
+
+        // Calcule les données pour le vestiaire
+        const vestiaireData = data.map(d => Number(d.vestiaire) || 0);
+
+        // Création ou mise à jour du graphique avec info-bulles personnalisées
+        const ctx = document.getElementById('revenueChart').getContext('2d');
+        if (revenueChart) {
+            revenueChart.destroy(); // Détruit l'ancien graphique pour éviter les conflits
+        }
+
+        revenueChart = new Chart(ctx, {
+            type: 'bar', // Type de graphique : barres
+            data: {
+                labels: labels, // Étiquettes des mois sur l'axe X
+                datasets: [
+                    {
+                        label: 'Entrées (€)', // Étiquette pour les entrées
+                        data: entryData, // Données des entrées
+                        backgroundColor: '#9733EE', // Couleur violette
+                        borderColor: '#9733EE',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Vestiaire (€)', // Étiquette pour le vestiaire
+                        data: vestiaireData, // Données du vestiaire
+                        backgroundColor: '#FF69B4', // Couleur rose
+                        borderColor: '#FF69B4',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true, // Le graphique s'adapte à la taille de l'écran
+                maintainAspectRatio: false, // Permet un meilleur ajustement sur petits écrans
+                scales: {
+                    y: {
+                        beginAtZero: true, // L'axe Y commence à 0
+                        title: {
+                            display: true,
+                            text: 'Montant (€)', // Titre de l'axe Y
+                            font: { size: 14 }
+                        },
+                        ticks: {
+                            callback: value => `${value}€` // Ajoute le symbole € sur l'axe Y
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Mois', // Titre de l'axe X
+                            font: { size: 14 }
+                        },
+                        ticks: {
+                            autoSkip: true, // Évite le chevauchement des étiquettes
+                            maxRotation: 45, // Rotation des étiquettes si nécessaire
+                            minRotation: 0
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        enabled: true,
+                        mode: 'index', // Affiche les info-bulles pour toutes les barres au même index
+                        intersect: false,
+                        callbacks: {
+                            // Personnalisation des info-bulles pour afficher des détails précis
+                            label: function(context) {
+                                const datasetLabel = context.dataset.label || ''; // Étiquette du dataset
+                                const value = context.parsed.y || 0; // Valeur de la barre
+                                const monthIndex = context.dataIndex; // Index du mois
+                                const monthData = data[monthIndex]; // Données du mois
+                                // Si c'est le dataset des entrées, on détaille les catégories
+                                if (datasetLabel === 'Entrées (€)') {
+                                    return [
+                                        `${datasetLabel}: ${value}€`,
+                                        ` - Sans Boisson: ${monthData.noDrink || 0}€`,
+                                        ` - Avec Alcool/Bouteille: ${monthData.withAlcoholBottle || 0}€`,
+                                        ` - Heure Creuse: ${monthData.offPeak || 0}€`,
+                                        ` - Avec Soft: ${monthData.withSoft || 0}€`
+                                    ];
+                                }
+                                return `${datasetLabel}: ${value}€`; // Pour le vestiaire, on affiche juste la valeur
+                            },
+                            title: function(tooltipItems) {
+                                return `Mois : ${labels[tooltipItems[0].dataIndex]}`; // Titre de l'info-bulle
                             }
+                        },
+                        backgroundColor: '#333', // Fond sombre pour les info-bulles
+                        titleFont: { size: 14 },
+                        bodyFont: { size: 12 },
+                        padding: 10,
+                        cornerRadius: 6
+                    },
+                    legend: {
+                        position: 'top', // Position de la légende
+                        labels: {
+                            font: { size: 12 },
+                            padding: 15
                         }
                     }
                 }
-            });
-
-            const tableBody = document.getElementById('occupancyTableBody');
-            tableBody.innerHTML = '';
-            if (period === 'month') {
-                data.forEach(d => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${d.date}</td>
-                        <td>${Math.round((d[ticketType].total / capacityMax) * 100)}%</td>
-                        <td class="editable" onclick="editInfo('${d.date}', '${d.info}')">${d.info}</td>
-                    `;
-                    row.addEventListener('click', () => {
-                        selectedDayData = d;
-                        currentView = 'hour';
-                        document.getElementById('periodSelect').value = 'hour';
-                        updateOccupancyChart();
-                    });
-                    tableBody.appendChild(row);
-                });
-            } else if (period === 'year') {
-                data.forEach(d => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${d.month}</td>
-                        <td>${Math.round((d[ticketType].total / capacityMax) * 100)}%</td>
-                        <td class="editable" onclick="editInfo('${d.month}', '${d.info}')">${d.info}</td>
-                    `;
-                    tableBody.appendChild(row);
-                });
-            } else if (period === 'hour' && selectedDayData) {
-                data.forEach(d => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${d.hour}</td>
-                        <td>${Math.round((d[ticketType].total / capacityMax) * 100)}%</td>
-                        <td>-</td>
-                    `;
-                    tableBody.appendChild(row);
-                });
             }
-        }
+        });
 
-        function editInfo(dateOrMonth, currentInfo) {
-            const period = document.getElementById('periodSelect').value;
-            currentSelectedData = period === 'year' 
-                ? { type: 'month', data: yearlyData.find(d => d.month === dateOrMonth) }
-                : { type: 'day', data: occupancyData[document.getElementById('monthSelect').value].find(d => d.date === dateOrMonth) };
-            const details = document.getElementById('chartDetails');
-            details.style.display = 'block';
-            document.getElementById('detailDate').textContent = dateOrMonth;
-            document.getElementById('detailRate').textContent = `${Math.round((currentSelectedData.data[document.getElementById('ticketTypeSelect').value].total / parseInt(document.getElementById('capacityMax').value)) * 100)}%`;
-            document.getElementById('detailInfo').value = currentInfo || '-';
-        }
+        // Mise à jour du tableau des données CA
+        const tableBody = document.getElementById('revenueTableBody'); // Récupère le corps du tableau
+        tableBody.innerHTML = ''; // Vide le tableau avant de le remplir
 
-        // Met à jour les options des filtres de sélection des mois pour le rapport CA en fonction de l'année sélectionnée
-        function updateRevenueFilters() {
-            // Récupère l'année sélectionnée dans le menu déroulant
-            const year = document.getElementById('revenueYear').value;
-            // Récupère les éléments HTML des sélecteurs de mois
-            const fromMonthSelect = document.getElementById('revenueFromMonth'); // "De" pour la plage
-            const toMonthSelect = document.getElementById('revenueToMonth');     // "À" pour la plage
-            const singleMonthSelect = document.getElementById('revenueSingleMonth'); // Mois unique
+        // Taux de TVA (simulé à 20%)
+        const tvaRate = 0.20;
 
-            // Réinitialise les options des sélecteurs pour éviter les doublons
-            fromMonthSelect.innerHTML = '';
-            toMonthSelect.innerHTML = '';
-            singleMonthSelect.innerHTML = '';
-
-            // Extrait la liste des mois disponibles pour l'année sélectionnée depuis revenueData
-            const months = revenueData[year].map(d => d.month);
-
-            // Remplit les sélecteurs avec les mois disponibles
-            months.forEach(month => {
-                // Crée une option pour le sélecteur "De"
-                const optionFrom = document.createElement('option');
-                optionFrom.value = month; // Valeur au format "YYYY-MM"
-                optionFrom.textContent = new Date(month).toLocaleString('fr-FR', { month: 'long', year: 'numeric' }); // Ex: "Mars 2025"
-                fromMonthSelect.appendChild(optionFrom);
-
-                // Crée une option pour le sélecteur "À"
-                const optionTo = document.createElement('option');
-                optionTo.value = month;
-                optionTo.textContent = new Date(month).toLocaleString('fr-FR', { month: 'long', year: 'numeric' });
-                toMonthSelect.appendChild(optionTo);
-
-                // Crée une option pour le sélecteur de mois unique
-                const optionSingle = document.createElement('option');
-                optionSingle.value = month;
-                optionSingle.textContent = new Date(month).toLocaleString('fr-FR', { month: 'long', year: 'numeric' });
-                singleMonthSelect.appendChild(optionSingle);
-            });
-
-            // Définit les valeurs par défaut : premier mois pour "De" et dernier mois pour "À"
-            fromMonthSelect.value = months[0];
-            toMonthSelect.value = months[months.length - 1];
-            singleMonthSelect.value = months[0];
-
-            // Met à jour le rapport après avoir modifié les filtres
-            updateRevenueReport();
-        }
-
-        // Affiche ou masque les filtres en fonction du mode sélectionné (plage ou mois unique)
-        function toggleRevenueFilters() {
-            const mode = document.getElementById('revenueMode').value;
-            const rangeFilters = document.getElementById('rangeFilters');
-            const singleMonthFilter = document.getElementById('singleMonthFilter');
-
-            // Affiche les filtres de plage et masque le filtre de mois unique si mode = "range"
-            if (mode === 'range') {
-                rangeFilters.style.display = 'flex';
-                singleMonthFilter.style.display = 'none';
-            } else { // Sinon, affiche le filtre de mois unique et masque les filtres de plage
-                rangeFilters.style.display = 'none';
-                singleMonthFilter.style.display = 'flex';
+        // Pour chaque mois dans les données
+        data.forEach((d, index) => {
+            if (!d.month) {
+                console.warn(`Données manquantes pour un mois à l'index ${index}`);
+                return; // Ignore les entrées invalides
             }
 
-            // Met à jour le rapport après changement de mode
-            updateRevenueReport();
-        }
+            // Formate le mois pour l'affichage
+            const month = new Date(d.month).toLocaleString('fr-FR', { month: 'long', year: 'numeric' });
 
-        // Met à jour le rapport CA (graphique et tableau) en fonction des filtres sélectionnés
-        async function updateRevenueReport() {
-            // Récupère les valeurs des filtres
-            const year = document.getElementById('revenueYear').value;
-            const mode = document.getElementById('revenueMode').value;
-            const fromMonth = document.getElementById('revenueFromMonth').value;
-            const toMonth = document.getElementById('revenueToMonth').value;
-            const singleMonth = document.getElementById('revenueSingleMonth').value;
-
-            // Récupère les données filtrées en fonction des paramètres
-            const data = await fetchRevenueData(year, mode, fromMonth, toMonth, singleMonth);
-
-            // Prépare les données pour le graphique
-            const labels = data.map(d => new Date(d.month).toLocaleString('fr-FR', { month: 'short' })); // Ex: "Jan", "Fév"
-            const datasets = [
-                {
-                    label: 'Entrée sans boisson',
-                    data: data.map(d => d.noDrink),
-                    backgroundColor: 'rgba(151, 51, 238, 0.5)',
-                },
-                {
-                    label: 'Entrée + Alcool/Bouteille',
-                    data: data.map(d => d.withAlcoholBottle),
-                    backgroundColor: 'rgba(30, 144, 255, 0.5)',
-                },
-                {
-                    label: 'Heure creuse',
-                    data: data.map(d => d.offPeak),
-                    backgroundColor: 'rgba(255, 105, 180, 0.5)',
-                },
-                {
-                    label: 'Entrée + Soft',
-                    data: data.map(d => d.withSoft),
-                    backgroundColor: 'rgba(75, 192, 192, 0.5)',
-                },
-                {
-                    label: 'Vestiaire',
-                    data: data.map(d => d.vestiaire),
-                    backgroundColor: 'rgba(255, 159, 64, 0.5)',
-                }
+            // Calcule les montants HT, TVA et TTC pour chaque catégorie
+            const categories = [
+                { name: 'Entrée sans Boisson', amount: Number(d.noDrink) || 0 },
+                { name: 'Entrée + Alcool/Bouteille', amount: Number(d.withAlcoholBottle) || 0 },
+                { name: 'Heure Creuse', amount: Number(d.offPeak) || 0 },
+                { name: 'Entrée + Soft', amount: Number(d.withSoft) || 0 },
+                { name: 'Vestiaire', amount: Number(d.vestiaire) || 0 }
             ];
 
-            // Met à jour le graphique
-            const ctx = document.getElementById('revenueChart').getContext('2d');
-            if (revenueChart) revenueChart.destroy(); // Détruit l'ancien graphique s'il existe
-            revenueChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels,
-                    datasets
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        x: { stacked: true }, // Empile les barres sur l'axe X
-                        y: { 
-                            stacked: true, 
-                            beginAtZero: true,
-                            title: { display: true, text: 'Montant TTC (€)' }
-                        }
-                    }
-                }
-            });
+            // Ajoute une ligne principale pour le mois (dépliable)
+            const toggleRow = document.createElement('tr');
+            toggleRow.classList.add('toggle-row'); // Ajoute une classe pour le style et l'interaction
+            const totalHT = categories.reduce((sum, cat) => sum + cat.amount, 0); // Calcule le total HT
+            const totalTVA = totalHT * tvaRate; // Calcule la TVA
+            const totalTTC = totalHT + totalTVA; // Calcule le total TTC
 
-            // Calcule le total global pour la période sélectionnée
-            const totalRevenue = data.reduce((sum, d) => 
-                sum + d.noDrink + d.withAlcoholBottle + d.offPeak + d.withSoft + d.vestiaire, 0);
-            document.getElementById('revenueTotal').textContent = `Total : ${totalRevenue.toLocaleString('fr-FR')}€`;
+            // Calcule la comparaison avec le mois précédent (si disponible)
+            let comparison = '-';
+            if (index > 0) {
+                const prevData = data[index - 1]; // Données du mois précédent
+                const prevTotalHT = (Number(prevData.noDrink) || 0) + (Number(prevData.withAlcoholBottle) || 0) + 
+                                   (Number(prevData.offPeak) || 0) + (Number(prevData.withSoft) || 0) + 
+                                   (Number(prevData.vestiaire) || 0); // Total HT du mois précédent
+                const diff = totalHT - prevTotalHT; // Différence avec le mois précédent
+                comparison = diff >= 0 ? `+${diff.toFixed(2)}€` : `${diff.toFixed(2)}€`; // Formate la différence
+            }
 
-            // Remplit le tableau avec les données détaillées et ajoute une barre de défilement
-            const tableBody = document.getElementById('revenueTableBody');
-            tableBody.innerHTML = '';
+            // Ajoute les données dans la ligne principale
+            toggleRow.innerHTML = `
+                <td>${month}</td>
+                <td>Total</td>
+                <td>${totalHT.toFixed(2)}€</td>
+                <td>${(tvaRate * 100).toFixed(0)}%</td>
+                <td>${totalTVA.toFixed(2)}€</td>
+                <td>${totalTTC.toFixed(2)}€</td>
+                <td class="${comparison.startsWith('+') ? 'positive' : comparison === '-' ? '' : 'negative'}">${comparison}</td>
+            `;
+            tableBody.appendChild(toggleRow); // Ajoute la ligne au tableau
 
-            // Taux de TVA fixes pour chaque catégorie (exemple)
-            const tvaRates = {
-                noDrink: 0.20,
-                withAlcoholBottle: 0.20,
-                offPeak: 0.20,
-                withSoft: 0.20,
-                vestiaire: 0.10
-            };
+            // Ajoute les sous-lignes pour chaque catégorie
+            categories.forEach(cat => {
+                const subRow = document.createElement('tr');
+                subRow.classList.add('sub-row'); // Ajoute une classe pour le style et l'interaction
+                const amountHT = cat.amount; // Montant HT de la catégorie
+                const amountTVA = amountHT * tvaRate; // Calcule la TVA
+                const amountTTC = amountHT + amountTVA; // Calcule le TTC
 
-            data.forEach((monthData, index) => {
-                const monthName = new Date(monthData.month).toLocaleString('fr-FR', { month: 'long', year: 'numeric' });
-                
-                // Ligne "Total" renommée avec le mois et placée en première ligne
-                const totalRow = document.createElement('tr');
-                totalRow.classList.add('toggle-row'); // Classe pour la ligne dépliable
-                const totalTTC = monthData.noDrink + monthData.withAlcoholBottle + monthData.offPeak + 
-                               monthData.withSoft + monthData.vestiaire;
-                const totalHT = Object.entries(monthData).reduce((sum, [key, value]) => {
-                    if (key !== 'month') {
-                        const ht = value / (1 + tvaRates[key]);
-                        return sum + ht;
-                    }
-                    return sum;
-                }, 0).toFixed(2);
-                const totalTVA = (totalTTC - totalHT).toFixed(2);
-
-                // Calcule la comparaison avec le mois précédent (si applicable)
-                let comparison = '-';
+                // Calcule la comparaison pour chaque catégorie
+                let catComparison = '-';
                 if (index > 0) {
-                    const prevTotal = data[index - 1].noDrink + data[index - 1].withAlcoholBottle + 
-                                    data[index - 1].offPeak + data[index - 1].withSoft + data[index - 1].vestiaire;
-                    comparison = (totalTTC - prevTotal).toFixed(2);
-                    comparison = comparison > 0 ? `+${comparison}` : comparison;
+                    const prevData = data[index - 1]; // Données du mois précédent
+                    const prevAmount = {
+                        'Entrée sans Boisson': Number(prevData.noDrink) || 0,
+                        'Entrée + Alcool/Bouteille': Number(prevData.withAlcoholBottle) || 0,
+                        'Heure Creuse': Number(prevData.offPeak) || 0,
+                        'Entrée + Soft': Number(prevData.withSoft) || 0,
+                        'Vestiaire': Number(prevData.vestiaire) || 0
+                    }[cat.name]; // Montant de la catégorie pour le mois précédent
+                    const diff = amountHT - prevAmount; // Différence avec le mois précédent
+                    catComparison = diff >= 0 ? `+${diff.toFixed(2)}€` : `${diff.toFixed(2)}€`; // Formate la différence
                 }
 
-                totalRow.innerHTML = `
-                    <td>${monthName}</td>
-                    <td>Total ${monthName}</td>
-                    <td>${totalHT}</td>
-                    <td>-</td>
-                    <td>${totalTVA}</td>
-                    <td>${totalTTC.toLocaleString('fr-FR')}</td>
-                    <td class="${comparison > 0 ? 'positive' : comparison < 0 ? 'negative' : ''}">${comparison}</td>
+                // Ajoute les données dans la sous-ligne
+                subRow.innerHTML = `
+                    <td></td>
+                    <td>${cat.name}</td>
+                    <td>${amountHT.toFixed(2)}€</td>
+                    <td>${(tvaRate * 100).toFixed(0)}%</td>
+                    <td>${amountTVA.toFixed(2)}€</td>
+                    <td>${amountTTC.toFixed(2)}€</td>
+                    <td class="${catComparison.startsWith('+') ? 'positive' : catComparison === '-' ? '' : 'negative'}">${catComparison}</td>
                 `;
-                tableBody.appendChild(totalRow);
-
-                // Sous-lignes pour chaque catégorie (masquées par défaut)
-                const categories = [
-                    { key: 'noDrink', label: 'Entrée sans boisson' },
-                    { key: 'withAlcoholBottle', label: 'Entrée + Alcool/Bouteille' },
-                    { key: 'offPeak', label: 'Heure creuse' },
-                    { key: 'withSoft', label: 'Entrée + Soft' },
-                    { key: 'vestiaire', label: 'Vestiaire' }
-                ];
-
-                categories.forEach(cat => {
-                    const ht = (monthData[cat.key] / (1 + tvaRates[cat.key])).toFixed(2);
-                    const tva = (monthData[cat.key] - ht).toFixed(2);
-                    const ttc = monthData[cat.key].toLocaleString('fr-FR');
-                    
-                    // Calcule la comparaison pour chaque catégorie
-                    let catComparison = '-';
-                    if (index > 0) {
-                        catComparison = (monthData[cat.key] - data[index - 1][cat.key]).toFixed(2);
-                        catComparison = catComparison > 0 ? `+${catComparison}` : catComparison;
-                    }
-
-                    const subRow = document.createElement('tr');
-                    subRow.classList.add('sub-row');
-                    subRow.innerHTML = `
-                        <td></td>
-                        <td>${cat.label}</td>
-                        <td>${ht}</td>
-                        <td>${(tvaRates[cat.key] * 100).toFixed(0)}%</td>
-                        <td>${tva}</td>
-                        <td>${ttc}</td>
-                        <td class="${catComparison > 0 ? 'positive' : catComparison < 0 ? 'negative' : ''}">${catComparison}</td>
-                    `;
-                    tableBody.appendChild(subRow);
-                });
-
-                // Ajoute un gestionnaire d'événements pour déplier/replier les sous-lignes
-                totalRow.addEventListener('click', () => {
-                    const subRows = totalRow.nextElementSibling;
-                    let nextRow = subRows;
-                    while (nextRow && nextRow.classList.contains('sub-row')) {
-                        nextRow.classList.toggle('visible');
-                        nextRow = nextRow.nextElementSibling;
-                    }
-                });
+                tableBody.appendChild(subRow); // Ajoute la sous-ligne au tableau
             });
-        }
 
-        // Initialise les filtres et rapports au chargement de la page
-        updateRevenueFilters();
-        toggleRevenueFilters();
-        updateOccupancyChart();
-        updateTicketsReport();
-    </script>
+            // Ajoute un événement pour déplier/replier les sous-lignes
+            toggleRow.addEventListener('click', () => {
+                let current = toggleRow.nextElementSibling; // Récupère la première sous-ligne
+                while (current && current.classList.contains('sub-row')) {
+                    current.classList.toggle('visible'); // Affiche ou masque la sous-ligne
+                    current = current.nextElementSibling; // Passe à la sous-ligne suivante
+                }
+            });
+        });
+    }
+
+    // === Initialisation ===
+    // Met à jour les filtres du rapport CA au chargement de la page
+    updateRevenueFilters();
+    // Met à jour le rapport des tickets au chargement de la page
+    updateTicketsReport();
+    // Met à jour le graphique d'occupation au chargement de la page
+    updateOccupancyChart();
+</script>
 </body>
 </html>
