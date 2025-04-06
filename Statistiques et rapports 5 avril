@@ -835,24 +835,24 @@
                     date: `2025-03-${String(i + 1).padStart(2, '0')}`,
                     entry: { men: menEntry, women: womenEntry, total: menEntry + womenEntry },
                     vestiaire: { men: menVestiaire, women: womenVestiaire, total: menVestiaire + womenVestiaire },
-                    hourlyData: Array.from({ length: 8 }, (_, h) => {
-                        const hour = 20 + h;
-                        const hourStr = hour >= 24 ? `0${hour - 24}:00` : `${hour}:00`;
-                        const factor = Math.sin((h / 8) * Math.PI) * 0.8 + 0.2;
-                        return {
-                            hour: hourStr,
-                            entry: {
-                                men: Math.round(menEntry * factor),
-                                women: Math.round(womenEntry * factor),
-                                total: Math.round((menEntry + womenEntry) * factor)
-                            },
-                            vestiaire: {
-                                men: Math.round(menVestiaire * factor),
-                                women: Math.round(womenVestiaire * factor),
-                                total: Math.round((menVestiaire + womenVestiaire) * factor)
-                            }
-                        };
-                    }),
+                    hourlyData: Array.from({ length: 24 }, (_, h) => {
+    const hour = 12 + h; // Début à 12h
+    const hourStr = hour >= 24 ? `${String(hour - 24).padStart(2, '0')}:00` : `${hour}:00`;
+    const factor = Math.sin((h / 24) * Math.PI) * 0.8 + 0.2; // Ajustement pour 24h
+    return {
+        hour: hourStr,
+        entry: {
+            men: Math.round(menEntry * factor),
+            women: Math.round(womenEntry * factor),
+            total: Math.round((menEntry + womenEntry) * factor)
+        },
+        vestiaire: {
+            men: Math.round(menVestiaire * factor),
+            women: Math.round(womenVestiaire * factor),
+            total: Math.round((menVestiaire + womenVestiaire) * factor)
+        }
+    };
+}),
                     info: i + 1 === 25 ? 'Soirée spéciale : forte affluence' : '-'
                 };
             }),
