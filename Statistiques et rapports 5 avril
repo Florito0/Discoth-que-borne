@@ -1642,56 +1642,103 @@ const ctx = document.getElementById('occupancyChart').getContext('2d');
                 }
             });
 
-            const tableBody = document.getElementById('occupancyTableBody');
-            tableBody.innerHTML = '';
-            if (period === 'month') {
-                data.forEach(d => {
-                    const rate = Math.round((d[ticketType].total / capacityMax) * 100);
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${d.date}</td>
-                        <td>${rate}%</td>
-                        <td class="editable">${d.info}</td>
-                    `;
-                    row.querySelector('.editable').addEventListener('click', () => {
-                        document.getElementById('chartDetails').style.display = 'block';
-                        document.getElementById('detailDate').textContent = d.date;
-                        document.getElementById('detailRate').textContent = `${rate}%`;
-                        document.getElementById('detailInfo').value = d.info || '-';
-                        currentSelectedData = { type: 'day', data: d };
-                    });
-                    tableBody.appendChild(row);
-                });
-            } else if (period === 'hour' && selectedDayData) {
-                data.forEach(d => {
-                    const rate = Math.round((d[ticketType].total / capacityMax) * 100);
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${selectedDayData.date} ${d.hour}</td>
-                        <td>${rate}%</td>
-                        <td>${selectedDayData.info}</td>
-                    `;
-                    tableBody.appendChild(row);
-                });
-            } else if (period === 'year') {
-                data.forEach(d => {
-                    const rate = Math.round((d[ticketType].total / capacityMax) * 100);
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${d.month}</td>
-                        <td>${rate}%</td>
-                        <td class="editable">${d.info}</td>
-                    `;
-                    row.querySelector('.editable').addEventListener('click', () => {
-                        document.getElementById('chartDetails').style.display = 'block';
-                        document.getElementById('detailDate').textContent = d.month;
-                        document.getElementById('detailRate').textContent = `${rate}%`;
-                        document.getElementById('detailInfo').value = d.info || '-';
-                        currentSelectedData = { type: 'month', data: d };
-                    });
-                    tableBody.appendChild(row);
-                });
-            }
+const tableBody = document.getElementById('occupancyTableBody');
+const tableHead = document.querySelector('#occupancyTable thead tr');
+tableBody.innerHTML = '';
+
+// Variables pour suivre l'état du tri
+let sortDirection = { date: 'asc', rate: 'asc' };
+
+// Fonction pour afficher le tableau avec les données triées
+function renderTable(sortedData) {
+    tableBody.innerHTML = '';
+    if (period === 'month') {
+        sortedData.forEach(d => {
+            const rate = Math.round((d[ticketType].total / capacityMax) * 100);
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${d.date}</td>
+                <td>${rate}%</td>
+                <td class="editable">${d.info}</td>
+            `;
+            row.querySelector('.editable').addEventListener('click', () => {
+                document.getElementById('chartDetails').style.display = 'block';
+                document.getElementById('detailDate').textContent = d.date;
+                document.getElementById('detailRate').textContent = `${rate}%`;
+                document.getElementById('detailInfo').value = d.info || '-';
+                currentSelectedData = { type: 'day', data: d };
+            });
+            tableBody.appendChild(row);
+        });
+    } else if (period === 'hour' && selectedDayData) {
+        sortedData.forEach(d => {
+            const rate = Math.round((d[ticketType].total / capacityMax) * 100);
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${selectedDayData.date} ${d.hour}</td>
+                <td>${rate}%</td>
+                <td>${selectedDayData.info}</td>
+            `;
+            tableBody.appendChild(row);
+        });
+    } else if (period === 'year') {
+        sortedData.forEach(d => {
+            const rate = Math.round((d[ticketType].total / capacityMax) * 100);
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${d.month}</td>
+                <td>${rate}%</td>
+                <td class="editable">${d.info}</td>
+            `;
+            row.querySelector('.editable').addEventListener('click', () => {
+                document.getElementById('chartDetails').style.display = 'block';
+                document.getElementById('detailDate').textContent = d.month;
+                document.getElementById('detailRate').textContent = `${rate}%`;
+                document.getElementById('detailInfo').value = d.info || '-';
+                currentSelectedData = { type: 'month', data: d };
+            });
+            tableBody.appendChild(row);
+        });
+    }
+}
+
+// Ajouter des styles et gestionnaires de clics pour le tri
+tableHead.children[0].style.cursor = 'pointer'; // "Date"
+tableHead.children[1].style.cursor = 'pointer'; // "Taux d'occupation"
+
+// Tri par "Date"
+tableHead.children[0].onclick = () => {
+    sortDirection.date = sortDirection.date === 'asc' ? 'desc' : 'asc';
+    const sortedData = [...data].sort((a, b) => {
+        let aDate, bDate;
+        if (period === 'month') {
+            aDate = new Date(a.date);
+            bDate = new Date(b.date);
+        } else if (period === 'year') {
+            aDate = new Date(a.month);
+            bDate = new Date(b.month);
+        } else if (period === 'hour' && selectedDayData) {
+            aDate = a.hour;
+            bDate = b.hour;
+        }
+        return sortDirection.date === 'asc' ? aDate - bDate : bDate - aDate;
+    });
+    renderTable(sortedData);
+};
+
+// Tri par "Taux d'occupation"
+tableHead.children[1].onclick = () => {
+    sortDirection.rate = sortDirection.rate === 'asc' ? 'desc' : 'asc';
+    const sortedData = [...data].sort((a, b) => {
+        const aRate = Math.round((a[ticketType].total / capacityMax) * 100);
+        const bRate = Math.round((b[ticketType].total / capacityMax) * 100);
+        return sortDirection.rate === 'asc' ? aRate - bRate : bRate - aRate;
+    });
+    renderTable(sortedData);
+};
+
+// Affichage initial du tableau
+renderTable(data);
         }
 
         function toggleRevenueFilters() {
