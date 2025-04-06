@@ -700,26 +700,42 @@
         </div>
 
         <!-- Gestion trésorerie -->
-        <div id="treasury" class="tab-content">
+<div id="treasury" class="tab-content">
             <h2>Gestion de la trésorerie</h2>
             <button class="btn btn-primary" onclick="exportToPDF('treasury')">Exporter en PDF</button>
             <div class="filters">
-                <select onchange="filterTreasury()">
-                    <option>Type : Tous</option>
-                    <option>Type : Entrée</option>
+                <select id="treasuryPeriod" onchange="updateTreasuryDays(); filterTreasury()">
+                    <option value="month">Mois</option>
+                    <option value="week">Semaine</option>
+                    <option value="day">Jour</option>
+                </select>
+                <select id="treasuryMonth" onchange="updateTreasuryDays(); filterTreasury()">
+                    <option value="2025-03">Mars 2025</option>
+                    <option value="2025-02">Février 2025</option>
+                    <option value="2025-01">Janvier 2025</option>
+                </select>
+                <select id="treasuryWeek" onchange="filterTreasury()" disabled>
+                    <option value="">Sélectionner une semaine</option>
+                </select>
+                <select id="treasuryDay" onchange="filterTreasury()" disabled>
+                    <option value="">Sélectionner un jour</option>
+                </select>
+                <select id="treasuryType" onchange="filterTreasury()">
+                    <option value="">Type : Tous</option>
+                    <option value="entry">Type : Entrée</option>
                     <option value="entryNoDrink">Type : Entrée sans Boisson</option>
                     <option value="entryWithAlcohol">Type : Entrée + Alcool</option>
                     <option value="entryWithBottle">Type : Entrée avec Bouteille</option>
                     <option value="entryOffPeak">Type : Heure Creuse</option>
                     <option value="entryWithSoft">Type : Entrée + Soft</option>
-                    <option>Type : Vestiaire</option>
+                    <option value="vestiaire">Type : Vestiaire</option>
                 </select>
             </div>
             <div class="loader" id="treasuryLoader" style="display: none; text-align: center; padding: 20px;">
                 <span>Chargement...</span>
             </div>
-            <div class="total">
-                Total pour Mars 2025 : 3 500€
+            <div class="total" id="treasuryTotal">
+                Total pour Mars 2025 : 0€
             </div>
             <div class="data-table" id="treasuryTable">
                 <table>
@@ -727,23 +743,14 @@
                         <tr>
                             <th>Date</th>
                             <th>Type</th>
-                            <th>Montant</th>
+                            <th>Montant HT (€)</th>
+                            <th>TVA (€)</th>
+                            <th>Montant TTC (€)</th>
                             <th>Statut</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>25/03/2025</td>
-                            <td>Entrée</td>
-                            <td>3000€</td>
-                            <td>Confirmé</td>
-                        </tr>
-                        <tr>
-                            <td>25/03/2025</td>
-                            <td>Vestiaire</td>
-                            <td>500€</td>
-                            <td>Confirmé</td>
-                        </tr>
+                        <!-- Rempli dynamiquement -->
                     </tbody>
                 </table>
             </div>
@@ -1920,11 +1927,212 @@ async function updateRevenueReport() {
     // Mettre à jour le total global affiché
     document.getElementById('revenueTotal').textContent = `Total : ${grandTotalTTC.toFixed(2)}€`;
 }
+      
+async function filterTreasury() {
+        const period = document.getElementById('treasuryPeriod').value;
+        const month = document.getElementById('treasuryMonth').value;
+        const week = document.getElementById('treasuryWeek').value;
+        const day = document.getElementById('treasuryDay').value;
+        const typeFilter = document.getElementById('treasuryType').value;
+        const loader = document.getElementById('treasuryLoader');
+        const tableBody = document.querySelector('#treasuryTable tbody');
+        const totalElement = document.querySelector('#treasury .total');
+
+        loader.style.display = 'flex';
+        tableBody.innerHTML = '';
+
+        try {
+            const data = ticketsData[month] || [];
+            if (!data.length) {
+                tableBody.innerHTML = '<tr><td colspan="6">Aucune donnée disponible pour ce mois.</td></tr>';
+                totalElement.textContent = `Total pour ${new Date(month).toLocaleString('fr-FR', { month: 'long', year: 'numeric' })} : 0€`;
+                return;
+            }
+
+            let filteredData = [];
+            let totalTTC = 0;
+
+            const prices = {
+                entryNoDrink: 10,
+                entryWithAlcohol: 20,
+                entryWithBottle: 50,
+                entryOffPeak: 8,
+                entryWithSoft: 12,
+                vestiaire: 5
+            };
+
+            const vatRates = {
+                entryNoDrink: 0.20,
+                entryWithAlcohol: 0.20,
+                entryWithBottle: 0.20,
+                entryOffPeak: 0.10,
+                entryWithSoft: 0.10,
+                vestiaire: 0.20
+            };
+
+            if (period === 'month') {
+                data.forEach(day => {
+                    const entryTotal = day.entry.total.total * 15;
+                    const vestiaireTotal = day.vestiaire.total * prices.vestiaire;
+
+                    if (typeFilter === '' || typeFilter === 'Type : Tous') {
+                        filteredData.push({ date: day.date, type: 'Entrée', ttc: entryTotal, vatRate: 0.20, status: 'Confirmé' });
+                        filteredData.push({ date: day.date, type: 'Vestiaire', ttc: vestiaireTotal, vatRate: vatRates.vestiaire, status: 'Confirmé' });
+                        totalTTC += entryTotal + vestiaireTotal;
+                    } else if (typeFilter === 'entry') {
+                        filteredData.push({ date: day.date, type: 'Entrée', ttc: entryTotal, vatRate: 0.20, status: 'Confirmé' });
+                        totalTTC += entryTotal;
+                    } else if (typeFilter === 'vestiaire') {
+                        filteredData.push({ date: day.date, type: 'Vestiaire', ttc: vestiaireTotal, vatRate: vatRates.vestiaire, status: 'Confirmé' });
+                        totalTTC += vestiaireTotal;
+                    } else {
+                        const entryTypes = {
+                            'entryNoDrink': { label: 'Entrée sans Boisson', total: day.entry.noDrink.total * prices.entryNoDrink, vatRate: vatRates.entryNoDrink },
+                            'entryWithAlcohol': { label: 'Entrée + Alcool', total: day.entry.withAlcohol.total * prices.entryWithAlcohol, vatRate: vatRates.entryWithAlcohol },
+                            'entryWithBottle': { label: 'Entrée avec Bouteille', total: day.entry.withBottle.total * prices.entryWithBottle, vatRate: vatRates.entryWithBottle },
+                            'entryOffPeak': { label: 'Heure Creuse', total: day.entry.offPeak.total * prices.entryOffPeak, vatRate: vatRates.entryOffPeak },
+                            'entryWithSoft': { label: 'Entrée + Soft', total: day.entry.withSoft.total * prices.entryWithSoft, vatRate: vatRates.entryWithSoft }
+                        };
+                        if (entryTypes[typeFilter]) {
+                            filteredData.push({ date: day.date, type: entryTypes[typeFilter].label, ttc: entryTypes[typeFilter].total, vatRate: entryTypes[typeFilter].vatRate, status: 'Confirmé' });
+                            totalTTC += entryTypes[typeFilter].total;
+                        }
+                    }
+                });
+            } else if (period === 'week' && week) {
+                const weekNum = parseInt(week);
+                const weekData = data.filter(d => Math.ceil(parseInt(d.date.split('-')[2]) / 7) === weekNum);
+                weekData.forEach(day => {
+                    const entryTotal = day.entry.total.total * 15;
+                    const vestiaireTotal = day.vestiaire.total * prices.vestiaire;
+
+                    if (typeFilter === '' || typeFilter === 'Type : Tous') {
+                        filteredData.push({ date: day.date, type: 'Entrée', ttc: entryTotal, vatRate: 0.20, status: 'Confirmé' });
+                        filteredData.push({ date: day.date, type: 'Vestiaire', ttc: vestiaireTotal, vatRate: vatRates.vestiaire, status: 'Confirmé' });
+                        totalTTC += entryTotal + vestiaireTotal;
+                    } else if (typeFilter === 'entry') {
+                        filteredData.push({ date: day.date, type: 'Entrée', ttc: entryTotal, vatRate: 0.20, status: 'Confirmé' });
+                        totalTTC += entryTotal;
+                    } else if (typeFilter === 'vestiaire') {
+                        filteredData.push({ date: day.date, type: 'Vestiaire', ttc: vestiaireTotal, vatRate: vatRates.vestiaire, status: 'Confirmé' });
+                        totalTTC += vestiaireTotal;
+                    } else {
+                        const entryTypes = {
+                            'entryNoDrink': { label: 'Entrée sans Boisson', total: day.entry.noDrink.total * prices.entryNoDrink, vatRate: vatRates.entryNoDrink },
+                            'entryWithAlcohol': { label: 'Entrée + Alcool', total: day.entry.withAlcohol.total * prices.entryWithAlcohol, vatRate: vatRates.entryWithAlcohol },
+                            'entryWithBottle': { label: 'Entrée avec Bouteille', total: day.entry.withBottle.total * prices.entryWithBottle, vatRate: vatRates.entryWithBottle },
+                            'entryOffPeak': { label: 'Heure Creuse', total: day.entry.offPeak.total * prices.entryOffPeak, vatRate: vatRates.entryOffPeak },
+                            'entryWithSoft': { label: 'Entrée + Soft', total: day.entry.withSoft.total * prices.entryWithSoft, vatRate: vatRates.entryWithSoft }
+                        };
+                        if (entryTypes[typeFilter]) {
+                            filteredData.push({ date: day.date, type: entryTypes[typeFilter].label, ttc: entryTypes[typeFilter].total, vatRate: entryTypes[typeFilter].vatRate, status: 'Confirmé' });
+                            totalTTC += entryTypes[typeFilter].total;
+                        }
+                    }
+                });
+            } else if (period === 'day' && day) {
+                const dayData = data.find(d => d.date === day);
+                if (dayData) {
+                    const entryTotal = dayData.entry.total.total * 15;
+                    const vestiaireTotal = dayData.vestiaire.total * prices.vestiaire;
+
+                    if (typeFilter === '' || typeFilter === 'Type : Tous') {
+                        filteredData.push({ date: dayData.date, type: 'Entrée', ttc: entryTotal, vatRate: 0.20, status: 'Confirmé' });
+                        filteredData.push({ date: dayData.date, type: 'Vestiaire', ttc: vestiaireTotal, vatRate: vatRates.vestiaire, status: 'Confirmé' });
+                        totalTTC += entryTotal + vestiaireTotal;
+                    } else if (typeFilter === 'entry') {
+                        filteredData.push({ date: dayData.date, type: 'Entrée', ttc: entryTotal, vatRate: 0.20, status: 'Confirmé' });
+                        totalTTC += entryTotal;
+                    } else if (typeFilter === 'vestiaire') {
+                        filteredData.push({ date: dayData.date, type: 'Vestiaire', ttc: vestiaireTotal, vatRate: vatRates.vestiaire, status: 'Confirmé' });
+                        totalTTC += vestiaireTotal;
+                    } else {
+                        const entryTypes = {
+                            'entryNoDrink': { label: 'Entrée sans Boisson', total: dayData.entry.noDrink.total * prices.entryNoDrink, vatRate: vatRates.entryNoDrink },
+                            'entryWithAlcohol': { label: 'Entrée + Alcool', total: dayData.entry.withAlcohol.total * prices.entryWithAlcohol, vatRate: vatRates.entryWithAlcohol },
+                            'entryWithBottle': { label: 'Entrée avec Bouteille', total: dayData.entry.withBottle.total * prices.entryWithBottle, vatRate: vatRates.entryWithBottle },
+                            'entryOffPeak': { label: 'Heure Creuse', total: dayData.entry.offPeak.total * prices.entryOffPeak, vatRate: vatRates.entryOffPeak },
+                            'entryWithSoft': { label: 'Entrée + Soft', total: dayData.entry.withSoft.total * prices.entryWithSoft, vatRate: vatRates.entryWithSoft }
+                        };
+                        if (entryTypes[typeFilter]) {
+                            filteredData.push({ date: dayData.date, type: entryTypes[typeFilter].label, ttc: entryTypes[typeFilter].total, vatRate: entryTypes[typeFilter].vatRate, status: 'Confirmé' });
+                            totalTTC += entryTypes[typeFilter].total;
+                        }
+                    }
+                }
+            }
+
+            filteredData.forEach(item => {
+                const ht = item.ttc / (1 + item.vatRate);
+                const tva = item.ttc - ht;
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.date}</td>
+                    <td>${item.type}</td>
+                    <td>${ht.toFixed(2)}</td>
+                    <td>${tva.toFixed(2)}</td>
+                    <td>${item.ttc.toFixed(2)}</td>
+                    <td>${item.status}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+            let periodLabel = '';
+            if (period === 'month') {
+                periodLabel = new Date(month).toLocaleString('fr-FR', { month: 'long', year: 'numeric' });
+            } else if (period === 'week' && week) {
+                periodLabel = `Semaine ${week} ${new Date(month).toLocaleString('fr-FR', { month: 'long', year: 'numeric' })}`;
+            } else if (period === 'day' && day) {
+                periodLabel = new Date(day).toLocaleString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+            }
+            totalElement.textContent = `Total pour ${periodLabel} : ${totalTTC.toFixed(2)}€`;
+        } catch (error) {
+            console.error('Erreur dans filterTreasury :', error);
+            tableBody.innerHTML = '<tr><td colspan="6">Une erreur est survenue lors du chargement des données.</td></tr>';
+            totalElement.textContent = `Total pour ${new Date(month).toLocaleString('fr-FR', { month: 'long', year: 'numeric' })} : 0€`;
+        } finally {
+            loader.style.display = 'none';
+        }
+    }
+
+    function updateTreasuryDays() {
+        const month = document.getElementById('treasuryMonth').value;
+        const daysInMonth = new Date(month.split('-')[0], month.split('-')[1], 0).getDate();
+        const daySelect = document.getElementById('treasuryDay');
+        const weekSelect = document.getElementById('treasuryWeek');
+        daySelect.innerHTML = '<option value="">Sélectionner un jour</option>';
+        weekSelect.innerHTML = '<option value="">Sélectionner une semaine</option>';
+
+        for (let i = 1; i <= daysInMonth; i++) {
+            const dayStr = `${month}-${String(i).padStart(2, '0')}`;
+            const date = new Date(dayStr);
+            const dayName = date.toLocaleString('fr-FR', { weekday: 'short' });
+            const option = document.createElement('option');
+            option.value = dayStr;
+            option.textContent = `${dayName} ${i} ${new Date(month).toLocaleString('fr-FR', { month: 'long', year: 'numeric' })}`;
+            daySelect.appendChild(option);
+        }
+
+        const weeks = Math.ceil(daysInMonth / 7);
+        for (let i = 1; i <= weeks; i++) {
+            const option = document.createElement('option');
+            option.value = i;
+            option.textContent = `Semaine ${i}`;
+            weekSelect.appendChild(option);
+        }
+
+        const period = document.getElementById('treasuryPeriod').value;
+        daySelect.disabled = period !== 'day';
+        weekSelect.disabled = period !== 'week';
+    }
+      
         // Initialisation
         updateOccupancyChart();
         updateTicketsReport();
         updateRevenueFilters();
         updateRevenueReport();
+        updateTreasuryDays();
+        filterTreasury();
     </script>
 </body>
 </html>
