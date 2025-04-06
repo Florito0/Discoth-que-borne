@@ -1482,60 +1482,80 @@
         }
 
         // === Fonctions principales ===
-        async function updateTicketsReport() {
-            const period = document.getElementById('ticketPeriod').value;
-            const month = document.getElementById('ticketMonth').value;
-            const week = document.getElementById('ticketWeek').value;
-            const day = document.getElementById('ticketDay').value;
-            const entryType = document.getElementById('entryTypeSelect').value;
+async function updateTicketsReport() {
+    const period = document.getElementById('ticketPeriod').value;
+    const month = document.getElementById('ticketMonth').value;
+    const week = document.getElementById('ticketWeek').value;
+    const day = document.getElementById('ticketDay').value;
+    const entryType = document.getElementById('entryTypeSelect').value;
 
-            updateTicketDays();
-            const data = await fetchTicketsData(period, month, week, day, entryType);
+    updateTicketDays();
+    const data = await fetchTicketsData(period, month, week, day, entryType);
 
-            document.getElementById('occupancyImpact').textContent = `Taux d'occupation moyen : ${data.avgOccupancy}%`;
-            updateVestiaireGauge();
-
-            const tableBody = document.querySelector('#ticketsTable tbody');
-            tableBody.innerHTML = '';
-
-            const capacityMax = parseInt(document.getElementById('capacityMax').value) || 500;
-            const types = entryType === 'all' ? ['noDrink', 'withAlcohol', 'withBottle', 'offPeak', 'withSoft', 'total'] : [entryType];
-
-            types.forEach(type => {
-                if (type !== 'vestiaire') {
-                    const row = document.createElement('tr');
-                    const typeLabel = {
-                        noDrink: 'Entrée sans Boisson',
-                        withAlcohol: 'Entrée + Alcool',
-                        withBottle: 'Entrée avec Bouteille',
-                        offPeak: 'Heure Creuse',
-                        withSoft: 'Entrée + Soft',
-                        total: 'Total Entrées'
-                    }[type];
-                    const impact = Math.round((data.entry[type].total / capacityMax) * 100);
-                    row.innerHTML = `
-                        <td>${typeLabel}</td>
-                        <td>${data.entry[type].men}</td>
-                        <td>${data.entry[type].women}</td>
-                        <td>${data.entry[type].total}</td>
-                        <td>${impact}%</td>
-                    `;
-                    tableBody.appendChild(row);
-                }
-            });
-
-            const vestiaireRow = document.createElement('tr');
-            const vestiaireImpact = Math.round((data.vestiaire.total / capacityMax) * 100);
-            vestiaireRow.innerHTML = `
-                <td>Vestiaire</td>
-                <td>${data.vestiaire.men}</td>
-                <td>${data.vestiaire.women}</td>
-                <td>${data.vestiaire.total}</td>
-                <td>${vestiaireImpact}%</td>
-            `;
-            tableBody.appendChild(vestiaireRow);
+    // Affichage du contexte de la sélection
+    let contextText = '';
+    if (period === 'day' && day) {
+        const selectedDate = new Date(day);
+        contextText = `Jour sélectionné : ${selectedDate.toLocaleString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}`;
+    } else if (period === 'week' && week) {
+        const year = month.split('-')[0];
+        const startOfYear = new Date(year, 0, 1);
+        const firstDayOfYear = startOfYear.getDay() || 7;
+        let weekStart = new Date(startOfYear);
+        if (firstDayOfYear !== 1) {
+            weekStart.setDate(weekStart.getDate() + (8 - firstDayOfYear));
         }
+        weekStart.setDate(weekStart.getDate() + (week - 1) * 7);
+        const weekEnd = new Date(weekStart);
+        weekEnd.setDate(weekEnd.getDate() + 6);
+        contextText = `Semaine sélectionnée : Semaine ${week} (${weekStart.toLocaleString('fr-FR', { day: 'numeric', month: 'short' })} - ${weekEnd.toLocaleString('fr-FR', { day: 'numeric', month: 'short' })})`;
+    } else if (period === 'month') {
+        contextText = `Mois sélectionné : ${new Date(month).toLocaleString('fr-FR', { month: 'long', year: 'numeric' })}`;
+    }
+    document.getElementById('occupancyImpact').textContent = `${contextText} - Taux d'occupation moyen : ${data.avgOccupancy}%`;
 
+    updateVestiaireGauge();
+
+    const tableBody = document.querySelector('#ticketsTable tbody');
+    tableBody.innerHTML = '';
+
+    const capacityMax = parseInt(document.getElementById('capacityMax').value) || 500;
+    const types = entryType === 'all' ? ['noDrink', 'withAlcohol', 'withBottle', 'offPeak', 'withSoft', 'total'] : [entryType];
+
+    types.forEach(type => {
+        if (type !== 'vestiaire') {
+            const row = document.createElement('tr');
+            const typeLabel = {
+                noDrink: 'Entrée sans Boisson',
+                withAlcohol: 'Entrée + Alcool',
+                withBottle: 'Entrée avec Bouteille',
+                offPeak: 'Heure Creuse',
+                withSoft: 'Entrée + Soft',
+                total: 'Total Entrées'
+            }[type];
+            const impact = Math.round((data.entry[type].total / capacityMax) * 100);
+            row.innerHTML = `
+                <td>${typeLabel}</td>
+                <td>${data.entry[type].men}</td>
+                <td>${data.entry[type].women}</td>
+                <td>${data.entry[type].total}</td>
+                <td>${impact}%</td>
+            `;
+            tableBody.appendChild(row);
+        }
+    });
+
+    const vestiaireRow = document.createElement('tr');
+    const vestiaireImpact = Math.round((data.vestiaire.total / capacityMax) * 100);
+    vestiaireRow.innerHTML = `
+        <td>Vestiaire</td>
+        <td>${data.vestiaire.men}</td>
+        <td>${data.vestiaire.women}</td>
+        <td>${data.vestiaire.total}</td>
+        <td>${vestiaireImpact}%</td>
+    `;
+    tableBody.appendChild(vestiaireRow);
+}
         async function updateOccupancyChart() {
             const month = document.getElementById('monthSelect').value;
             const period = document.getElementById('periodSelect').value;
