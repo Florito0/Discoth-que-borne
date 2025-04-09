@@ -32,13 +32,13 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
 
-        .kiosk-container {
-            max-width: 600px;
-            margin: 20px;
-            display: block;
-        }
+.kiosk-container {
+    max-width: 600px;
+    margin: 20px;
+    display: none;
+}
 
-        .container { display: none; }
+.container { display: block; }
 
         .access-section, .kiosk-items-container {
             padding: 20px;
@@ -959,7 +959,7 @@
         </div>
     </div>
 
-    <button class="toggle-btn" id="toggle-btn" onclick="toggleInterface()">Passer au Tableau de Bord</button>
+<button class="toggle-btn" id="toggle-btn" onclick="toggleInterface()">Passer au Kiosque</button>
 
     <script>
         let prestations = [];
@@ -2146,8 +2146,8 @@ window.onload = () => {
     // Explicitly set initial display styles
     const dashboard = document.getElementById('dashboard');
     const kiosk = document.getElementById('kiosk');
-    dashboard.style.display = 'none'; // Matches CSS .container { display: none; }
-    kiosk.style.display = 'block';   // Matches CSS .kiosk-container { display: block; }
+    dashboard.style.display = 'block'; // Matches CSS .container { display: block; }
+    kiosk.style.display = 'none';     // Matches CSS .kiosk-container { display: none; }
 
     addPure();
     renderKioskItems();
@@ -2155,6 +2155,6 @@ window.onload = () => {
         icon.addEventListener('mouseenter', showTooltip);
         icon.addEventListener('mouseleave', hideTooltip);
         icon.addEventListener('mousemove', positionTooltip);
-        });
-    };
+    });
+};
 </script>
