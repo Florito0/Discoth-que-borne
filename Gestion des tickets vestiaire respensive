@@ -97,10 +97,10 @@
     .item-name {
       font-size: clamp(14px, 3.5vw, 18px);
       font-weight: 500;
-      white-space: normal; /* Permet le retour à la ligne */
-      overflow-wrap: break-word; /* Casse les mots si nécessaire */
-      word-break: break-word; /* Assure la compatibilité pour les mots très longs */
-      line-height: 1.2; /* Améliore la lisibilité avec un espacement entre les lignes */
+      white-space: normal;
+      overflow-wrap: break-word;
+      word-break: break-word;
+      line-height: 1.2;
     }
     
     .item-price {
@@ -110,7 +110,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      min-width: 40px; /* Assure un espace minimum pour le centrage */
+      min-width: 40px;
     }
     
     .quantity-control {
@@ -216,7 +216,7 @@
     }
 
     .admin-container {
-      display: none;
+      display: block;
     }
     
     .admin-item {
@@ -288,6 +288,25 @@
       transform: scale(0.95);
     }
     
+    /* Style pour le bouton toggle en haut à droite */
+    .toggle-btn {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      padding: 10px 20px;
+      background: #444;
+      border: 1px solid #333;
+      border-radius: 4px;
+      cursor: pointer;
+      color: white;
+      transition: background-color 0.3s;
+      z-index: 1000;
+    }
+
+    .toggle-btn:hover {
+      background: #555;
+    }
+    
     @media (max-width: 768px) {
       .item {
         grid-template-columns: 1fr 1fr 1fr;
@@ -326,11 +345,10 @@
   <div id="notification" class="notification"></div>
 
   <!-- Interface Client -->
-  <div class="container" id="client-interface">
+  <div class="container" id="client-interface" style="display: none;">
     <div class="header">
       <h1>VESTIAIRE</h1>
       <div class="subtitle">Sélectionnez vos articles</div>
-      <button class="admin-btn" onclick="switchToAdmin()" aria-label="Passer à l'accès gérant">Passer à l'accès gérant</button>
     </div>
     
     <div class="items-container" id="items-container"></div>
@@ -346,11 +364,10 @@
   </div>
 
   <!-- Interface Gérant -->
-  <div class="admin-container" id="admin-interface">
+  <div class="admin-container" id="admin-interface" style="display: block;">
     <div class="header">
       <h1>GESTION VESTIAIRE</h1>
       <div class="subtitle">Modifier les articles</div>
-      <button class="admin-btn" onclick="switchToClient()" aria-label="Passer à l'accès client">Passer à l'accès client</button>
     </div>
     
     <div class="admin-items" id="admin-items"></div>
@@ -362,6 +379,9 @@
     </div>
   </div>
 
+  <!-- Bouton toggle en haut à droite -->
+  <button class="toggle-btn" id="toggle-btn" onclick="toggleInterface()" aria-label="Basculer entre les interfaces">Passer au Kiosque</button>
+
   <script>
     let items = [];
 
@@ -369,9 +389,7 @@
       const notification = document.getElementById('notification');
       notification.textContent = message;
       notification.classList.add('show');
-      setTimeout(() => {
-        notification.classList.remove('show');
-      }, 3000);
+      setTimeout(() => notification.classList.remove('show'), 3000);
     }
 
     function renderItems() {
@@ -388,7 +406,7 @@
           container.innerHTML += `
             <div class="item">
               <div class="item-name">${item.name}</div>
-              <div class="item-price">${item.price}€</div>
+              <div class="item-price">${item.price.toFixed(2)}€</div>
               <div class="quantity-control">
                 <button class="qty-btn" data-id="${item.id}" data-action="decrease" aria-label="Diminuer la quantité de ${item.name}">-</button>
                 <div id="${item.id}-qty" class="qty-value">${item.qty}</div>
@@ -399,20 +417,22 @@
         });
       }
       updateTotal();
+      attachQuantityListeners();
     }
 
     function attachQuantityListeners() {
       const container = document.getElementById('items-container');
-      container.removeEventListener('click', handleQuantityClick);
-      container.addEventListener('click', handleQuantityClick);
+      if (!container) return;
+      container.querySelectorAll('.qty-btn').forEach(btn => {
+        btn.removeEventListener('click', handleQuantityClick);
+        btn.addEventListener('click', handleQuantityClick);
+      });
     }
 
     function handleQuantityClick(event) {
-      if (event.target.classList.contains('qty-btn')) {
-        const id = event.target.dataset.id;
-        const action = event.target.dataset.action;
-        updateQuantity(id, action === 'increase' ? 1 : -1);
-      }
+      const id = event.target.dataset.id;
+      const action = event.target.dataset.action;
+      updateQuantity(id, action === 'increase' ? 1 : -1);
     }
 
     function updateQuantity(itemId, change) {
@@ -425,9 +445,7 @@
       if (newQty >= 0) {
         item.qty = newQty;
         const qtyElement = document.getElementById(`${itemId}-qty`);
-        if (qtyElement) {
-          qtyElement.textContent = newQty;
-        }
+        if (qtyElement) qtyElement.textContent = newQty;
         updateTotal();
       }
     }
@@ -435,43 +453,42 @@
     function updateTotal() {
       let total = 0;
       let itemCount = 0;
-      for (const item of items) {
+      items.forEach(item => {
         total += item.price * item.qty;
         itemCount += item.qty;
-      }
+      });
       const totalElement = document.getElementById('total-price');
       const checkoutBtn = document.getElementById('checkout-btn');
       if (totalElement && checkoutBtn) {
-        totalElement.textContent = `${total}€`;
+        totalElement.textContent = `${total.toFixed(2)}€`;
         checkoutBtn.disabled = itemCount === 0;
       }
     }
 
     function validateSelection() {
-      for (const item of items) {
-        item.qty = 0;
-      }
+      items.forEach(item => item.qty = 0);
       renderItems();
+      showNotification('Sélection validée !');
     }
 
     function switchToAdmin() {
       document.getElementById('client-interface').style.display = 'none';
       document.getElementById('admin-interface').style.display = 'block';
+      document.getElementById('toggle-btn').textContent = 'Passer au Kiosque';
       renderAdminItems();
     }
 
     function switchToClient() {
       document.getElementById('admin-interface').style.display = 'none';
       document.getElementById('client-interface').style.display = 'block';
+      document.getElementById('toggle-btn').textContent = "Passer à l'accès gérant";
       renderItems();
-      attachQuantityListeners();
     }
 
     function noVestiaire() {
-      for (const item of items) {
-        item.qty = 0;
-      }
+      items.forEach(item => item.qty = 0);
       renderItems();
+      showNotification('Continuer sans vestiaire.');
     }
 
     function renderAdminItems() {
@@ -490,7 +507,7 @@
           itemDiv.draggable = true;
           itemDiv.dataset.id = item.id;
           itemDiv.innerHTML = `
-            <span>${item.name} - ${item.price}€</span>
+            <span>${item.name} - ${item.price.toFixed(2)}€</span>
             <button class="delete-btn" data-id="${item.id}" aria-label="Supprimer ${item.name}">🗑️</button>
           `;
           adminContainer.appendChild(itemDiv);
@@ -502,19 +519,21 @@
 
     function attachDeleteListeners() {
       const adminContainer = document.getElementById('admin-items');
-      adminContainer.removeEventListener('click', handleDeleteClick);
-      adminContainer.addEventListener('click', handleDeleteClick);
+      if (!adminContainer) return;
+      adminContainer.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.removeEventListener('click', handleDeleteClick);
+        btn.addEventListener('click', handleDeleteClick);
+      });
     }
 
     function handleDeleteClick(event) {
-      if (event.target.classList.contains('delete-btn')) {
-        const id = event.target.dataset.id;
-        deleteItem(id);
-      }
+      const id = event.target.dataset.id;
+      deleteItem(id);
     }
 
     function attachDragAndDropListeners() {
       const adminContainer = document.getElementById('admin-items');
+      if (!adminContainer) return;
       const adminItems = adminContainer.querySelectorAll('.admin-item');
 
       adminItems.forEach(item => {
@@ -538,16 +557,15 @@
           const targetId = item.dataset.id;
           const targetItem = items.find(i => i.id === targetId);
 
-          if (draggedId !== targetId) {
+          if (draggedId && targetId && draggedId !== targetId) {
             const draggedIndex = items.indexOf(draggedItem);
             const targetIndex = items.indexOf(targetItem);
-
-            items.splice(draggedIndex, 1);
-            items.splice(targetIndex, 0, draggedItem);
-
-            renderAdminItems();
-            renderItems();
-            attachQuantityListeners();
+            if (draggedIndex !== -1 && targetIndex !== -1) {
+              items.splice(draggedIndex, 1); // Correction du bug : suppression correcte
+              items.splice(targetIndex, 0, draggedItem);
+              renderAdminItems();
+              renderItems();
+            }
           }
         });
       });
@@ -555,10 +573,12 @@
 
     function addItem() {
       const name = document.getElementById('new-item-name').value.trim();
-      const price = parseFloat(document.getElementById('new-item-price').value);
+      const priceInput = document.getElementById('new-item-price').value;
+      const price = priceInput ? parseFloat(priceInput) : NaN;
+
       if (name && !isNaN(price) && price >= 0) {
-        const id = name.toLowerCase().replace(/\s+/g, '-');
-        if (items.find(i => i.id === id)) {
+        const id = name.toLowerCase().replace(/\s+/g, '-') + '-' + Date.now(); // ID unique
+        if (items.some(i => i.name.toLowerCase() === name.toLowerCase())) {
           showNotification('Cet article existe déjà !');
           return;
         }
@@ -567,27 +587,40 @@
         document.getElementById('new-item-price').value = '';
         renderAdminItems();
         renderItems();
-        attachQuantityListeners();
+        showNotification('Article ajouté avec succès !');
       } else {
         showNotification('Veuillez entrer un nom valide et un prix positif.');
       }
     }
 
     function deleteItem(itemId) {
-      if (!items.find(i => i.id === itemId)) {
+      const itemIndex = items.findIndex(i => i.id === itemId);
+      if (itemIndex === -1) {
         console.error(`Article non trouvé pour suppression : ${itemId}`);
         return;
       }
-      console.log(`Suppression de l'article : ${itemId}`);
-      items = items.filter(i => i.id !== itemId);
+      items.splice(itemIndex, 1);
       renderAdminItems();
       renderItems();
-      attachQuantityListeners();
+      showNotification('Article supprimé.');
+    }
+
+    function toggleInterface() {
+      const clientInterface = document.getElementById('client-interface');
+      if (clientInterface.style.display === 'none') {
+        switchToClient();
+      } else {
+        switchToAdmin();
+      }
     }
 
     // Initialisation
-    renderItems();
-    attachQuantityListeners();
+    window.onload = () => {
+      document.getElementById('admin-interface').style.display = 'block';
+      document.getElementById('client-interface').style.display = 'none';
+      document.getElementById('toggle-btn').textContent = 'Passer au Kiosque';
+      renderAdminItems();
+    };
   </script>
 </body>
 </html>
