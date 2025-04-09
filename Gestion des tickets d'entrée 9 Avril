@@ -678,54 +678,82 @@
             display: block;
         }
 
-        .max-entries-editor {
-            position: absolute;
-            background: #333;
-            color: #fff;
-            padding: 10px;
-            border-radius: 4px;
-            z-index: 100;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-            min-width: 200px;
-            max-width: 300px;
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
+.max-entries-editor {
+    position: absolute;
+    background: #333;
+    color: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    z-index: 100;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    min-width: 250px;
+    max-width: 300px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    border: 1px solid #444;
+}
 
-        .max-entries-editor #max-entries-inputs {
-            max-height: 150px;
-            overflow-y: auto;
-            flex-grow: 1;
-        }
+.max-entries-editor label {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 5px;
+}
 
-        .max-entries-editor input {
-            width: 60px;
-            margin-right: 5px;
-        }
+.max-entries-editor #max-entries-inputs {
+    max-height: 120px;
+    overflow-y: auto;
+    flex-grow: 1;
+}
 
-        .max-entries-editor .editor-buttons {
-            display: flex;
-            gap: 10px;
-            padding-top: 5px;
-            border-top: 1px solid #444;
-        }
+.max-entries-editor .max-entry-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
 
-        .max-entries-editor button {
-            padding: 5px 10px;
-            background: #444;
-            border: none;
-            color: white;
-            border-radius: 4px;
-            cursor: pointer;
-            flex-shrink: 0;
-        }
+.max-entries-editor input {
+    width: 70px;
+    padding: 5px;
+    background-color: #444;
+    border: 1px solid #555;
+    color: white;
+    border-radius: 4px;
+    font-size: 14px;
+}
 
-        .max-entries-editor button:hover {
-            background: #555;
-        }
+.max-entries-editor input:focus {
+    outline: none;
+    border-color: #00D4FF;
+    box-shadow: 0 0 3px #00D4FF;
+}
 
+.max-entries-editor .editor-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #444;
+}
+
+.max-entries-editor button {
+    padding: 6px 12px;
+    background: #9733EE;
+    border: none;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.max-entries-editor button:hover {
+    background: #DA22FF;
+}
+      
         @media (max-width: 768px) {
             .access-header-row, .access-detail-row, .pure-header-row, .pure-detail-row {
                 grid-template-columns: 1fr;
@@ -1159,61 +1187,60 @@
         draggedPure = null;
     }
 
-    function showMaxEntriesEditor(input) {
-        let editor = input.parentElement.querySelector('.max-entries-editor');
-        if (!editor) {
-            editor = document.createElement('div');
-            editor.className = 'max-entries-editor';
-            editor.innerHTML = `
-                <label>Définir Max. Entrée par Qt. bouteilles:</label><br>
-                <div id="max-entries-inputs">
-                    <div>1 bouteille: <input type="number" min="1" class="max-entry-input" data-qty="1"></div>
-                    <div>2 bouteilles: <input type="number" min="1" class="max-entry-input" data-qty="2"></div>
-                </div>
-                <button onclick="addMaxEntryInput(this)">+ Ajouter</button>
-                <button onclick="saveMaxEntries(this)">OK</button>
-            `;
-            input.parentElement.appendChild(editor);
+function showMaxEntriesEditor(input) {
+    let editor = input.parentElement.querySelector('.max-entries-editor');
+    if (!editor) {
+        editor = document.createElement('div');
+        editor.className = 'max-entries-editor';
+        editor.innerHTML = `
+            <label>Définir Max. Entrée par Qt. bouteilles:</label><br>
+            <div id="max-entries-inputs">
+                <div>1 bouteille: <input type="number" min="1" class="max-entry-input" data-qty="1"></div>
+                <div>2 bouteilles: <input type="number" min="1" class="max-entry-input" data-qty="2"></div>
+            </div>
+            <button onclick="addMaxEntryInput(this)">+ Ajouter</button>
+            <button onclick="saveMaxEntries(this)">OK</button>
+        `;
+        input.parentElement.appendChild(editor);
 
-            const rect = input.getBoundingClientRect();
-            const parentRect = input.offsetParent.getBoundingClientRect();
-            const scrollTop = window.scrollY || window.pageYOffset;
-            const scrollLeft = window.scrollX || window.pageXOffset;
+        const rect = input.getBoundingClientRect();
+        const parentRect = input.offsetParent.getBoundingClientRect();
+        const scrollTop = window.scrollY || window.pageYOffset;
+        const scrollLeft = window.scrollX || window.pageXOffset;
 
-            editor.style.position = 'absolute';
-            editor.style.top = `${rect.bottom + scrollTop}px`;
-            editor.style.left = `${rect.left + scrollLeft}px`;
+        editor.style.position = 'absolute';
+        editor.style.top = `${rect.bottom + scrollTop}px`;
+        editor.style.left = `${rect.left + scrollLeft}px`;
 
-            const offsetTopAdjustment = parentRect.top + scrollTop;
-            const offsetLeftAdjustment = parentRect.left + scrollLeft;
-            editor.style.top = `${parseInt(editor.style.top) - offsetTopAdjustment}px`;
-            editor.style.left = `${parseInt(editor.style.left) - offsetLeftAdjustment}px`;
+        const offsetTopAdjustment = parentRect.top + scrollTop;
+        const offsetLeftAdjustment = parentRect.left + scrollLeft;
+        editor.style.top = `${parseInt(editor.style.top) - offsetTopAdjustment}px`;
+        editor.style.left = `${parseInt(editor.style.left) - offsetLeftAdjustment}px`;
 
-            const editorRect = editor.getBoundingClientRect();
-            const viewportHeight = window.innerHeight;
-            const viewportWidth = window.innerWidth;
+        const editorRect = editor.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+        const viewportWidth = window.innerWidth;
 
-            if (editorRect.bottom > viewportHeight) {
-                editor.style.top = `${parseInt(editor.style.top) - (editorRect.bottom - viewportHeight) - 10}px`;
-            }
-            if (editorRect.right > viewportWidth) {
-                editor.style.left = `${parseInt(editor.style.left) - (editorRect.right - viewportWidth) - 5}px`;
-            }
+        if (editorRect.bottom > viewportHeight) {
+            editor.style.top = `${parseInt(editor.style.top) - (editorRect.bottom - viewportHeight) - 10}px`;
+        }
+        if (editorRect.right > viewportWidth) {
+            editor.style.left = `${parseInt(editor.style.left) - (editorRect.right - viewportWidth) - 5}px`;
+        }
 
-            if (input.dataset.maxEntries) {
-                const maxEntries = JSON.parse(input.dataset.maxEntries);
-                const inputsContainer = editor.querySelector('#max-entries-inputs');
-                inputsContainer.innerHTML = '';
-                for (const [qty, max] of Object.entries(maxEntries)) {
-                    const newInput = document.createElement('div');
-                    newInput.innerHTML = `${qty} bouteilles: <input type="number" min="1" class="max-entry-input" data-qty="${qty}" value="${max}">`;
-                    inputsContainer.appendChild(newInput);
-                }
+        if (input.dataset.maxEntries) {
+            const maxEntries = JSON.parse(input.dataset.maxEntries);
+            const inputsContainer = editor.querySelector('#max-entries-inputs');
+            inputsContainer.innerHTML = '';
+            for (const [qty, max] of Object.entries(maxEntries)) {
+                const newInput = document.createElement('div');
+                newInput.innerHTML = `${qty} bouteilles: <input type="number" min="1" class="max-entry-input" data-qty="${qty}" value="${max}">`;
+                inputsContainer.appendChild(newInput);
             }
         }
-        editor.style.display = editor.style.display === 'none' ? 'block' : 'none';
     }
-
+    editor.style.display = editor.style.display === 'none' ? 'block' : 'none';
+}
     function addMaxEntryInput(button) {
         const inputsContainer = button.parentElement.querySelector('#max-entries-inputs');
         const existingQtys = Array.from(inputsContainer.querySelectorAll('.max-entry-input')).map(input => parseInt(input.dataset.qty));
