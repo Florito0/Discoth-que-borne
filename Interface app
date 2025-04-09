@@ -245,6 +245,26 @@
             border-radius: 4px 4px 0 0;
             clip-path: polygon(0 100%, 20% 0, 80% 0, 100% 100%);
         }
+      
+      .icon.screen::before {
+    content: '';
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 16px;
+    height: 12px;
+    border: 2px solid #ffffff;
+    border-radius: 2px;
+}
+.icon.screen::after {
+    content: '';
+    position: absolute;
+    top: 18px;
+    left: 8px;
+    width: 8px;
+    height: 2px;
+    background: #ffffff;
+}
 
         .icon.chart::before {
             content: '';
@@ -966,11 +986,11 @@
             <span class="icon calendar"></span>
             <span class="text">Réservation</span>
         </a>
-        <!-- Client -->
-        <a href="#" class="menu-item" data-target="client" aria-label="Client" data-tooltip="Client">
-            <span class="icon users"></span>
-            <span class="text">Client</span>
-        </a>
+<!-- Kiosque -->
+    <a href="#" class="menu-item" data-target="client" aria-label="Kiosque" data-tooltip="Kiosque">
+        <span class="icon screen"></span>
+        <span class="text">Kiosque</span>
+    </a>
         <!-- Profile -->
         <a href="#" class="menu-item" data-target="profile" aria-label="Profile" data-tooltip="Profile">
             <span class="icon user"></span>
