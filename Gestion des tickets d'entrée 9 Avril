@@ -885,86 +885,45 @@
                     </div>
                 </div>
                 
-                <div class="form-group presentation-group">
-                    <h3>Les entrées</h3>
-                    <div class="presentation-fields">
-                        <div>
-                            <label>Accès Entrée sans Boisson: <span class="tooltip-icon" data-tooltip="TVA incluse, personnalisez dans Configuration > Mode de paiement et caisse > Paramètres de caisse > Paramètres des taxes. L'outil 'Statistique et rapport' calcule automatiquement le prix HT et la TVA à partir du prix TTC saisi.">i</span></label>
-                            <input type="text" placeholder="Ex: Entrée seule" id="access-presentation-normal">
-                        </div>
-                        <div>
-                            <label>Accès Entrée + Alcool: <span class="tooltip-icon" data-tooltip="TVA incluse, personnalisez dans Configuration > Mode de paiement et caisse > Paramètres de caisse > Paramètres des taxes. L'outil 'Statistique et rapport' calcule automatiquement le prix HT et la TVA à partir du prix TTC saisi.">i</span></label>
-                            <input type="text" placeholder="Ex: Entrée avec boisson alcoolisée" id="access-presentation-alcohol">
-                        </div>
-                        <div>
-                            <label>Accès Heure Creuse: <span class="tooltip-icon" data-tooltip="TVA incluse, personnalisez dans Configuration > Mode de paiement et caisse > Paramètres de caisse > Paramètres des taxes. L'outil 'Statistique et rapport' calcule automatiquement le prix HT et la TVA à partir du prix TTC saisi.">i</span></label>
-                            <input type="text" placeholder="Ex: Entrée Gratuit" id="access-presentation-low">
-                        </div>
-                        <div>
-                            <label>Accès Entrée + Soft: <span class="tooltip-icon" data-tooltip="TVA incluse, personnalisez dans Configuration > Mode de paiement et caisse > Paramètres de caisse > Paramètres des taxes. L'outil 'Statistique et rapport' calcule automatiquement le prix HT et la TVA à partir du prix TTC saisi.">i</span></label>
-                            <input type="text" placeholder="Ex: Entrée avec boisson soft" id="access-presentation-soft">
-                        </div>
-                        <div class="price-container">
-                            <label>Prix</label>
-                            <input type="number" step="0.01" min="0" placeholder="Prix (€)" id="access-price">
-                        </div>
-                        <div class="sex-container">
-                            <label>Sexe</label>
-                            <select id="access-sex">
-                                <option value="Homme"><span style="color: #00D4FF;">♂</span> Homme</option>
-                                <option value="Femme"><span style="color: #FF00FF;">♀</span> Femme</option>
-                                <option value="H/F" selected><span style="color: #00D4FF;">♂</span>/<span style="color: #FF00FF;">♀</span> H/F</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
+<div class="form-group presentation-group">
+    <h3>Les entrées</h3>
+    <div class="presentation-fields">
+        <div>
+            <label>Entrée sans Boisson: <span class="tooltip-icon" data-tooltip="TVA incluse, personnalisez dans Configuration > Mode de paiement et caisse > Paramètres de caisse > Paramètres des taxes. L'outil 'Statistique et rapport' calcule automatiquement le prix HT et la TVA à partir du prix TTC saisi.">i</span></label>
+            <input type="text" placeholder="Ex: Entrée seule" id="access-presentation-normal">
+        </div>
+        <div>
+            <label>Entrée + Alcool: <span class="tooltip-icon" data-tooltip="TVA incluse, personnalisez dans Configuration > Mode de paiement et caisse > Paramètres de caisse > Paramètres des taxes. L'outil 'Statistique et rapport' calcule automatiquement le prix HT et la TVA à partir du prix TTC saisi.">i</span></label>
+            <input type="text" placeholder="Ex: Entrée avec boisson alcoolisée" id="access-presentation-alcohol">
+        </div>
+        <div>
+            <label>Heure Creuse: <span class="tooltip-icon" data-tooltip="TVA incluse, personnalisez dans Configuration > Mode de paiement et caisse > Paramètres de caisse > Paramètres des taxes. L'outil 'Statistique et rapport' calcule automatiquement le prix HT et la TVA à partir du prix TTC saisi.">i</span></label>
+            <input type="text" placeholder="Ex: Entrée Gratuit" id="access-presentation-low">
+        </div>
+        <div>
+            <label>Entrée + Soft: <span class="tooltip-icon" data-tooltip="TVA incluse, personnalisez dans Configuration > Mode de paiement et caisse > Paramètres de caisse > Paramètres des taxes. L'outil 'Statistique et rapport' calcule automatiquement le prix HT et la TVA à partir du prix TTC saisi.">i</span></label>
+            <input type="text" placeholder="Ex: Entrée avec boisson soft" id="access-presentation-soft">
+        </div>
+        <div class="price-container">
+            <label>Prix</label>
+            <input type="number" step="0.01" min="0" placeholder="Prix (€)" id="access-price">
+        </div>
+        <div class="sex-container">
+            <label>Sexe</label>
+            <select id="access-sex">
+                <option value="Homme"><span style="color: #00D4FF;">♂</span> Homme</option>
+                <option value="Femme"><span style="color: #FF00FF;">♀</span> Femme</option>
+                <option value="H/F" selected><span style="color: #00D4FF;">♂</span>/<span style="color: #FF00FF;">♀</span> H/F</option>
+            </select>
+        </div>
+    </div>
+</div>
                 
                 <div class="form-group pure-group">
                     <h3>Les entrées avec bouteille <span class="tooltip-icon" data-tooltip="TVA incluse, personnalisez dans Configuration > Mode de paiement et caisse > Paramètres de caisse > Paramètres des taxes. L'outil 'Statistique et rapport' calcule automatiquement le prix HT et la TVA à partir du prix TTC saisi.">i</span></h3>
-                    <div class="pure-container" id="pure-container">
-                        <div class="pure-row" draggable="true">
-                            <div class="category-section">
-                                <div>
-                                    <label>Catégorie de bouteille (optionnel)</label>
-                                    <input type="text" list="bottle-categories" placeholder="Saisir ou sélectionner une catégorie" class="pure-category-input">
-                                    <datalist id="bottle-categories">
-                                        <option value="VODKA">
-                                        <option value="WHISKY">
-                                        <option value="RUM">
-                                        <option value="JÄGERBOMB">
-                                        <option value="CHAMPAGNE">
-                                    </datalist>
-                                </div>
-                            </div>
-                            <div class="name-section">
-                                <div>
-                                    <label>Nom</label>
-                                    <input type="text" placeholder="Ex: Bouteille" class="pure-name">
-                                </div>
-                                <div>
-                                    <label>Qt. bouteilles</label>
-                                    <input type="number" min="1" placeholder="Quantité" class="pure-qty">
-                                </div>
-                                <div>
-                                    <label>Prix</label>
-                                    <input type="number" step="0.01" min="0" placeholder="Prix (€)" class="pure-price">
-                                </div>
-                                <div>
-                                    <label>Max. Entrée</label>
-                                    <input type="text" placeholder="Cliquez pour définir" class="pure-max-entries" readonly onclick="showMaxEntriesEditor(this)">
-                                </div>
-                                <div>
-                                    <label>Réduc. bouteille suppl.</label>
-                                    <input type="number" step="0.01" min="0" placeholder="Réduction (€)" class="pure-discount">
-                                </div>
-                                <button class="pure-duplicate-btn" onclick="duplicatePure(this)">📋</button>
-                                <button class="pure-delete-btn" onclick="deletePure(this)">🗑️</button>
-                            </div>
-                            <div class="details-section">
-                                <button class="add-details-btn" onclick="addDetails(this)">+</button>
-                            </div>
-                        </div>
-                    </div>
+<div class="pure-container" id="pure-container">
+    <!-- La ligne "Formule Bouteille" sera ajoutée dynamiquement via addPure() -->
+</div>
                     <div class="add-pure-btn" onclick="addPure()">+ Ajouter une formule bouteille</div>
                 </div>
             </div>
@@ -1476,137 +1435,137 @@ function showMaxEntriesEditor(input) {
         });
     }
 
-    function renderPrestations() {
-        const accessList = document.getElementById('access-prestations-list');
-        const pureList = document.getElementById('pure-prestations-list');
-        const separatorLine = document.getElementById('separator-line');
-        const previewSection = document.getElementById('preview-section');
-        const accessForm = document.getElementById('access-form');
-        const previewBtn = document.querySelector('.preview-btn');
-        accessList.style.display = 'block';
-        pureList.style.display = 'block';
-        previewSection.style.display = 'none';
-        accessForm.style.display = 'block';
-        previewBtn.classList.remove('active');
-        isPreviewActive = false;
-        accessList.innerHTML = '';
-        pureList.innerHTML = '';
-        const filteredPrestations = selectedDayFilter ? prestations.filter(p => p.days.includes(selectedDayFilter)) : [...prestations];
-        let hasAccess = false;
-        let hasPure = false;
+function renderPrestations() {
+    const accessList = document.getElementById('access-prestations-list');
+    const pureList = document.getElementById('pure-prestations-list');
+    const separatorLine = document.getElementById('separator-line');
+    const previewSection = document.getElementById('preview-section');
+    const accessForm = document.getElementById('access-form');
+    const previewBtn = document.querySelector('.preview-btn');
+    accessList.style.display = 'block';
+    pureList.style.display = 'block';
+    previewSection.style.display = 'none';
+    accessForm.style.display = 'block';
+    previewBtn.classList.remove('active');
+    isPreviewActive = false;
+    accessList.innerHTML = '';
+    pureList.innerHTML = '';
+    const filteredPrestations = selectedDayFilter ? prestations.filter(p => p.days.includes(selectedDayFilter)) : [...prestations];
+    let hasAccess = false;
+    let hasPure = false;
 
-        if (filteredPrestations.some(p => p.presentationLow || p.presentationNormal || p.presentationAlcohol || p.presentationSoft || p.price)) {
-            accessList.innerHTML = `
-                <div class="access-header-row">
-                    <div class="prestation-label">Les entrées:</div>
-                    <div class="prestation-label">Prestation:</div>
-                    <div class="prestation-label">Prix:</div>
-                    <div class="prestation-label">Sexe:</div>
-                    <div class="button-container"></div>
-                </div>
-            `;
-        }
-
-        if (filteredPrestations.some(p => p.pureItems.length > 0)) {
-            pureList.innerHTML = `
-                <div class="pure-header-row">
-                    <div class="prestation-label">Type:</div>
-                    <div class="prestation-label">Catégorie:</div>
-                    <div class="prestation-label">Nom:</div>
-                    <div class="prestation-label">Qt:</div>
-                    <div class="prestation-label">Prix:</div>
-                    <div class="prestation-label">Max. Entrée:</div>
-                    <div class="prestation-label">Réduc. Suppl.:</div>
-                    <div class="button-container"></div>
-                </div>
-            `;
-        }
-
-        filteredPrestations.forEach((prestation, index) => {
-            if (prestation.presentationLow || prestation.presentationNormal || prestation.presentationAlcohol || prestation.presentationSoft || prestation.price) {
-                hasAccess = true;
-                const accessItem = document.createElement('div');
-                accessItem.className = 'prestation-item';
-                accessItem.draggable = true;
-                accessItem.dataset.index = prestations.indexOf(prestation);
-                const presentationRows = [];
-                if (prestation.presentationLow) presentationRows.push({ access: 'Heure creuse', prestation: prestation.presentationLow, price: prestation.price, sex: prestation.sex });
-                if (prestation.presentationNormal) presentationRows.push({ access: 'Entrée sans Boisson', prestation: prestation.presentationNormal, price: prestation.price, sex: prestation.sex });
-                if (prestation.presentationAlcohol) presentationRows.push({ access: 'Entrée + Alcool', prestation: prestation.presentationAlcohol, price: prestation.price, sex: prestation.sex });
-                if (prestation.presentationSoft) presentationRows.push({ access: 'Entrée + Soft', prestation: prestation.presentationSoft, price: prestation.price, sex: prestation.sex });
-                const detailRows = presentationRows.map((row, rowIndex) => `
-                    <div class="access-detail-row ${rowIndex % 2 === 0 ? 'even-row' : 'odd-row'}" data-detail-index="${rowIndex}">
-                        <div class="prestation-value">${row.access || '-'}</div>
-                        <div class="prestation-value">${row.prestation || '-'}</div>
-                        <div class="prestation-price">${row.price ? `${row.price}€` : '-'}</div>
-                        <div class="prestation-value">${row.sex || '-'}</div>
-                        <div class="button-container">
-                            <button class="edit-btn" onclick="editPrestation(${prestations.indexOf(prestation)})">✏️</button>
-                            <button class="delete-btn" onclick="deletePrestation(${prestations.indexOf(prestation)})">🗑️</button>
-                        </div>
-                    </div>
-                `).join('');
-                accessItem.innerHTML = detailRows;
-                accessList.appendChild(accessItem);
-            }
-
-            if (prestation.pureItems.length > 0) {
-                hasPure = true;
-                prestation.pureItems.forEach((pure, pureIndex) => {
-                    const pureItem = document.createElement('div');
-                    pureItem.className = 'prestation-item pure-item grid-support';
-                    pureItem.draggable = true;
-                    pureItem.dataset.index = prestations.indexOf(prestation);
-                    const detailRows = pure.details.map((detail, detailIndex) => {
-                        const maxEntriesText = Object.entries(detail.maxEntries).map(([qty, max]) => `${qty}=${max}`).join(', ') || '-';
-                        return `
-                            <div class="pure-detail-row ${detailIndex % 2 === 0 ? 'even-row' : 'odd-row'}" data-detail-index="${detailIndex}">
-                                <div class="prestation-label">Entrée bouteille:</div>
-                                <div class="prestation-value">${detail.category || 'Aucune'}</div>
-                                <div class="prestation-value">${detail.name || '-'}</div>
-                                <div class="prestation-qty">${detail.qty || '-'}</div>
-                                <div class="prestation-price">${detail.price ? `${detail.price}€` : '-'}</div>
-                                <div class="prestation-max" data-tooltip="${maxEntriesText}">${maxEntriesText}</div>
-                                <div class="prestation-discount">${detail.discount ? `${detail.discount}€` : '-'}</div>
-                                <div class="button-container">
-                                    <button class="edit-btn" onclick="editPrestation(${prestations.indexOf(prestation)})">✏️</button>
-                                    <button class="delete-btn" onclick="deletePrestation(${prestations.indexOf(prestation)})">🗑️</button>
-                                </div>
-                            </div>
-                        `;
-                    }).join('');
-                    pureItem.innerHTML = detailRows;
-                    pureList.appendChild(pureItem);
-                    pureItem.addEventListener('dragstart', handleDragStart);
-                    pureItem.addEventListener('dragover', handleDragOver);
-                    pureItem.addEventListener('drop', handleDrop);
-                    pureItem.addEventListener('dragend', handleDragEnd);
-                });
-            }
-        });
-
-        accessList.style.display = hasAccess ? 'block' : 'none';
-        pureList.style.display = hasPure ? 'block' : 'none';
-        separatorLine.style.display = (hasAccess && hasPure) ? 'block' : 'none';
-
-        document.querySelectorAll('.prestation-item').forEach(item => {
-            item.addEventListener('dragstart', handleDragStart);
-            item.addEventListener('dragover', handleDragOver);
-            item.addEventListener('drop', handleDrop);
-            item.addEventListener('dragend', handleDragEnd);
-        });
-
-        document.querySelectorAll('.prestation-max').forEach(element => {
-            const tooltipText = element.getAttribute('data-tooltip');
-            if (element.scrollWidth > element.clientWidth) {
-                element.addEventListener('mouseenter', showTooltip);
-                element.addEventListener('mouseleave', hideTooltip);
-                element.addEventListener('mousemove', positionTooltip);
-            }
-        });
-
-        addTooltipsToPrestations();
+    if (filteredPrestations.some(p => p.presentationLow || p.presentationNormal || p.presentationAlcohol || p.presentationSoft || p.price)) {
+        accessList.innerHTML = `
+            <div class="access-header-row">
+                <div class="prestation-label">Les entrées:</div>
+                <div class="prestation-label">Prestation:</div>
+                <div class="prestation-label">Prix:</div>
+                <div class="prestation-label">Sexe:</div>
+                <div class="button-container"></div>
+            </div>
+        `;
     }
+
+    if (filteredPrestations.some(p => p.pureItems.length > 0)) {
+        pureList.innerHTML = `
+            <div class="pure-header-row">
+                <div class="prestation-label">Type:</div>
+                <div class="prestation-label">Catégorie:</div>
+                <div class="prestation-label">Nom:</div>
+                <div class="prestation-label">Qt:</div>
+                <div class="prestation-label">Prix:</div>
+                <div class="prestation-label">Max. Entrée:</div>
+                <div class="prestation-label">Réduc. Suppl.:</div>
+                <div class="button-container"></div>
+            </div>
+        `;
+    }
+
+    filteredPrestations.forEach((prestation, index) => {
+        if (prestation.presentationLow || prestation.presentationNormal || prestation.presentationAlcohol || prestation.presentationSoft || prestation.price) {
+            hasAccess = true;
+            const accessItem = document.createElement('div');
+            accessItem.className = 'prestation-item';
+            accessItem.draggable = true;
+            accessItem.dataset.index = prestations.indexOf(prestation);
+            const presentationRows = [];
+            if (prestation.presentationLow) presentationRows.push({ access: 'Heure creuse', prestation: prestation.presentationLow, price: prestation.price, sex: prestation.sex });
+            if (prestation.presentationNormal) presentationRows.push({ access: 'Entrée sans Boisson', prestation: prestation.presentationNormal, price: prestation.price, sex: prestation.sex });
+            if (prestation.presentationAlcohol) presentationRows.push({ access: 'Entrée + Alcool', prestation: prestation.presentationAlcohol, price: prestation.price, sex: prestation.sex });
+            if (prestation.presentationSoft) presentationRows.push({ access: 'Entrée + Soft', prestation: prestation.presentationSoft, price: prestation.price, sex: prestation.sex });
+            const detailRows = presentationRows.map((row, rowIndex) => `
+                <div class="access-detail-row ${rowIndex % 2 === 0 ? 'even-row' : 'odd-row'}" data-detail-index="${rowIndex}">
+                    <div class="prestation-value">${row.access || '-'}</div>
+                    <div class="prestation-value">${row.prestation || '-'}</div>
+                    <div class="prestation-price">${row.price ? `${row.price}€` : '-'}</div>
+                    <div class="prestation-value">${row.sex || '-'}</div>
+                    <div class="button-container">
+                        <button class="edit-btn" onclick="editPrestation(${prestations.indexOf(prestation)})">✏️</button>
+                        <button class="delete-btn" onclick="deletePrestation(${prestations.indexOf(prestation)})">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+            accessItem.innerHTML = detailRows;
+            accessList.appendChild(accessItem);
+        }
+
+        if (prestation.pureItems.length > 0) {
+            hasPure = true;
+            prestation.pureItems.forEach((pure, pureIndex) => {
+                const pureItem = document.createElement('div');
+                pureItem.className = 'prestation-item pure-item grid-support';
+                pureItem.draggable = true;
+                pureItem.dataset.index = prestations.indexOf(prestation);
+                const detailRows = pure.details.map((detail, detailIndex) => {
+                    const maxEntriesText = Object.entries(detail.maxEntries).map(([qty, max]) => `${qty}=${max}`).join(', ') || '-';
+                    return `
+                        <div class="pure-detail-row ${detailIndex % 2 === 0 ? 'even-row' : 'odd-row'}" data-detail-index="${detailIndex}">
+                            <div class="prestation-label">Entrée bouteille:</div>
+                            <div class="prestation-value">${detail.category || 'Aucune'}</div>
+                            <div class="prestation-value">${detail.name || '-'}</div>
+                            <div class="prestation-qty">${detail.qty || '-'}</div>
+                            <div class="prestation-price">${detail.price ? `${detail.price}€` : '-'}</div>
+                            <div class="prestation-max" data-tooltip="${maxEntriesText}">${maxEntriesText}</div>
+                            <div class="prestation-discount">${detail.discount ? `${detail.discount}€` : '-'}</div>
+                            <div class="button-container">
+                                <button class="edit-btn" onclick="editPrestation(${prestations.indexOf(prestation)})">✏️</button>
+                                <button class="delete-btn" onclick="deletePrestation(${prestations.indexOf(prestation)})">🗑️</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                pureItem.innerHTML = detailRows;
+                pureList.appendChild(pureItem);
+                pureItem.addEventListener('dragstart', handleDragStart);
+                pureItem.addEventListener('dragover', handleDragOver);
+                pureItem.addEventListener('drop', handleDrop);
+                pureItem.addEventListener('dragend', handleDragEnd);
+            });
+        }
+    });
+
+    accessList.style.display = hasAccess ? 'block' : 'none';
+    pureList.style.display = hasPure ? 'block' : 'none';
+    separatorLine.style.display = (hasAccess && hasPure) ? 'block' : 'none';
+
+    document.querySelectorAll('.prestation-item').forEach(item => {
+        item.addEventListener('dragstart', handleDragStart);
+        item.addEventListener('dragover', handleDragOver);
+        item.addEventListener('drop', handleDrop);
+        item.addEventListener('dragend', handleDragEnd);
+    });
+
+    document.querySelectorAll('.prestation-max').forEach(element => {
+        const tooltipText = element.getAttribute('data-tooltip');
+        if (element.scrollWidth > element.clientWidth) {
+            element.addEventListener('mouseenter', showTooltip);
+            element.addEventListener('mouseleave', hideTooltip);
+            element.addEventListener('mousemove', positionTooltip);
+        }
+    });
+
+    addTooltipsToPrestations();
+}
 
     function showTooltip(e) {
         let tooltip = document.querySelector('.tooltip');
