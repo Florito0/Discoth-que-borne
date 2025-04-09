@@ -2183,14 +2183,19 @@ if (prestation.presentationSoft) {
             toggleBtn.textContent = 'Passer au Tableau de Bord';
         }
     }
+window.onload = () => {
+    // Explicitly set initial display styles
+    const dashboard = document.getElementById('dashboard');
+    const kiosk = document.getElementById('kiosk');
+    dashboard.style.display = 'none'; // Matches CSS .container { display: none; }
+    kiosk.style.display = 'block';   // Matches CSS .kiosk-container { display: block; }
 
-    window.onload = () => {
-        addPure();
-        renderKioskItems();
-        document.querySelectorAll('.tooltip-icon').forEach(icon => {
-            icon.addEventListener('mouseenter', showTooltip);
-            icon.addEventListener('mouseleave', hideTooltip);
-            icon.addEventListener('mousemove', positionTooltip);
+    addPure();
+    renderKioskItems();
+    document.querySelectorAll('.tooltip-icon').forEach(icon => {
+        icon.addEventListener('mouseenter', showTooltip);
+        icon.addEventListener('mouseleave', hideTooltip);
+        icon.addEventListener('mousemove', positionTooltip);
         });
     };
 </script>
