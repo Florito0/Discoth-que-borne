@@ -67,6 +67,7 @@
         th {
             font-weight: 700;
             font-size: 18px;
+            position: relative; /* For tooltip positioning */
         }
         
         td input[type="time"] {
@@ -172,6 +173,51 @@
             opacity: 0.9;
         }
         
+        /* Tooltip Styles */
+        .tooltip-icon {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 16px;
+            height: 16px;
+            background-color: #2a2a2a;
+            color: #b3b3b3;
+            border-radius: 50%;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-left: 5px;
+            vertical-align: middle;
+            transition: background-color 0.3s;
+        }
+
+        .tooltip-icon:hover {
+            background-color: #3a3a3a;
+        }
+
+        .tooltip {
+            position: absolute;
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 14px;
+            z-index: 10;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+            display: none;
+            max-width: 300px;
+            pointer-events: none;
+            white-space: normal;
+            line-height: 1.4;
+            top: 100%;
+            left: 0;
+            margin-top: 5px;
+        }
+
+        .tooltip.visible {
+            display: block;
+        }
+        
         @media (max-width: 768px) {
             th, td {
                 padding: 10px;
@@ -202,8 +248,22 @@
                 <thead>
                     <tr>
                         <th>Jour</th>
-                        <th>Heures Creuses 1</th>
-                        <th>Heures Creuses 2</th>
+                        <th>
+                            Heures Creuses 1
+                            <span class="tooltip-icon" data-tooltip="hc1">?</span>
+                            <div class="tooltip" id="tooltip-hc1">
+                                <p>Lundi 23h00 à 00h00 : cela couvre la fin de la journée de lundi.</p>
+                                <p>Mardi 00h00 à 01h30 : cela couvre le début de la journée de mardi.</p>
+                            </div>
+                        </th>
+                        <th>
+                            Heures Creuses 2
+                            <span class="tooltip-icon" data-tooltip="hc2">?</span>
+                            <div class="tooltip" id="tooltip-hc2">
+                                <p>Lundi 23h00 à 00h00 : cela couvre la fin de la journée de lundi.</p>
+                                <p>Mardi 00h00 à 01h30 : cela couvre le début de la journée de mardi.</p>
+                            </div>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -511,6 +571,21 @@
             console.log('Horaires sauvegardés:', horaires);
             alert('Horaires sauvegardés avec succès!');
         }
+
+        // Gestion des tooltips
+        document.querySelectorAll('.tooltip-icon').forEach(icon => {
+            icon.addEventListener('mouseenter', function() {
+                const tooltipId = this.getAttribute('data-tooltip');
+                const tooltip = document.getElementById(`tooltip-${tooltipId}`);
+                tooltip.classList.add('visible');
+            });
+
+            icon.addEventListener('mouseleave', function() {
+                const tooltipId = this.getAttribute('data-tooltip');
+                const tooltip = document.getElementById(`tooltip-${tooltipId}`);
+                tooltip.classList.remove('visible');
+            });
+        });
 
         // Ajouter les événements aux boutons
         document.querySelectorAll('.copy-btn').forEach(button => {
