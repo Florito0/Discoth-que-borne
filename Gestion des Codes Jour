@@ -54,13 +54,14 @@
             border: 1px solid #333;
             border-radius: 4px;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s, box-shadow 0.3s;
             font-size: 14px;
             position: relative;
         }
 
         .year-select-btn:hover {
             background: #555;
+            box-shadow: 0 0 10px #9733EE, 0 0 5px #00D4FF;
         }
 
         .year-select-btn:after {
@@ -82,23 +83,16 @@
             left: 0;
         }
 
-        .year-dropdown select {
+        .year-option {
             padding: 8px;
-            background: #333;
-            border: none;
             color: white;
-            border-radius: 4px;
-            width: 100%;
             cursor: pointer;
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
             font-size: 14px;
+            transition: background-color 0.2s;
         }
 
-        .year-dropdown select:focus {
-            outline: none;
-            box-shadow: 0 0 5px #00D4FF;
+        .year-option:hover {
+            background: #444;
         }
 
         .month-btn {
@@ -107,13 +101,14 @@
             border: 1px solid #333;
             border-radius: 4px;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s, box-shadow 0.3s;
             white-space: nowrap;
             font-size: 14px;
         }
 
         .month-btn:hover {
             background: #555;
+            box-shadow: 0 0 10px #9733EE, 0 0 5px #00D4FF;
         }
 
         .month-btn.active {
@@ -184,12 +179,13 @@
             border: 1px solid #333;
             border-radius: 4px;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s, box-shadow 0.3s;
             margin-left: 5px;
         }
 
         .generate-option:hover {
             background: #555;
+            box-shadow: 0 0 10px #9733EE, 0 0 5px #00D4FF;
         }
 
         .generate-option.active {
@@ -222,7 +218,7 @@
         <div class="calendar" id="calendar"></div>
 
         <div class="controls">
-            <span class="generate-label">Générer Code</span>
+            <span class="generate-label">Générer Code Automatique</span>
             <button class="generate-option" onclick="generateCodes('month')">Mois</button>
             <button class="generate-option" onclick="generateCodes('year')">Année</button>
             <button class="export-btn" onclick="exportToPDF()">Exporter en PDF</button>
@@ -233,7 +229,7 @@
         const months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
         const days = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
         let currentYear = new Date().getFullYear(); // Année actuelle (2025)
-        let currentMonth = new Date().getMonth(); // Mois actuel (février, index 1 pour mars 2025)
+        let currentMonth = new Date().getMonth(); // Mois actuel
         let codes = {};
         let lastGenerateType = 'month'; // Par défaut, génération par mois
         let yearDropdown = null; // Variable globale pour stocker le dropdown
@@ -266,52 +262,41 @@
 
             const yearBtn = document.getElementById('yearSelectBtn');
             if (yearBtn) {
-                // Supprimer tous les écouteurs d'événements précédents pour éviter les conflits
-                yearBtn.removeEventListener('click', toggleYearDropdown); // Supprimer l'ancien écouteur si existant
+                yearBtn.removeEventListener('click', toggleYearDropdown);
                 yearBtn.addEventListener('click', (e) => {
                     e.preventDefault();
                     e.stopPropagation();
                     toggleYearDropdown();
-                    console.log('Clic sur yearSelectBtn détecté');
                 });
-            } else {
-                console.error('Élément yearSelectBtn non trouvé dans le DOM.');
             }
         }
 
         function createYearDropdown() {
-            // Créer le dropdown une seule fois
+            // Créer le conteneur de la liste personnalisée
             yearDropdown = document.createElement('div');
             yearDropdown.className = 'year-dropdown';
             yearDropdown.id = 'yearDropdown';
-            yearDropdown.style.display = 'none'; // Initialement caché
+            yearDropdown.style.display = 'none';
             yearDropdown.style.position = 'absolute';
             yearDropdown.style.zIndex = '1000';
-
-            // Créer un élément select
-            const select = document.createElement('select');
-            select.onchange = (e) => {
-                currentYear = parseInt(e.target.value);
-                codes = {}; // Réinitialiser les codes pour la nouvelle année
-                renderYearMonthNav();
-                renderCalendar(currentYear, currentMonth);
-                yearDropdown.style.display = 'none'; // Masquer le dropdown après sélection
-            };
 
             // Ajouter les options d'années
             const years = [2025, 2026, 2027];
             years.forEach(year => {
-                const option = document.createElement('option');
-                option.value = year;
+                const option = document.createElement('div');
+                option.className = 'year-option';
                 option.textContent = year;
-                if (year === currentYear) option.selected = true;
-                select.appendChild(option);
+                option.onclick = () => {
+                    currentYear = year;
+                    codes = {}; // Réinitialiser les codes pour la nouvelle année
+                    renderYearMonthNav();
+                    renderCalendar(currentYear, currentMonth);
+                    yearDropdown.style.display = 'none'; // Masquer après sélection
+                };
+                yearDropdown.appendChild(option);
             });
 
-            // Ajouter le select au dropdown
-            yearDropdown.appendChild(select);
-            
-            // Ajouter au body (mais initialement caché)
+            // Ajouter au body
             document.body.appendChild(yearDropdown);
         }
 
@@ -323,12 +308,11 @@
             }
 
             if (!yearDropdown) {
-                createYearDropdown(); // Créer le dropdown si nécessaire
+                createYearDropdown();
             }
 
-            // Basculer l'affichage du dropdown existant
             if (yearDropdown.style.display === 'none' || yearDropdown.style.display === '') {
-                // Positionner le dropdown juste sous le bouton d'année
+                // Positionner le dropdown sous le bouton
                 const rect = yearBtn.getBoundingClientRect();
                 yearDropdown.style.left = rect.left + 'px';
                 yearDropdown.style.top = rect.bottom + 'px';
@@ -338,7 +322,7 @@
                 yearDropdown.style.display = 'none';
             }
 
-            // Fermer le dropdown si on clique ailleurs
+            // Fermer le dropdown si clic ailleurs
             document.addEventListener('click', function closeDropdown(event) {
                 if (!yearDropdown.contains(event.target) && event.target !== yearBtn) {
                     yearDropdown.style.display = 'none';
@@ -357,7 +341,7 @@
             ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'].forEach(day => {
                 const cell = document.createElement('div');
                 cell.className = 'day-cell';
-                cell.textContent = day.substring(0, 1); // Affiche L, M, M, J, V, S, D
+                cell.textContent = day.substring(0, 1);
                 header.appendChild(cell);
             });
             calendar.appendChild(header);
@@ -389,7 +373,7 @@
                             <input type="text" value="${codes[dateStr] || ''}" placeholder="Ex: L 237" onchange="updateCode('${dateStr}', this.value)">
                         `;
                         if (isCurrentMonth && date.getDate() === today.getDate()) {
-                            cell.classList.add('today'); // Ajoute une bordure rose pour le jour actuel
+                            cell.classList.add('today');
                         }
                         dayCount++;
                     }
@@ -423,7 +407,6 @@
 
             for (let i = 1; i <= daysInMonth; i++) {
                 const date = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
-                // Générer ou mettre à jour le code pour ce jour, même si un code année existe
                 const dayIndex = new Date(currentYear, currentMonth, i).getDay();
                 let randomNum;
                 do {
@@ -436,7 +419,7 @@
         }
 
         function generateYearCodes() {
-            for (let year of [2025, 2026, 2027]) { // Générer pour plusieurs années
+            for (let year of [2025, 2026, 2027]) {
                 for (let month = 0; month < 12; month++) {
                     const daysInMonth = new Date(year, month + 1, 0).getDate();
                     const usedNumbers = new Set();
@@ -455,26 +438,25 @@
                     }
                 }
             }
-            renderCalendar(currentYear, currentMonth); // Rafraîchit le mois actuel, mais tous les codes des années sont générés
+            renderCalendar(currentYear, currentMonth);
         }
 
         function exportToPDF() {
             try {
-                const element = document.querySelector('.container'); // Sélectionne le planning à exporter
+                const element = document.querySelector('.container');
                 if (!element) {
                     console.error("Élément non trouvé pour l'exportation en PDF.");
                     alert('Une erreur est survenue : le conteneur du planning n\'a pas été trouvé.');
                     return;
                 }
 
-                // Vérifier si html2pdf est chargé
                 if (typeof html2pdf !== 'function') {
-                    throw new Error('html2pdf.js n\'est pas chargé. Vérifiez la connexion ou utilisez un serveur local.');
+                    throw new Error('html2pdf.js n\'est pas chargé.');
                 }
 
                 html2pdf(element, {
                     margin: 10,
-                    filename: `Planning_${currentYear}_${months[currentMonth].replace(' ', '_')}.pdf`, // Remplacer les espaces par des underscores
+                    filename: `Planning_${currentYear}_${months[currentMonth].replace(' ', '_')}.pdf`,
                     image: { type: 'jpeg', quality: 0.98 },
                     html2canvas: { scale: 2 },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
@@ -482,11 +464,11 @@
                     console.log('PDF téléchargé avec succès');
                 }).catch(error => {
                     console.error('Erreur lors de la génération du PDF :', error);
-                    alert('Une erreur est survenue lors de l’exportation en PDF. Vérifiez la console pour plus de détails.');
+                    alert('Une erreur est survenue lors de l’exportation en PDF.');
                 });
             } catch (error) {
                 console.error('Erreur dans exportToPDF :', error);
-                alert('Une erreur est survenue lors de l’exportation en PDF. Vérifiez la console pour plus de détails.');
+                alert('Une erreur est survenue lors de l’exportation en PDF.');
             }
         }
 
