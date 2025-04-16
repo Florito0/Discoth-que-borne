@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tape 2 Enter - Solution de billetterie automatique pour discothèques</title>
-    <meta name="description" content="Tape 2 Enter révolutionne la gestion des entrées en discothèque avec son kiosque tactile. Contrôle d'accès, prévention des fraudes et expérience client optimisée.">
-    <meta name="keywords" content="billetterie automatique, kiosque tactile, discothèques, contrôle d'accès, prévention fraudes, gestion entrées, heures creuses, Tape 2 Enter">
+    <meta name="description" content="Tape 2 Enter révolutionne la gestion des entrées en discothèque avec des kiosques tactiles. Contrôle d'accès, prévention des fraudes, gestion des TVA personnalisées et expérience client optimisée.">
+    <meta name="keywords" content="billetterie automatique, kiosque tactile, discothèques, contrôle d'accès, prévention fraudes, gestion entrées, heures creuses, TVA personnalisée, vestiaire intégré, Tape 2 Enter">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Particles.js -->
@@ -160,7 +160,7 @@
         </div>
     </nav>
 
-    <!-- Hero Section (importée du code sombre) -->
+    <!-- Hero Section -->
     <section class="relative hero-gradient text-white py-20 md:py-32 overflow-hidden">
         <!-- Particles.js -->
         <div id="particles-js"></div>
@@ -198,7 +198,7 @@
                                     <span class="text-lg font-bold text-white">12€</span>
                                 </div>
                                 <div class="mt-2 flex justify-between items-center">
-                                    <span class="text-sm text-gray-300">Option vestiaire</span>
+                                    <span class="text-sm text-gray-300"><i class="fas fa-hanger mr-1"></i> Option vestiaire</span>
                                     <span class="text-sm font-bold text-white">+5€</span>
                                 </div>
                                 <button class="mt-4 w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-md font-medium">
@@ -316,12 +316,21 @@
                 </div>
                 
                 <!-- Feature 8: Option vestiaire -->
+               <div class="feature-card bg-white p-8 rounded-xl shadow-lg transition duration-300">
+    <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mb-6">
+        <i class="fas fa-tshirt text-purple-800 text-2xl"></i> <!-- Changement de fa-hanger à fa-tshirt -->
+    </div>
+    <h3 class="text-xl font-bold mb-3">Option vestiaire intégrée</h3>
+    <p class="text-base text-gray-600">Simplifiez l’expérience client avec une option vestiaire directement sur le ticket, payable au kiosque.</p>
+                </div>
+                
+                <!-- Feature 9: TVA personnalisée -->
                 <div class="feature-card bg-white p-8 rounded-xl shadow-lg transition duration-300">
                     <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mb-6">
-                        <i class="fas fa-hanger text-purple-600 text-2xl"></i>
+                        <i class="fas fa-calculator text-purple-600 text-2xl"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-3">Option vestiaire intégrée</h3>
-                    <p class="text-base text-gray-600">Simplifiez l’expérience client avec une option vestiaire directement sur le ticket, payable au kiosque.</p>
+                    <h3 class="text-xl font-bold mb-3">TVA personnalisée</h3>
+                    <p class="text-base text-gray-600">Adaptez les taux de TVA pour chaque type d’entrée et vestiaire pour une gestion fiscale simplifiée et conforme.</p>
                 </div>
             </div>
         </div>
@@ -352,7 +361,7 @@
                         <i class="fas fa-cloud text-purple-600 text-2xl"></i>
                     </div>
                     <h3 class="text-xl font-bold mb-3">Formule logicielle</h3>
-                    <p class="text-base text-gray-600 mb-4">Un abonnement mensuel pour gérer vos tickets, contrôler les accès, analyser vos données, et proposer des options comme le vestiaire. Choisissez entre Starter, Pro ou Enterprise.</p>
+                    <p class="text-base text-gray-600 mb-4">Un abonnement mensuel pour gérer vos tickets, contrôler les accès, analyser vos données, proposer des options comme le vestiaire, et personnaliser les TVA. Choisissez entre Starter, Pro ou Enterprise.</p>
                     <p class="text-base text-gray-600"><strong>Essai gratuit</strong> : 14 jours pour tester toutes les fonctionnalités !</p>
                     <a href="#pricing" class="mt-4 inline-block bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-md">Voir les tarifs</a>
                 </div>
@@ -490,6 +499,10 @@
                                     <i class="fas fa-check text-green-500 mr-2"></i>
                                     <span class="text-gray-700">Analytics avancés</span>
                                 </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-check text-green-500 mr-2"></i>
+                                    <span class="text-gray-700">TVA personnalisée</span>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -527,6 +540,10 @@
                                 <li class="flex items-center">
                                     <i class="fas fa-check text-green-500 mr-2"></i>
                                     <span class="text-gray-700">Formation complète</span>
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-check text-green-500 mr-2"></i>
+                                    <span class="text-gray-700">TVA personnalisée</span>
                                 </li>
                             </ul>
                         </div>
@@ -707,14 +724,14 @@
             <div class="prose prose-lg text-gray-700 max-w-none">
                 <h2 class="text-3xl font-bold mb-6">La solution de billetterie automatique pour discothèques</h2>
                 
-                <p>Tape 2 Enter propulse vos entrées dans une nouvelle dimension avec le leader français des kiosques tactiles pour discothèques à Paris, Ibiza et au-delà. Gérez vos heures creuses avec des offres personnalisées, comme des tickets gratuits pour les femmes de 23h à 1h, et maximisez votre fréquentation.</p>
+                <p>Tape 2 Enter propulse vos entrées dans une nouvelle dimension avec le leader français des kiosques tactiles pour discothèques à Paris, Ibiza et au-delà. Gérez vos heures creuses avec des offres personnalisées, comme des tickets gratuits pour les femmes de 23h à 1h, personnalisez les taux de TVA pour une conformité fiscale optimale, et maximisez votre fréquentation.</p>
                 
                 <h3 class="text-2xl font-bold mt-8 mb-4">Pourquoi choisir un système de billetterie automatique ?</h3>
                 <p>Les discothèques modernes font face à de nombreux défis : files d'attente interminables, fraudes aux entrées, gestion compliquée des listes VIP, et perte de revenus due à des processus inefficaces. Notre kiosque automatique résout tous ces problèmes en offrant :</p>
                 <ul>
                     <li>Une réduction des coûts opérationnels grâce à l’automatisation</li>
                     <li>Une augmentation des revenus par la suppression des fraudes</li>
-                    <li>Une expérience client améliorée avec des tickets plus rapides et une option vestiaire intégrée</li>
+                    <li>Une expérience client améliorée avec des tickets plus rapides, une option vestiaire intégrée et une gestion simplifiée des TVA</li>
                     <li>Une meilleure gestion de la capacité avec des analytics en temps réel</li>
                 </ul>
                 
@@ -722,7 +739,7 @@
                 <p>Notre solution tout-en-un comprend :</p>
                 <ol>
                     <li><strong>Le kiosque physique</strong> : Un terminal robuste et élégant conçu pour résister à l’environnement nocturne, avec écran tactile haute résolution et lecteur de cartes sécurisé.</li>
-                    <li><strong>Le logiciel de gestion</strong> : Un tableau de bord complet pour configurer les tarifs, gérer les accès VIP, proposer des options comme le vestiaire, analyser les données et superviser les opérations en temps réel.</li>
+                    <li><strong>Le logiciel de gestion</strong> : Un tableau de bord complet pour configurer les tarifs, gérer les accès VIP, proposer des options comme le vestiaire, personnaliser les taux de TVA, analyser les données et superviser les opérations en temps réel.</li>
                     <li><strong>Le système anti-fraude</strong> : Validation des tickets avec QR code unique pour empêcher les entrées non autorisées.</li>
                 </ol>
                 
