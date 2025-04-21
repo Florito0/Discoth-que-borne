@@ -383,144 +383,112 @@
     </div>
 </section>
 
-    <!-- Pricing Section -->
-    <section id="pricing" class="py-16 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl md:text-4xl font-bold mb-4">Tarifs de l'abonnement logiciel</h2>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto">Choisissez la formule qui correspond à votre établissement. Kiosque physique requis (achat séparé, voir détails).</p>
-            </div>
-            
-            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-                <!-- Basic Plan -->
-                <div class="pricing-card bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
-                    <div class="px-6 py-8">
-                        <h3 class="text-lg font-medium text-gray-900">Starter</h3>
-                        <div class="mt-4 flex items-baseline">
-                            <span class="text-4xl font-bold text-gray-900">79€</span>
-                            <span class="ml-1 text-lg font-medium text-gray-500">HT/mois</span>
-                        </div>
-                        <p class="mt-2 text-sm text-gray-500">Parfait pour lancer votre club</p>
-                        <div class="mt-6">
-                            <ul class="space-y-3">
-                                <li class="flex items-center">
-                                    <i class="fas fa-check text-green-500 mr-2"></i>
-                                    <span class="text-gray-700">1 kiosque physique (achat séparé)</span>
-                                </li>
-                                <li class="flex items-center">
-                                    <i class="fas fa-check text-green-500 mr-2"></i>
-                                    <span class="text-gray-700">Billetterie de base</span>
-                                </li>
-                                <li class="flex items-center">
-                                    <i class="fas fa-check text-green-500 mr-2"></i>
-                                    <span class="text-gray-700">Contrôle d'accès</span>
-                                </li>
-                                <li class="flex items-center">
-                                    <i class="fas fa-check text-green-500 mr-2"></i>
-                                    <span class="text-gray-700">Gestion des heures creuses</span>
-                                </li>
-                            </ul>
-                        </div>
+<!-- Pricing Section -->
+<section id="pricing" class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">Tarifs de l'abonnement logiciel</h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">Choisissez la formule qui correspond à votre établissement. Kiosque physique requis (achat séparé).</p>
+        </div>
+        
+        <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            <!-- Club Plan -->
+            <div class="pricing-card bg-white border-2 border-purple-600 rounded-xl shadow-lg overflow-hidden relative">
+                <div class="absolute top-0 right-0 bg-purple-600 text-white text-xs font-semibold px-3 py-1 transform translate-x-2 -translate-y-2 rounded-bl-lg">
+                    Le plus populaire
+                </div>
+                <div class="px-6 py-8">
+                    <h3 class="text-lg font-medium text-gray-900">Club</h3>
+                    <div class="mt-4 flex items-baseline">
+                        <span class="text-4xl font-bold text-gray-900">99€</span>
+                        <span class="ml-1 text-lg font-medium text-gray-500">HT/mois</span>
                     </div>
-                    <div class="px-6 pb-8">
-                        <a href="#contact" class="block w-full py-3 px-4 text-center bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-md text-gray-700 font-medium">Essai gratuit</a>
+                    <p class="mt-2 text-sm text-gray-500">Faites exploser vos entrées</p>
+                    <div class="mt-6">
+                        <ul class="space-y-3">
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-green-500 mr-2"></i>
+                                <span class="text-gray-700">Jusqu'à 2 kiosques (achat séparé)</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-green-500 mr-2"></i>
+                                <span class="text-gray-700">Toutes les fonctionnalités essentielles (entrées, vestiaire, VIP, TVA personnalisée)</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-green-500 mr-2"></i>
+                                <span class="text-gray-700">Personnalisation avancée de l’interface</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-green-500 mr-2"></i>
+                                <span class="text-gray-700">Gestion des heures creuses</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-green-500 mr-2"></i>
+                                <span class="text-gray-700">Analytics avancés (taux d’occupation par genre, rapports CA, export PDF)</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-green-500 mr-2"></i>
+                                <span class="text-gray-700">TVA personnalisée pour une fiscalité simplifiée</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-green-500 mr-2"></i>
+                                <span class="text-gray-700">Gestion de capacité avec alertes dynamiques</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-green-500 mr-2"></i>
+                                <span class="text-gray-700">Planification des codes jour pour une sécurité proactive</span>
+                            </li>
+                        </ul>
+                        <p class="mt-6 text-gray-600 text-sm">Économisez sur les coûts de personnel grâce à l’automatisation des entrées et du vestiaire. Votre réceptionniste se concentre sur l’organisation du vestiaire, pour une expérience client plus rapide.</p>
                     </div>
                 </div>
-                
-                <!-- Pro Plan -->
-                <div class="pricing-card bg-white border-2 border-purple-600 rounded-xl shadow-lg overflow-hidden relative">
-                    <div class="absolute top-0 right-0 bg-purple-600 text-white text-xs font-semibold px-3 py-1 transform translate-x-2 -translate-y-2 rounded-bl-lg">
-                        Le plus populaire
-                    </div>
-                    <div class="px-6 py-8">
-                        <h3 class="text-lg font-medium text-gray-900">Pro</h3>
-                        <div class="mt-4 flex items-baseline">
-                            <span class="text-4xl font-bold text-gray-900">99€</span>
-                            <span class="ml-1 text-lg font-medium text-gray-500">HT/mois</span>
-                        </div>
-                        <p class="mt-2 text-sm text-gray-500">Faites exploser vos entrées</p>
-                        <div class="mt-6">
-                            <ul class="space-y-3">
-                                <li class="flex items-center">
-                                    <i class="fas fa-check text-green-500 mr-2"></i>
-                                    <span class="text-gray-700">Jusqu'à 3 kiosques (achat séparé)</span>
-                                </li>
-                                <li class="flex items-center">
-                                    <i class="fas fa-check text-green-500 mr-2"></i>
-                                    <span class="text-gray-700">Toutes les fonctionnalités</span>
-                                </li>
-                                <li class="flex items-center">
-                                    <i class="fas fa-check text-green-500 mr-2"></i>
-                                    <span class="text-gray-700">Personnalisation avancée</span>
-                                </li>
-                                <li class="flex items-center">
-                                    <i class="fas fa-check text-green-500 mr-2"></i>
-                                    <span class="text-gray-700">Gestion des heures creuses</span>
-                                </li>
-                                <li class="flex items-center">
-                                    <i class="fas fa-check text-green-500 mr-2"></i>
-                                    <span class="text-gray-700">Analytics avancés</span>
-                                </li>
-                                <li class="flex items-center">
-                                    <i class="fas fa-check text-green-500 mr-2"></i>
-                                    <span class="text-gray-700">TVA personnalisée</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="px-6 pb-8">
-                        <a href="#contact" class="block w-full py-3 px-4 text-center bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-md">Essai gratuit</a>
-                    </div>
-                </div>
-                
-                <!-- Enterprise Plan -->
-                <div class="pricing-card bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
-                    <div class="px-6 py-8">
-                        <h3 class="text-lg font-medium text-gray-900">Enterprise</h3>
-                        <div class="mt-4 flex items-baseline">
-                            <span class="text-4xl font-bold text-gray-900">Sur mesure</span>
-                        </div>
-                        <p class="mt-2 text-sm text-gray-500">Dominez le game</p>
-                        <div class="mt-6">
-                            <ul class="space-y-3">
-                                <li class="flex items-center">
-                                    <i class="fas fa-check text-green-500 mr-2"></i>
-                                    <span class="text-gray-700">Kiosques illimités (achat séparé)</span>
-                                </li>
-                                <li class="flex items-center">
-                                    <i class="fas fa-check text-green-500 mr-2"></i>
-                                    <span class="text-gray-700">Solution sur mesure</span>
-                                </li>
-                                <li class="flex items-center">
-                                    <i class="fas fa-check text-green-500 mr-2"></i>
-                                    <span class="text-gray-700">Gestion des heures creuses</span>
-                                </li>
-                                <li class="flex items-center">
-                                    <i class="fas fa-check text-green-500 mr-2"></i>
-                                    <span class="text-gray-700">Gestion multi-établissements (en cours d’évolution)</span>
-                                </li>
-                                <li class="flex items-center">
-                                    <i class="fas fa-check text-green-500 mr-2"></i>
-                                    <span class="text-gray-700">Formation complète</span>
-                                </li>
-                                <li class="flex items-center">
-                                    <i class="fas fa-check text-green-500 mr-2"></i>
-                                    <span class="text-gray-700">TVA personnalisée</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="px-6 pb-8">
-                        <a href="#contact" class="block w-full py-3 px-4 text-center bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-md text-gray-700 font-medium">Nous contacter</a>
-                    </div>
+                <div class="px-6 pb-8">
+                    <a href="#contact" class="block w-full py-3 px-4 text-center bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-md">Essai gratuit</a>
                 </div>
             </div>
             
-            <div class="mt-12 text-center">
-                <p class="text-gray-600">Tous nos plans incluent l'hébergement cloud sécurisé, les mises à jour logicielles et un support 24/7. Kiosque physique requis (achat séparé, contactez-nous pour un devis).</p>
+            <!-- VIP Plan -->
+            <div class="pricing-card bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+                <div class="px-6 py-8">
+                    <h3 class="text-lg font-medium text-gray-900">VIP</h3>
+                    <div class="mt-4 flex items-baseline">
+                        <span class="text-4xl font-bold text-gray-900">Sur mesure</span>
+                        <span class="ml-1 text-lg font-medium text-gray-500">(contactez-nous)</span>
+                    </div>
+                    <p class="mt-2 text-sm text-gray-500">Maîtrisez tout, sans limites</p>
+                    <div class="mt-6">
+                        <ul class="space-y-3">
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-green-500 mr-2"></i>
+                                <span class="text-gray-700">Kiosques illimités (achat séparé)</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-green-500 mr-2"></i>
+                                <span class="text-gray-700">Toutes les fonctionnalités du plan Club</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-green-500 mr-2"></i>
+                                <span class="text-gray-700">Gestion multi-établissements pour les chaînes de clubs (en cours de développement)</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-green-500 mr-2"></i>
+                                <span class="text-gray-700">Support prioritaire</span>
+                            </li>
+                        </ul>
+                        <p class="mt-6 text-gray-600 text-sm">Économisez sur les coûts de personnel grâce à l’automatisation des entrées et du vestiaire, tout en gérant plusieurs clubs efficacement.</p>
+                    </div>
+                </div>
+                <div class="px-6 pb-8">
+                    <a href="#contact" class="block w-full py-3 px-4 text-center bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-md text-gray-700 font-medium">Nous contacter</a>
+                </div>
             </div>
         </div>
-    </section>
+        
+        <div class="mt-12 text-center">
+            <p class="text-gray-600">Tous nos plans incluent l'hébergement cloud sécurisé, les mises à jour logicielles et un support 24/7. Kiosque physique requis (achat séparé, contactez-nous pour un devis).</p>
+        </div>
+    </div>
+</section>
 
     <!-- FAQ Section -->
     <section id="faq" class="py-16 bg-gray-50">
