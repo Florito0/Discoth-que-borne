@@ -490,88 +490,222 @@
     </div>
 </section>
 
-    <!-- FAQ Section -->
-    <section id="faq" class="py-16 bg-gray-50">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl md:text-4xl font-bold mb-4">Questions fréquentes</h2>
-                <p class="text-xl text-gray-600">Trouvez les réponses aux questions les plus courantes</p>
-            </div>
-            
-            <div class="space-y-6">
-                <!-- FAQ Item 1 -->
-                <div class="faq-item bg-white p-6 rounded-lg shadow">
-                    <button class="faq-question flex justify-between items-center w-full text-left font-medium text-gray-900">
-                        <span>Combien de temps prend l'installation du système ?</span>
-                        <i class="fas fa-chevron-down text-purple-600 transition-transform duration-300"></i>
-                    </button>
-                    <div class="faq-answer mt-4 text-gray-600 hidden">
-                        <p>L'installation de notre kiosque standard prend généralement moins de 2 heures. Notre équipe technique se déplace sur site pour configurer le matériel, effectuer les tests nécessaires et former votre personnel.</p>
-                    </div>
-                </div>
-                
-                <!-- FAQ Item 2 -->
-                <div class="faq-item bg-white p-6 rounded-lg shadow">
-                    <button class="faq-question flex justify-between items-center w-full text-left font-medium text-gray-900">
-                        <span>Puis-je personnaliser l'interface des kiosques ?</span>
-                        <i class="fas fa-chevron-down text-purple-600 transition-transform duration-300"></i>
-                    </button>
-                    <div class="faq-answer mt-4 text-gray-600 hidden">
-                        <p>Absolument ! Notre système est conçu pour s'adapter parfaitement à l'identité de votre établissement. Vous pouvez modifier les couleurs, les polices, ajouter votre logo, et même personnaliser les messages affichés.</p>
-                    </div>
-                </div>
-                
-                <!-- FAQ Item 3 -->
-                <div class="faq-item bg-white p-6 rounded-lg shadow">
-                    <button class="faq-question flex justify-between items-center w-full text-left font-medium text-gray-900">
-                        <span>Comment gérez-vous les problèmes techniques ?</span>
-                        <i class="fas fa-chevron-down text-purple-600 transition-transform duration-300"></i>
-                    </button>
-                    <div class="faq-answer mt-4 text-gray-600 hidden">
-                        <p>Nous proposons un support 24/7 avec un temps de réponse rapide. Pour les formules Pro et Enterprise, intervention sur site sous 4 heures dans les grandes villes.</p>
-                    </div>
-                </div>
-                
-                <!-- FAQ Item 4 -->
-                <div class="faq-item bg-white p-6 rounded-lg shadow">
-                    <button class="faq-question flex justify-between items-center w-full text-left font-medium text-gray-900">
-                        <span>Quels types de paiement sont acceptés ?</span>
-                        <i class="fas fa-chevron-down text-purple-600 transition-transform duration-300"></i>
-                    </button>
-                    <div class="faq-answer mt-4 text-gray-600 hidden">
-                        <p>Nos kiosques acceptent cartes bancaires, paiements sans contact (Apple Pay, Google Pay), et solutions locales. Transactions sécurisées avec frais réduits.</p>
-                    </div>
-                </div>
-                
-                <!-- FAQ Item 5 -->
-                <div class="faq-item bg-white p-6 rounded-lg shadow">
-                    <button class="faq-question flex justify-between items-center w-full text-left font-medium text-gray-900">
-                        <span>Comment le système prévient-il les fraudes ?</span>
-                        <i class="fas fa-chevron-down text-purple-600 transition-transform duration-300"></i>
-                    </button>
-                    <div class="faq-answer mt-4 text-gray-600 hidden">
-                        <p>QR codes uniques, validation en temps réel et analyse comportementale réduisent les fraudes de 75% à 95% selon les clubs.</p>
-                    </div>
-                </div>
-                
-                <!-- FAQ Item 6: Integration -->
-                <div class="faq-item bg-white p-6 rounded-lg shadow">
-                    <button class="faq-question flex justify-between items-center w-full text-left font-medium text-gray-900">
-                        <span>Puis-je intégrer Tape 2 Enter avec mon système actuel ?</span>
-                        <i class="fas fa-chevron-down text-purple-600 transition-transform duration-300"></i>
-                    </button>
-                    <div class="faq-answer mt-4 text-gray-600 hidden">
-                        <p>Nous travaillons sur des intégrations fluides avec les principaux outils de gestion de discothèques. Contactez-nous pour discuter de vos besoins spécifiques !</p>
-                    </div>
+<!-- FAQ Section -->
+<section id="faq" class="py-16 bg-gray-50">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">Questions fréquentes</h2>
+            <p class="text-xl text-gray-600">Trouvez les réponses aux questions les plus courantes</p>
+        </div>
+        
+        <div class="space-y-6">
+            <!-- FAQ Item 1 -->
+            <div class="faq-item bg-white p-6 rounded-lg shadow">
+                <button class="faq-question flex justify-between items-center w-full text-left font-medium text-gray-900">
+                    <span>Combien de temps prend l’installation d’un kiosque pour discothèque ?</span>
+                    <i class="fas fa-chevron-down text-purple-600 transition-transform duration-300"></i>
+                </button>
+                <div class="faq-answer mt-4 text-gray-600 hidden">
+                    <p>Votre kiosque d’entrée est opérationnel en moins de 2 heures ! Installez-le vous-même en toute simplicité ou laissez une équipe spécialisée assurer une mise en place fluide, sans perturber votre discothèque. Profitez d’une assistance 24/7 pour une tranquillité d’esprit totale.</p>
                 </div>
             </div>
             
-            <div class="mt-12 text-center">
-                <p class="text-gray-600">Vous avez d'autres questions ? <a href="#contact" class="text-purple-600 font-medium hover:underline">Contactez notre équipe</a></p>
+            <!-- FAQ Item 2 -->
+            <div class="faq-item bg-white p-6 rounded-lg shadow">
+                <button class="faq-question flex justify-between items-center w-full text-left font-medium text-gray-900">
+                    <span>Puis-je personnaliser l’interface des kiosques pour ma discothèque ?</span>
+                    <i class="fas fa-chevron-down text-purple-600 transition-transform duration-300"></i>
+                </button>
+                <div class="faq-answer mt-4 text-gray-600 hidden">
+                    <p>Faites briller votre discothèque ! Personnalisez l’écran d’accueil de votre kiosque d’entrée avec votre logo, des visuels uniques, et des messages qui captent l’ambiance de votre club. Ajustez les formules, promotions, et options comme le vestiaire en un clic pour une billetterie 100% à votre image.</p>
+                </div>
+            </div>
+            
+            <!-- FAQ Item 3 -->
+            <div class="faq-item bg-white p-6 rounded-lg shadow">
+                <button class="faq-question flex justify-between items-center w-full text-left font-medium text-gray-900">
+                    <span>Comment gérez-vous les problèmes techniques pour les kiosques de discothèque ?</span>
+                    <i class="fas fa-chevron-down text-purple-600 transition-transform duration-300"></i>
+                </button>
+                <div class="faq-answer mt-4 text-gray-600 hidden">
+                    <p>Pas de panique, votre soirée reste au top ! Notre assistance 24/7 pour votre kiosque, dépannage à distance immédiat ou une intervention rapide par des équipes spécialisées, partout en France. Notre système de sauvegarde cloud garantit que votre kiosque d’entrée et votre billetterie restent opérationnels, même en cas de panne.</p>
+                </div>
+            </div>
+            
+            <!-- FAQ Item 4 -->
+            <div class="faq-item bg-white p-6 rounded-lg shadow">
+                <button class="faq-question flex justify-between items-center w-full text-left font-medium text-gray-900">
+                    <span>Quels modes de paiement les kiosques de billetterie pour discothèques acceptent-ils ?</span>
+                    <i class="fas fa-chevron-down text-purple-600 transition-transform duration-300"></i>
+                </button>
+                <div class="faq-answer mt-4 text-gray-600 hidden">
+                    <p>Attirez tous vos clients avec des paiements fluides ! Nos kiosques d’entrée acceptent cartes bancaires, paiements sans contact (Apple Pay, Google Pay). Transactions sécurisées, frais réduits, pour une billetterie rapide et une soirée sans accroc.</p>
+                </div>
+            </div>
+            
+            <!-- FAQ Item 5 -->
+            <div class="faq-item bg-white p-6 rounded-lg shadow">
+                <button class="faq-question flex justify-between items-center w-full text-left font-medium text-gray-900">
+                    <span>Comment vos kiosques pour discothèques préviennent-ils les fraudes ?</span>
+                    <i class="fas fa-chevron-down text-purple-600 transition-transform duration-300"></i>
+                </button>
+                <div class="faq-answer mt-4 text-gray-600 hidden">
+                    <p>Protégez votre club avec une sécurité imbattable ! Nos kiosques utilisent des codes uniques par client et par jour, programmables via un planning intuitif, avec validation en temps réel pour bloquer les fraudes. L’analyse comportementale garantit une billetterie sécurisée, pour des soirées sans souci.</p>
+                </div>
+            </div>
+            
+            <!-- FAQ Item 6 -->
+            <div class="faq-item bg-white p-6 rounded-lg shadow">
+                <button class="faq-question flex justify-between items-center w-full text-left font-medium text-gray-900">
+                    <span>Comment fonctionne le kiosque de billetterie automatique pour ma discothèque ?</span>
+                    <i class="fas fa-chevron-down text-purple-600 transition-transform duration-300"></i>
+                </button>
+                <div class="faq-answer mt-4 text-gray-600 hidden">
+                    <p>Tape 2 Enter révolutionne votre discothèque ! Notre kiosque tout-en-un offre : un terminal robuste avec écran tactile et paiements sans contact, générant un ticket d’entrée et deux tickets vestiaire (un pour le client avec ses sélections, un pour la réceptionniste) ; un logiciel intuitif pour gérer entrées, réservations VIP, taxes, et analytics en temps réel ; une sécurité anti-fraude avec codes uniques par client et par jour. Boostez vos heures creuses avec des offres sur mesure.</p>
+                </div>
+            </div>
+            
+            <!-- FAQ Item 7 -->
+            <div class="faq-item bg-white p-6 rounded-lg shadow">
+                <button class="faq-question flex justify-between items-center w-full text-left font-medium text-gray-900">
+                    <span>Quels types de rapports puis-je obtenir ?</span>
+                    <i class="fas fa-chevron-down text-purple-600 transition-transform duration-300"></i>
+                </button>
+                <div class="faq-answer mt-4 text-gray-600 hidden">
+                    <p>Obtenez des rapports détaillés sur le taux d’occupation (par genre, heure), les ventes de tickets, l’historique, la trésorerie, et le chiffre d’affaires, exportables en PDF depuis votre tableau de bord, même en déplacement. Prenez des décisions éclairées pour maximiser vos revenus.</p>
+                </div>
+            </div>
+            
+            <!-- FAQ Item 8 -->
+            <div class="faq-item bg-white p-6 rounded-lg shadow">
+                <button class="faq-question flex justify-between items-center w-full text-left font-medium text-gray-900">
+                    <span>Comment gérer la capacité maximum de mon club ?</span>
+                    <i class="fas fa-chevron-down text-purple-600 transition-transform duration-300"></i>
+                </button>
+                <div class="faq-answer mt-4 text-gray-600 hidden">
+                    <p>Notre kiosque affiche dynamiquement la capacité actuelle et le nombre de clients présents, avec des alertes pour respecter la capacité maximum. Gérez vos entrées en toute conformité et optimisez votre fréquentation sans effort.</p>
+                </div>
+            </div>
+            
+            <!-- FAQ Item 9 -->
+            <div class="faq-item bg-white p-6 rounded-lg shadow">
+                <button class="faq-question flex justify-between items-center w-full text-left font-medium text-gray-900">
+                    <span>Comment Tape 2 Enter réduit-il les coûts de personnel ?</span>
+                    <i class="fas fa-chevron-down text-purple-600 transition-transform duration-300"></i>
+                </button>
+                <div class="faq-answer mt-4 text-gray-600 hidden">
+                    <p>Nos kiosques automatisent les paiements d’entrées et de vestiaire, libérant votre réceptionniste pour des tâches essentielles comme l’accueil ou l’organisation du vestiaire. Fini la manipulation d’espèces, les erreurs, ou les risques de vol, pour des opérations fluides et sécurisées.</p>
+                </div>
+            </div>
+            
+            <!-- FAQ Item 10 -->
+            <div class="faq-item bg-white p-6 rounded-lg shadow">
+                <button class="faq-question flex justify-between items-center w-full text-left font-medium text-gray-900">
+                    <span>Est-ce que Tape 2 Enter convient aux petits clubs ?</span>
+                    <i class="fas fa-chevron-down text-purple-600 transition-transform duration-300"></i>
+                </button>
+                <div class="faq-answer mt-4 text-gray-600 hidden">
+                    <p>Oui, notre solution est idéale pour les petits clubs. En automatisant les entrées et le vestiaire, vous réduisez les coûts de personnel, rendant l’investissement rentable même avec un budget limité. Contactez-nous pour une démo personnalisée !</p>
+                </div>
             </div>
         </div>
-    </section>
+        
+        <div class="mt-12 text-center">
+            <p class="text-gray-600">Vous avez d'autres questions ? <a href="#contact" class="text-purple-600 font-medium hover:underline">Contactez notre équipe</a></p>
+        </div>
+    </div>
+</section>
 
+<!-- FAQ Schema -->
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+        {
+            "@type": "Question",
+            "name": "Combien de temps prend l’installation d’un kiosque pour discothèque ?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Votre kiosque d’entrée est opérationnel en moins de 2 heures ! Installez-le vous-même en toute simplicité ou laissez une équipe spécialisée assurer une mise en place fluide, sans perturber votre discothèque. Profitez d’une assistance 24/7 pour une tranquillité d’esprit totale."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Puis-je personnaliser l’interface des kiosques pour ma discothèque ?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Faites briller votre discothèque ! Personnalisez l’écran d’accueil de votre kiosque d’entrée avec votre logo, des visuels uniques, et des messages qui captent l’ambiance de votre club. Ajustez les formules, promotions, et options comme le vestiaire en un clic pour une billetterie 100% à votre image."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Comment gérez-vous les problèmes techniques pour les kiosques de discothèque ?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Pas de panique, votre soirée reste au top ! Notre assistance 24/7 pour votre kiosque, dépannage à distance immédiat ou une intervention rapide par des équipes spécialisées, partout en France. Notre système de sauvegarde cloud garantit que votre kiosque d’entrée et votre billetterie restent opérationnels, même en cas de panne."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Quels modes de paiement les kiosques de billetterie pour discothèques acceptent-ils ?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Attirez tous vos clients avec des paiements fluides ! Nos kiosques d’entrée acceptent cartes bancaires, paiements sans contact (Apple Pay, Google Pay). Transactions sécurisées, frais réduits, pour une billetterie rapide et une soirée sans accroc."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Comment vos kiosques pour discothèques préviennent-ils les fraudes ?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Protégez votre club avec une sécurité imbattable ! Nos kiosques utilisent des codes uniques par client et par jour, programmables via un planning intuitif, avec validation en temps réel pour bloquer les fraudes. L’analyse comportementale garantit une billetterie sécurisée, pour des soirées sans souci."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Comment fonctionne le kiosque de billetterie automatique pour ma discothèque ?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Tape 2 Enter révolutionne votre discothèque ! Notre kiosque tout-en-un offre : un terminal robuste avec écran tactile et paiements sans contact, générant un ticket d’entrée et deux tickets vestiaire (un pour le client avec ses sélections, un pour la réceptionniste) ; un logiciel intuitif pour gérer entrées, réservations VIP, taxes, et analytics en temps réel ; une sécurité anti-fraude avec codes uniques par client et par jour. Boostez vos heures creuses avec des offres sur mesure."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Quels types de rapports puis-je obtenir ?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Obtenez des rapports détaillés sur le taux d’occupation (par genre, heure), les ventes de tickets, l’historique, la trésorerie, et le chiffre d’affaires, exportables en PDF depuis votre tableau de bord, même en déplacement. Prenez des décisions éclairées pour maximiser vos revenus."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Comment gérer la capacité maximum de mon club ?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Notre kiosque affiche dynamiquement la capacité actuelle et le nombre de clients présents, avec des alertes pour respecter la capacité maximum. Gérez vos entrées en toute conformité et optimisez votre fréquentation sans effort."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Comment Tape 2 Enter réduit-il les coûts de personnel ?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Nos kiosques automatisent les paiements d’entrées et de vestiaire, libérant votre réceptionniste pour des tâches essentielles comme l’accueil ou l’organisation du vestiaire. Fini la manipulation d’espèces, les erreurs, ou les risques de vol, pour des opérations fluides et sécurisées."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Est-ce que Tape 2 Enter convient aux petits clubs ?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Oui, notre solution est idéale pour les petits clubs. En automatisant les entrées et le vestiaire, vous réduisez les coûts de personnel, rendant l’investissement rentable même avec un budget limité. Contactez-nous pour une démo personnalisée !"
+            }
+        }
+    ]
+}
+</script>
+  
     <!-- Contact Section -->
     <section id="contact" class="py-16 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
