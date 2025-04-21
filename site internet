@@ -138,7 +138,6 @@
                 <div class="hidden md:flex items-center space-x-8">
                     <a href="#features" class="text-gray-700 hover:text-purple-600 px-3 py-2 font-medium">Fonctionnalités</a>
                     <a href="#kiosque-formule" class="text-gray-700 hover:text-purple-600 px-3 py-2 font-medium">Kiosque + Formule</a>
-                    <a href="#testimonials" class="text-gray-700 hover:text-purple-600 px-3 py-2 font-medium">Témoignages</a>
                     <a href="#pricing" class="text-gray-700 hover:text-purple-600 px-3 py-2 font-medium">Tarifs</a>
                     <a href="#faq" class="text-gray-700 hover:text-purple-600 px-3 py-2 font-medium">FAQ</a>
                 </div>
@@ -230,196 +229,159 @@
         </div>
     </section>
 
-    <!-- Logos Section -->
-    <section class="py-12 bg-gray-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <p class="text-center text-gray-500 mb-8">Utilisé par les discothèques les plus innovantes</p>
-            <div class="flex flex-wrap justify-center items-center gap-8 md:gap-16">
-                <div class="text-3xl font-bold text-gray-700">Le VIP Room</div>
-                <div class="text-3xl font-bold text-gray-700">Le Queen</div>
-                <div class="text-3xl font-bold text-gray-700">Le Duplex</div>
-                <div class="text-3xl font-bold text-gray-700">Le Buddha Bar</div>
-            </div>
+<!-- Features Section -->
+<section id="features" class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">Tout ce dont votre discothèque a besoin</h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">Dominez vos entrées avec une solution qui booste l’efficacité et l’expérience client.</p>
         </div>
-    </section>
-
-    <!-- Features Section -->
-    <section id="features" class="py-16 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl md:text-4xl font-bold mb-4">Tout ce dont votre discothèque a besoin</h2>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto">Dominez vos entrées avec une solution qui booste l’efficacité et l’expérience client.</p>
+        
+        <div class="grid md:grid-cols-3 gap-8">
+            <!-- Feature 1: Vendez vos tickets non-stop -->
+            <div class="feature-card bg-white p-8 rounded-xl shadow-lg transition duration-300">
+                <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mb-6">
+                    <i class="fas fa-qrcode text-purple-600 text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Vendez vos tickets non-stop</h3>
+                <p class="text-base text-gray-600">Kiosques tactiles pour des ventes 24/7 par carte ou mobile (Apple Pay, Google Pay). Fini les files d’attente, vos clients entrent en un clin d’œil !</p>
             </div>
             
-            <div class="grid md:grid-cols-3 gap-8">
-                <!-- Feature 1 -->
-                <div class="feature-card bg-white p-8 rounded-xl shadow-lg transition duration-300">
-                    <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mb-6">
-                        <i class="fas fa-qrcode text-purple-600 text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3">Vendez vos tickets non-stop</h3>
-                    <p class="text-base text-gray-600">Kiosques tactiles pour des ventes 24/7 par carte ou mobile, fini les files d’attente !</p>
+            <!-- Feature 2: Contrôle d’accès blindé -->
+            <div class="feature-card bg-white p-8 rounded-xl shadow-lg transition duration-300">
+                <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mb-6">
+                    <i class="fas fa-user-shield text-purple-600 text-2xl"></i>
                 </div>
-                
-                <!-- Feature 2 -->
-                <div class="feature-card bg-white p-8 rounded-xl shadow-lg transition duration-300">
-                    <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mb-6">
-                        <i class="fas fa-user-shield text-purple-600 text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3">Contrôle d’accès blindé</h3>
-                    <p class="text-base text-gray-600">Zéro fraude grâce à des tickets uniques validés en temps réel.</p>
+                <h3 class="text-xl font-bold mb-3">Contrôle d’accès blindé</h3>
+                <p class="text-base text-gray-600">Zéro fraude grâce à des tickets uniques validés en temps réel. Programmez vos codes jour via un planning intuitif pour une sécurité proactive avec un code client unique.</p>
+            </div>
+            
+            <!-- Feature 3: Analytics puissants -->
+            <div class="feature-card bg-white p-8 rounded-xl shadow-lg transition duration-300">
+                <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mb-6">
+                    <i class="fas fa-chart-line text-purple-600 text-2xl"></i>
                 </div>
-                
-                <!-- Feature 3 -->
-                <div class="feature-card bg-white p-8 rounded-xl shadow-lg transition duration-300">
-                    <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mb-6">
-                        <i class="fas fa-chart-line text-purple-600 text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3">Analytics en live</h3>
-                    <p class="text-base text-gray-600">Suivez fréquentation, revenus et tendances depuis votre bureau ou en déplacement (application mobile en développement).</p>
+                <h3 class="text-xl font-bold mb-3">Analytics puissants</h3>
+                <p class="text-base text-gray-600">Suivez en temps réel le taux d’occupation par genre, les ventes de tickets, l’historique, la trésorerie, et le chiffre d’affaires. Exportez vos rapports en PDF depuis votre tableau de bord pour des décisions éclairées.</p>
+            </div>
+            
+            <!-- Feature 4: 100% à votre image -->
+            <div class="feature-card bg-white p-8 rounded-xl shadow-lg transition duration-300">
+                <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mb-6">
+                    <i class="fas fa-cogs text-purple-600 text-2xl"></i>
                 </div>
-                
-                <!-- Feature 4 -->
-                <div class="feature-card bg-white p-8 rounded-xl shadow-lg transition duration-300">
-                    <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mb-6">
-                        <i class="fas fa-cogs text-purple-600 text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3">100% à votre image</h3>
-                    <p class="text-base text-gray-600">Personnalisez interface, tarifs et messages pour coller au style unique de votre club. Changez l’interface pour vos soirées thématiques en un clic (bientôt disponible).</p>
+                <h3 class="text-xl font-bold mb-3">100% à votre image</h3>
+                <p class="text-base text-gray-600">Personnalisez interface, tarifs et messages pour coller au style unique de votre club. Changez l’interface pour vos soirées thématiques en un clic.</p>
+            </div>
+            
+            <!-- Feature 5: Listes VIP au top -->
+            <div class="feature-card bg-white p-8 rounded-xl shadow-lg transition duration-300">
+                <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mb-6">
+                    <i class="fas fa-users text-purple-600 text-2xl"></i>
                 </div>
-                
-                <!-- Feature 5 -->
-                <div class="feature-card bg-white p-8 rounded-xl shadow-lg transition duration-300">
-                    <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mb-6">
-                        <i class="fas fa-users text-purple-600 text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3">Listes VIP au top</h3>
-                    <p class="text-base text-gray-600">Gérez vos invités VIP avec un accès prioritaire ultra-simple.</p>
+                <h3 class="text-xl font-bold mb-3">Listes VIP au top</h3>
+                <p class="text-base text-gray-600">Gérez vos invités VIP avec un accès prioritaire ultra-simple, pour une expérience premium qui fait la différence.</p>
+            </div>
+            
+            <!-- Feature 6: Démarrage express -->
+            <div class="feature-card bg-white p-8 rounded-xl shadow-lg transition duration-300">
+                <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mb-6">
+                    <i class="fas fa-rocket text-purple-600 text-2xl"></i>
                 </div>
-                
-                <!-- Feature 6 -->
-                <div class="feature-card bg-white p-8 rounded-xl shadow-lg transition duration-300">
-                    <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mb-6">
-                        <i class="fas fa-rocket text-purple-600 text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3">Démarrage express</h3>
-                    <p class="text-base text-gray-600">Démarrez en un clin d’œil : votre kiosque est prêt en moins de 2h avec une formation ultra-simple.</p>
+                <h3 class="text-xl font-bold mb-3">Démarrage express</h3>
+                <p class="text-base text-gray-600">Votre kiosque est prêt en moins de 2 heures. Installez-le vous-même ou laissez une équipe spécialisée s’en charger, avec un support 24/7.</p>
+            </div>
+            
+            <!-- Feature 7: Boost heures creuses -->
+            <div class="feature-card bg-white p-8 rounded-xl shadow-lg transition duration-300">
+                <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mb-6">
+                    <i class="fas fa-clock text-purple-600 text-2xl"></i>
                 </div>
-                
-                <!-- Feature 7: Entrée heure creuse -->
-                <div class="feature-card bg-white p-8 rounded-xl shadow-lg transition duration-300">
-                    <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mb-6">
-                        <i class="fas fa-clock text-purple-600 text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3">Boost heures creuses</h3>
-                    <p class="text-base text-gray-600">Attirez plus de clients avec des tickets gratuits ou réduits pendant les heures creuses (ex. femmes de 23h à 1h), personnalisables par groupe, avec retour automatique aux tarifs normaux.</p>
+                <h3 class="text-xl font-bold mb-3">Boost heures creuses</h3>
+                <p class="text-base text-gray-600">Attirez plus de clients avec des tickets gratuits ou réduits pendant les heures creuses, personnalisables par groupe, avec retour automatique aux tarifs normaux.</p>
+            </div>
+            
+            <!-- Feature 8: Option vestiaire intégrée -->
+            <div class="feature-card bg-white p-8 rounded-xl shadow-lg transition duration-300">
+                <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mb-6">
+                    <i class="fas fa-tshirt text-purple-600 text-2xl"></i>
                 </div>
-                
-                <!-- Feature 8: Option vestiaire -->
-               <div class="feature-card bg-white p-8 rounded-xl shadow-lg transition duration-300">
-    <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mb-6">
-        <i class="fas fa-tshirt text-purple-800 text-2xl"></i> <!-- Changement de fa-hanger à fa-tshirt -->
+                <h3 class="text-xl font-bold mb-3">Option vestiaire intégrée</h3>
+                <p class="text-base text-gray-600">Offrez une expérience fluide avec un vestiaire payable directement au kiosque, sans attente ni espèces, pour un service rapide et sécurisé.</p>
+            </div>
+            
+            <!-- Feature 9: TVA personnalisée -->
+            <div class="feature-card bg-white p-8 rounded-xl shadow-lg transition duration-300">
+                <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mb-6">
+                    <i class="fas fa-calculator text-purple-600 text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">TVA personnalisée</h3>
+                <p class="text-base text-gray-600">Adaptez les taux de TVA pour chaque type d’entrée et vestiaire pour une gestion fiscale simplifiée et conforme.</p>
+            </div>
+            
+            <!-- Feature 10: Économies de personnel -->
+            <div class="feature-card bg-white p-8 rounded-xl shadow-lg transition duration-300">
+                <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mb-6">
+                    <i class="fas fa-money-bill-wave text-purple-600 text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Économies de personnel</h3>
+                <p class="text-base text-gray-600">Automatisez les paiements d’entrées et de vestiaire, libérant votre réceptionniste pour des tâches essentielles comme l’organisation du vestiaire. Fini les espèces, les erreurs, ou les risques de vol, pour des opérations fluides et sécurisées.</p>
+            </div>
+            
+            <!-- Feature 11: Gestion de capacité -->
+            <div class="feature-card bg-white p-8 rounded-xl shadow-lg transition duration-300">
+                <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mb-6">
+                    <i class="fas fa-building text-purple-600 text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Gestion de capacité</h3>
+                <p class="text-base text-gray-600">Affichez en temps réel la capacité actuelle, le nombre de clients présents, et la capacité maximum. Respectez les réglementations avec des alertes dynamiques pour optimiser vos entrées.</p>
+            </div>
+            
+            <!-- Feature 12: Planification des codes jour -->
+            <div class="feature-card bg-white p-8 rounded-xl shadow-lg transition duration-300">
+                <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mb-6">
+                    <i class="fas fa-calendar-alt text-purple-600 text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Planification des codes jour</h3>
+                <p class="text-base text-gray-600">Programmez vos codes uniques par jour via un planning intuitif, pour une sécurité renforcée et une gestion proactive des accès.</p>
+            </div>
+        </div>
     </div>
-    <h3 class="text-xl font-bold mb-3">Option vestiaire intégrée</h3>
-    <p class="text-base text-gray-600">Simplifiez l’expérience client avec une option vestiaire directement sur le ticket, payable au kiosque.</p>
-                </div>
-                
-                <!-- Feature 9: TVA personnalisée -->
-                <div class="feature-card bg-white p-8 rounded-xl shadow-lg transition duration-300">
-                    <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mb-6">
-                        <i class="fas fa-calculator text-purple-600 text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3">TVA personnalisée</h3>
-                    <p class="text-base text-gray-600">Adaptez les taux de TVA pour chaque type d’entrée et vestiaire pour une gestion fiscale simplifiée et conforme.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+</section>
 
-    <!-- Kiosque + Formule Logicielle Section -->
-    <section id="kiosque-formule" class="py-16 bg-gray-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl md:text-4xl font-bold mb-4">Kiosque + Formule logicielle</h2>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto">Un modèle simple pour transformer vos entrées</p>
+<!-- Kiosque + Formule Logicielle Section -->
+<section id="kiosque-formule" class="py-16 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">Kiosque + Formule logicielle</h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">Un modèle simple pour transformer vos entrées</p>
+        </div>
+        
+        <div class="grid md:grid-cols-2 gap-8">
+            <!-- Kiosque physique -->
+            <div class="bg-white p-8 rounded-xl shadow-lg">
+                <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mb-6">
+                    <i class="fas fa-desktop text-purple-600 text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Kiosque physique</h3>
+                <p class="text-base text-gray-600 mb-4">Un terminal robuste conçu pour les discothèques : écran tactile haute résolution, lecteur de cartes sécurisé, et design élégant qui résiste à l’environnement nocturne. Gérez entrées, vestiaire, et paiements sans contact en un seul appareil.</p>
+                <p class="text-base text-gray-600 mb-2"><strong>Achat unique</strong> : Prix estimé entre 1 000 et 1 600 € (contactez-nous pour un devis).</p>
+                <p class="text-base text-gray-600"><strong>Support</strong> : Installation en moins de 2 heures, avec assistance 24/7.</p>
             </div>
             
-            <div class="grid md:grid-cols-2 gap-8">
-                <!-- Kiosque -->
-                <div class="bg-white p-8 rounded-xl shadow-lg">
-                    <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mb-6">
-                        <i class="fas fa-desktop text-purple-600 text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3">Kiosque physique</h3>
-                    <p class="text-base text-gray-600 mb-4">Un terminal robuste conçu pour les discothèques : écran tactile haute résolution, lecteur de cartes sécurisé, et design élégant qui résiste à l’environnement nocturne.</p>
-                    <p class="text-base text-gray-600"><strong>Achat unique</strong> : Contactez-nous pour un devis (prix estimé entre 1 000 et 1 600 €, à confirmer).</p>
+            <!-- Formule logicielle -->
+            <div class="bg-white p-8 rounded-xl shadow-lg">
+                <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mb-6">
+                    <i class="fas fa-cloud text-purple-600 text-2xl"></i>
                 </div>
-                
-                <!-- Formule logicielle -->
-                <div class="bg-white p-8 rounded-xl shadow-lg">
-                    <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mb-6">
-                        <i class="fas fa-cloud text-purple-600 text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3">Formule logicielle</h3>
-                    <p class="text-base text-gray-600 mb-4">Un abonnement mensuel pour gérer vos tickets, contrôler les accès, analyser vos données, proposer des options comme le vestiaire, et personnaliser les TVA. Choisissez entre Starter, Pro ou Enterprise.</p>
-                    <p class="text-base text-gray-600"><strong>Essai gratuit</strong> : 14 jours pour tester toutes les fonctionnalités !</p>
-                    <a href="#pricing" class="mt-4 inline-block bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-md">Voir les tarifs</a>
-                </div>
+                <h3 class="text-xl font-bold mb-3">Formule logicielle</h3>
+                <p class="text-base text-gray-600 mb-4">Boostez votre club avec un abonnement mensuel pour gérer tickets, accès, données, vestiaire, et TVA personnalisée. Suivez vos performances avec des rapports détaillés exportables en PDF. Choisissez la formule Club pour une solution complète ou VIP pour un contrôle total.</p>
+                <p class="text-base text-gray-600"><strong>Essai gratuit</strong> : 14 jours pour tester toutes les fonctionnalités !</p>
+                <a href="#pricing" class="mt-4 inline-block bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-md">Voir les tarifs</a>
             </div>
         </div>
-    </section>
-
-    <!-- Testimonials Section -->
-    <section id="testimonials" class="py-16 bg-gray-50">
-        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl md:text-4xl font-bold mb-4">Ce que disent nos clients</h2>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto">Les discothèques les plus branchées nous font confiance</p>
-            </div>
-            
-            <div class="grid md:grid-cols-2 gap-8">
-                <div class="bg-white p-6 rounded-xl shadow-lg">
-                    <div class="flex items-center mb-6">
-                        <div class="w-16 h-16 rounded-full overflow-hidden mr-4">
-                            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=687&q=80" alt="Jean Dupont" class="w-full h-full object-cover">
-                        </div>
-                        <div>
-                            <h4 class="font-bold">Jean Dupont</h4>
-                            <p class="text-gray-600">Gérant du VIP Room Paris</p>
-                        </div>
-                    </div>
-                    <p class="text-gray-700 italic mb-4">"Depuis l'installation des kiosques Tape 2 Enter, nous avons réduit les fraudes de 85% et augmenté notre chiffre d'affaires de 30%. Le système est si intuitif que même nos clients les moins technophiles l'adoptent immédiatement."</p>
-                    <div class="flex text-yellow-400">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                    </div>
-                </div>
-                
-                <div class="bg-white p-6 rounded-xl shadow-lg">
-                    <div class="flex items-center mb-6">
-                        <div class="w-16 h-16 rounded-full overflow-hidden mr-4">
-                            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5cd?ixlib=rb-4.0.3&auto=format&fit=crop&w=688&q=80" alt="Sophie Martin" class="w-full h-full object-cover">
-                        </div>
-                        <div>
-                            <h4 class="font-bold">Sophie Martin</h4>
-                            <p class="text-gray-600">Directrice du Buddha Bar</p>
-                        </div>
-                    </div>
-                    <p class="text-gray-700 italic mb-4">"La personnalisation des kiosques nous a permis de maintenir notre image premium tout en modernisant notre processus d'entrée. Nos clients adorent la rapidité du système !"</p>
-                    <div class="flex text-yellow-400">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star-half-alt"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    </div>
+</section>
 
     <!-- Pricing Section -->
     <section id="pricing" class="py-16 bg-white">
