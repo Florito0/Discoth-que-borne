@@ -2,15 +2,14 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>Tape 2 Enter - Solution de billetterie automatique pour discothèques</title>
     <meta name="description" content="Tape 2 Enter révolutionne la gestion des entrées en discothèque avec des kiosques tactiles. Contrôle d'accès, prévention des fraudes, gestion des TVA personnalisées et expérience client optimisée.">
     <meta name="keywords" content="billetterie automatique, kiosque tactile, discothèques, contrôle d'accès, prévention fraudes, gestion entrées, heures creuses, TVA personnalisée, vestiaire intégré, Tape 2 Enter">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Particles.js -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin>
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-    <!-- FAQ Schema -->
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
@@ -44,7 +43,6 @@
     }
     </script>
     <style>
-        /* Styles originaux de ton code sobre */
         .feature-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
@@ -76,9 +74,9 @@
             animation: pulse 2s infinite;
         }
         section {
-            opacity: 0;
-            transform: translateY(10px);
-            animation: fadeIn 0.4s ease-out forwards;
+            opacity: 1; /* Désactiver l'animation temporairement pour tester */
+            transform: none;
+            animation: none;
         }
         @keyframes fadeIn {
             to {
@@ -99,12 +97,15 @@
         #demo-video-btn {
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
-        /* Styles spécifiques pour la nouvelle Hero Section */
-     .hero-gradient {
-    background: linear-gradient(135deg, #2b1055 0%, #7597de 100%);
-    position: relative;
-    min-height: 600px; /* Hauteur fixe pour un contrôle précis */
-}
+        .hero-gradient {
+            background: linear-gradient(135deg, #2b1055 0%, #7597de 100%);
+            position: relative;
+            min-height: 600px;
+            max-height: 80vh;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+        }
         .glass-effect {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
@@ -112,8 +113,8 @@
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
         }
         .kiosk-mockup {
-            background-attachment: fixed;
-            background-position: center;
+            width: 100%;
+            max-width: 300px;
         }
         #particles-js {
             position: absolute;
@@ -121,15 +122,224 @@
             height: 100%;
             top: 0;
             left: 0;
-            z-index: 10; /* Place au-dessus de l'overlay pour visibilité */
+            z-index: 10;
         }
         .bg-black.bg-opacity-60 {
-            z-index: 5; /* Overlay en dessous des particules */
+            z-index: 5;
         }
         #faq {
             overflow-y: auto;
             max-height: 80vh;
             -webkit-overflow-scrolling: touch;
+        }
+        section:not(.hero-gradient) {
+            position: relative;
+            z-index: 20;
+            background-color: #fff;
+        }
+        nav {
+            opacity: 1 !important;
+            display: block !important;
+        }
+        /* Responsive adjustments */
+        @media (max-width: 400px) {
+            #contact .sm\:grid-cols-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 640px) {
+            .max-w-7xl {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+            h2 {
+                font-size: 2rem;
+            }
+            p {
+                font-size: 1rem;
+            }
+            .hero-gradient {
+                min-height: 100vh;
+                max-height: none;
+                padding-top: 4rem;
+                padding-bottom: 2rem;
+            }
+            .hero-gradient h1 {
+                font-size: 2.5rem;
+                line-height: 1.2;
+            }
+            .hero-gradient p {
+                font-size: 1rem;
+            }
+            .hero-gradient .flex-col.sm\:flex-row {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .hero-gradient video {
+                display: none;
+            }
+            .hero-gradient {
+                background-image: url('kiosk-mockup-mobile.webp');
+                background-size: cover;
+                background-position: center;
+            }
+            #mobile-menu {
+                padding: 1.5rem;
+            }
+            #mobile-menu a {
+                padding: 0.75rem 1rem;
+                font-size: 1.1rem;
+            }
+            #menu-btn i {
+                font-size: 1.5rem;
+            }
+            .feature-card, .pricing-card {
+                padding: 1.5rem;
+                margin-bottom: 1rem;
+            }
+            .grid.md\:grid-cols-3, .grid.md\:grid-cols-2 {
+                gap: 1rem;
+            }
+            .feature-card:hover, .pricing-card:hover {
+                transform: none;
+                box-shadow: none;
+            }
+            .form-input {
+                padding: 0.75rem 1rem;
+                font-size: 1rem;
+            }
+            #contact-form button[type="submit"] {
+                padding: 1rem 2rem;
+                font-size: 1.1rem;
+            }
+            #contact-form .space-y-6 {
+                gap: 1.5rem;
+            }
+            .faq-item {
+                padding: 1rem;
+            }
+            .faq-question {
+                font-size: 1rem;
+            }
+            .faq-answer p {
+                font-size: 0.9rem;
+            }
+            #seo-content h3 {
+                font-size: 1.5rem;
+            }
+            #seo-content .space-y-3 p {
+                font-size: 0.95rem;
+            }
+            #pricing .text-4xl {
+                font-size: 2.5rem;
+            }
+            #pricing .text-lg {
+                font-size: 1rem;
+            }
+            #kiosque-formule p {
+                font-size: 0.95rem;
+            }
+        }
+        @media (max-width: 767px) {
+            #mobile-menu {
+                padding: 1.5rem;
+            }
+            #mobile-menu a {
+                padding: 0.75rem 1rem;
+                font-size: 1.1rem;
+            }
+            #menu-btn i {
+                font-size: 1.5rem;
+            }
+            .hero-gradient .md\:flex {
+                flex-direction: column;
+                align-items: center;
+            }
+            .hero-gradient .md\:w-1\/2 {
+                width: 100%;
+                margin-bottom: 2rem;
+            }
+            footer .md\:grid-cols-4 > div {
+                margin-bottom: 2rem;
+            }
+            footer .md\:grid-cols-4 > div:last-child {
+                margin-bottom: 0;
+            }
+        }
+        @media (min-width: 641px) and (max-width: 1024px) {
+            .max-w-7xl {
+                padding-left: 2rem;
+                padding-right: 2rem;
+            }
+            .grid.md\:grid-cols-2 {
+                gap: 1.5rem;
+            }
+            .grid.md\:grid-cols-3 {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 1.5rem;
+            }
+            .hero-gradient {
+                min-height: 700px;
+                max-height: 90vh;
+            }
+            .kiosk-mockup {
+                max-width: 450px;
+            }
+            .faq-question {
+                font-size: 1.1rem;
+            }
+            .faq-answer p {
+                font-size: 1rem;
+            }
+            #seo-content h3 {
+                font-size: 1.75rem;
+            }
+            #seo-content .space-y-3 p {
+                font-size: 1rem;
+            }
+            #contact .bg-gray-50 {
+                max-width: 500px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+        @media (min-width: 768px) {
+            .kiosk-mockup {
+                max-width: 450px;
+            }
+        }
+        @media (min-width: 1024px) {
+            .hero-gradient {
+                min-height: 600px;
+                max-height: 80vh;
+            }
+            #contact .lg\:grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                align-items: center;
+            }
+            #contact .lg\:grid > div {
+                max-width: 100%;
+            }
+            #contact .bg-gray-50 {
+                height: fit-content;
+            }
+        }
+        @media (max-width: 1023px) {
+            #contact .lg\:grid {
+                display: block;
+            }
+            #contact .bg-gray-50 {
+                margin-top: 2rem;
+            }
+        }
+        #mobile-menu {
+            transition: max-height 0.3s ease-in-out;
+            max-height: 0;
+            overflow: hidden;
+        }
+        #mobile-menu:not(.hidden) {
+            max-height: 500px;
         }
     </style>
 </head>
@@ -147,7 +357,7 @@
                 <div class="hidden md:flex items-center space-x-8">
                     <a href="#features" class="text-gray-700 hover:text-purple-600 px-3 py-2 font-medium">Fonctionnalités</a>
                     <a href="#kiosque-formule" class="text-gray-700 hover:text-purple-600 px-3 py-2 font-medium">Kiosque + Formule</a>
-                    <a href="#pricing" class="text-gray-700 hover:text-purple-600 px-3 py-2">Tarifs</a>
+                    <a href="#pricing" class="text-gray-700 hover:text-purple-600 px-3 py-2 font-medium">Tarifs</a>
                     <a href="#faq" class="text-gray-700 hover:text-purple-600 px-3 py-2 font-medium">FAQ</a>
                 </div>
                 <div class="md:hidden flex items-center">
@@ -157,7 +367,6 @@
                 </div>
             </div>
         </div>
-        <!-- Mobile menu -->
         <div id="mobile-menu" class="hidden md:hidden bg-white pb-3 px-4">
             <a href="#features" class="block px-3 py-2 text-gray-700 hover:text-purple-600 font-medium">Fonctionnalités</a>
             <a href="#kiosque-formule" class="block px-3 py-2 text-gray-700 hover:text-purple-600 font-medium">Kiosque + Formule</a>
@@ -168,75 +377,77 @@
         </div>
     </nav>
 
-<!-- Hero Section -->
-<section class="relative hero-gradient text-white py-16 md:py-24 overflow-hidden">
-    <!-- Particles.js -->
-    <div id="particles-js"></div>
-    <!-- Background Video -->
-    <video autoplay muted loop class="absolute inset-0 w-full h-full object-cover z-0 opacity-50">
-        <source src="https://assets.mixkit.co/videos/preview/mixkit-dj-mixing-in-a-nightclub-888-large.mp4" type="video/mp4">
-        Votre navigateur ne supporte pas la vidéo.
-    </video>
-    <!-- Overlay -->
-    <div class="absolute inset-0 bg-black bg-opacity-60 z-5"></div>
-    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-20">
-        <div class="md:flex items-center">
-            <div class="md:w-1/2 mb-10 md:mb-0">
-                <h1 class="text-5xl md:text-6xl font-bold leading-tight mb-6">Révolutionnez l'entrée de votre discothèque</h1>
-                <p class="text-2xl mb-4 font-semibold">Un kiosque tactile conçu pour les clubs !</p>
-                <p class="text-xl mb-8">Automatisez la vente des entrées et du vestiaire : sans personnel, sans file d’attente, sans perte.</p>
-                <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-                    <a href="#contact" class="bg-purple-600 text-white hover:bg-purple-700 font-bold py-4 px-8 rounded-lg text-center pulse-animation shadow-lg">Essai gratuit 14 jours (logiciel) !</a>
-                    <a href="#features" class="border-2 border-white text-white hover:bg-white hover:text-purple-600 font-bold py-4 px-8 rounded-lg text-center">Découvrir les fonctionnalités</a>
+    <!-- Hero Section -->
+    <section class="relative hero-gradient text-white py-16 md:py-24 overflow-hidden">
+        <div id="particles-js"></div>
+        <picture>
+            <source media="(max-width: 768px)" srcset="https://images.unsplash.com/photo-1516321497487-e288fb19713f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80" type="image/webp">
+            <video autoplay muted loop poster="https://images.unsplash.com/photo-1516321497487-e288fb19713f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80" class="absolute inset-0 w-full h-full object-cover z-0 opacity-50">
+                <source src="https://assets.mixkit.co/videos/preview/mixkit-dj-mixing-in-a-nightclub-888-large.mp4" type="video/mp4">
+                Votre navigateur ne supporte pas la vidéo.
+            </video>
+        </picture>
+        <div class="absolute inset-0 bg-black bg-opacity-60 z-5"></div>
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-20">
+            <div class="md:flex items-center">
+                <div class="md:w-1/2 mb-10 md:mb-0">
+                    <h1 class="text-5xl md:text-6xl font-bold leading-tight mb-6">Révolutionnez l'entrée de votre discothèque</h1>
+                    <p class="text-2xl mb-4 font-semibold">Un kiosque tactile conçu pour les clubs !</p>
+                    <p class="text-xl mb-8">Automatisez la vente des entrées et du vestiaire : sans personnel, sans file d’attente, sans perte.</p>
+                    <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                        <a href="#contact" class="bg-purple-600 text-white hover:bg-purple-700 font-bold py-4 px-8 rounded-lg text-center pulse-animation shadow-lg">Essai gratuit 14 jours (logiciel) !</a>
+                        <a href="#features" class="border-2 border-white text-white hover:bg-white hover:text-purple-600 font-bold py-4 px-8 rounded-lg text-center">Découvrir les fonctionnalités</a>
+                    </div>
                 </div>
-            </div>
-            <div class="md:w-1/2 flex justify-center">
-                <div class="relative w-full max-w-md kiosk-mockup">
-                    <div class="absolute -top-10 -left-10 w-32 h-32 bg-purple-300 rounded-full opacity-20"></div>
-                    <div class="absolute -bottom-10 -right-10 w-32 h-32 bg-yellow-300 rounded-full opacity-20"></div>
-                    <div class="relative glass-effect rounded-xl overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1516321497487-e288fb19713f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80" alt="Kiosque Tape 2 Enter en discothèque" class="w-full h-auto">
-                        <div class="p-4">
-                            <div class="flex justify-between items-center">
-                                <span class="font-bold text-white">Tape 2 Enter PRO</span>
-                                <span class="text-sm text-gray-300">#TICKET0064</span>
+                <div class="md:w-1/2 flex justify-center">
+                    <div class="relative w-full max-w-md kiosk-mockup">
+                        <div class="absolute -top-10 -left-10 w-32 h-32 bg-purple-300 rounded-full opacity-20"></div>
+                        <div class="absolute -bottom-10 -right-10 w-32 h-32 bg-yellow-300 rounded-full opacity-20"></div>
+                        <div class="relative glass-effect rounded-xl overflow-hidden">
+                            <picture>
+                                <source srcset="https://images.unsplash.com/photo-1516321497487-e288fb19713f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80" type="image/webp">
+                                <img src="https://images.unsplash.com/photo-1516321497487-e288fb19713f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80" alt="Kiosque Tape 2 Enter en discothèque" class="w-full h-auto">
+                            </picture>
+                            <div class="p-4">
+                                <div class="flex justify-between items-center">
+                                    <span class="font-bold text-white">Tape 2 Enter PRO</span>
+                                    <span class="text-sm text-gray-300">#TICKET0064</span>
+                                </div>
+                                <div class="mt-2 flex justify-between items-center">
+                                    <span class="text-lg font-bold text-white">Ticket d'entrée</span>
+                                    <span class="text-lg font-bold text-white">12€</span>
+                                </div>
+                                <div class="mt-2 flex justify-between items-center">
+                                    <span class="text-sm text-gray-300"><i class="fas fa-hanger mr-1"></i> Option vestiaire</span>
+                                    <span class="text-sm font-bold text-white">+5€</span>
+                                </div>
+                                <button class="mt-4 w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-md font-medium">
+                                    Valider le paiement
+                                </button>
                             </div>
-                            <div class="mt-2 flex justify-between items-center">
-                                <span class="text-lg font-bold text-white">Ticket d'entrée</span>
-                                <span class="text-lg font-bold text-white">12€</span>
-                            </div>
-                            <div class="mt-2 flex justify-between items-center">
-                                <span class="text-sm text-gray-300"><i class="fas fa-hanger mr-1"></i> Option vestiaire</span>
-                                <span class="text-sm font-bold text-white">+5€</span>
-                            </div>
-                            <button class="mt-4 w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-md font-medium">
-                                Valider le paiement
+                        </div>
+                        <div class="mt-4 text-center">
+                            <button id="demo-video-btn" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-md flex items-center justify-center mx-auto">
+                                <i class="fas fa-play mr-2"></i> Voir la démo
                             </button>
                         </div>
                     </div>
-                    <div class="mt-4 text-center">
-                        <button id="demo-video-btn" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-md flex items-center justify-center mx-auto">
-                            <i class="fas fa-play mr-2"></i> Voir la démo
-                        </button>
-                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <!-- Modal for video -->
-    <div id="demo-video-modal" class="fixed inset-0 bg-black bg-opacity-75 hidden flex items-center justify-center z-50">
-        <div class="glass-effect rounded-lg max-w-3xl w-full p-4 relative">
-            <button id="close-modal" class="absolute top-2 right-2 text-white hover:text-gray-300">
-                <i class="fas fa-times text-xl"></i>
-            </button>
-            <div class="aspect-w-16 aspect-h-9">
-                <video controls class="w-full h-full">
-                    <p>Votre navigateur ne supporte pas la vidéo. Contactez-nous pour une démo !</p>
-                </video>
+        <div id="demo-video-modal" class="fixed inset-0 bg-black bg-opacity-75 hidden flex items-center justify-center z-50">
+            <div class="glass-effect rounded-lg max-w-3xl w-full p-4 relative">
+                <button id="close-modal" class="absolute top-2 right-2 text-white hover:text-gray-300">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+                <div class="aspect-w-16 aspect-h-9">
+                    <video controls class="w-full h-full">
+                        <p>Votre navigateur ne supporte pas la vidéo. Contactez-nous pour une démo !</p>
+                    </video>
+                </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
     <!-- Features Section -->
     <section id="features" class="py-16 bg-white">
@@ -245,9 +456,7 @@
                 <h2 class="text-3xl md:text-4xl font-bold mb-4">Tout ce dont votre discothèque a besoin</h2>
                 <p class="text-xl text-gray-600 max-w-3xl mx-auto">Dominez vos entrées avec une solution qui booste l’efficacité et l’expérience client.</p>
             </div>
-            
             <div class="grid md:grid-cols-3 gap-8">
-                <!-- Feature 1: Vendez vos tickets non-stop -->
                 <div class="feature-card bg-white p-8 rounded-xl shadow-lg transition duration-300">
                     <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mb-6">
                         <i class="fas fa-qrcode text-purple-600 text-2xl"></i>
@@ -255,8 +464,6 @@
                     <h3 class="text-xl font-bold mb-3">Vendez vos tickets non-stop</h3>
                     <p class="text-base text-gray-600">Kiosques tactiles pour des ventes 24/7 par carte ou mobile (Apple Pay, Google Pay). Fini les files d’attente, vos clients entrent en un clin d’œil !</p>
                 </div>
-                
-                <!-- Feature 2: Contrôle d’accès blindé -->
                 <div class="feature-card bg-white p-8 rounded-xl shadow-lg transition duration-300">
                     <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mb-6">
                         <i class="fas fa-user-shield text-purple-600 text-2xl"></i>
@@ -264,8 +471,6 @@
                     <h3 class="text-xl font-bold mb-3">Contrôle d’accès blindé</h3>
                     <p class="text-base text-gray-600">Zéro fraude grâce à des tickets uniques validés en temps réel. Programmez vos codes jour via un planning intuitif pour une sécurité proactive avec un code client unique.</p>
                 </div>
-                
-                <!-- Feature 3: Analytics puissants -->
                 <div class="feature-card bg-white p-8 rounded-xl shadow-lg transition duration-300">
                     <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mb-6">
                         <i class="fas fa-chart-line text-purple-600 text-2xl"></i>
@@ -273,8 +478,6 @@
                     <h3 class="text-xl font-bold mb-3">Analytics puissants</h3>
                     <p class="text-base text-gray-600">Suivez en temps réel le taux d’occupation par genre, les ventes de tickets, l’historique, la trésorerie, et le chiffre d’affaires. Exportez vos rapports en PDF depuis votre tableau de bord pour des décisions éclairées.</p>
                 </div>
-                
-                <!-- Feature 4: 100% à votre image -->
                 <div class="feature-card bg-white p-8 rounded-xl shadow-lg transition duration-300">
                     <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mb-6">
                         <i class="fas fa-cogs text-purple-600 text-2xl"></i>
@@ -282,8 +485,6 @@
                     <h3 class="text-xl font-bold mb-3">100% à votre image</h3>
                     <p class="text-base text-gray-600">Personnalisez interface, tarifs et messages pour coller au style unique de votre club. Changez l’interface pour vos soirées thématiques en un clic.</p>
                 </div>
-                
-                <!-- Feature 5: Listes VIP au top -->
                 <div class="feature-card bg-white p-8 rounded-xl shadow-lg transition duration-300">
                     <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mb-6">
                         <i class="fas fa-users text-purple-600 text-2xl"></i>
@@ -291,8 +492,6 @@
                     <h3 class="text-xl font-bold mb-3">Listes VIP au top</h3>
                     <p class="text-base text-gray-600">Gérez vos invités VIP avec un accès prioritaire ultra-simple, pour une expérience premium qui fait la différence.</p>
                 </div>
-                
-                <!-- Feature 6: Démarrage express -->
                 <div class="feature-card bg-white p-8 rounded-xl shadow-lg transition duration-300">
                     <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mb-6">
                         <i class="fas fa-rocket text-purple-600 text-2xl"></i>
@@ -300,8 +499,6 @@
                     <h3 class="text-xl font-bold mb-3">Démarrage express</h3>
                     <p class="text-base text-gray-600">Votre kiosque est prêt en moins de 2 heures. Installez-le vous-même ou laissez une équipe spécialisée s’en charger, avec un support 24/7.</p>
                 </div>
-                
-                <!-- Feature 7: Boost heures creuses -->
                 <div class="feature-card bg-white p-8 rounded-xl shadow-lg transition duration-300">
                     <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mb-6">
                         <i class="fas fa-clock text-purple-600 text-2xl"></i>
@@ -309,8 +506,6 @@
                     <h3 class="text-xl font-bold mb-3">Boost heures creuses</h3>
                     <p class="text-base text-gray-600">Attirez plus de clients avec des tickets gratuits ou réduits pendant les heures creuses, personnalisables par groupe, avec retour automatique aux tarifs normaux.</p>
                 </div>
-                
-                <!-- Feature 8: Option vestiaire intégrée -->
                 <div class="feature-card bg-white p-8 rounded-xl shadow-lg transition duration-300">
                     <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mb-6">
                         <i class="fas fa-tshirt text-purple-600 text-2xl"></i>
@@ -318,8 +513,6 @@
                     <h3 class="text-xl font-bold mb-3">Option vestiaire intégrée</h3>
                     <p class="text-base text-gray-600">Offrez une expérience fluide avec un vestiaire payable directement au kiosque, sans attente ni espèces, pour un service rapide et sécurisé.</p>
                 </div>
-                
-                <!-- Feature 9: TVA personnalisée -->
                 <div class="feature-card bg-white p-8 rounded-xl shadow-lg transition duration-300">
                     <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mb-6">
                         <i class="fas fa-calculator text-purple-600 text-2xl"></i>
@@ -327,8 +520,6 @@
                     <h3 class="text-xl font-bold mb-3">TVA personnalisée</h3>
                     <p class="text-base text-gray-600">Adaptez les taux de TVA pour chaque type d’entrée et vestiaire pour une gestion fiscale simplifiée et conforme.</p>
                 </div>
-                
-                <!-- Feature 10: Économies de personnel -->
                 <div class="feature-card bg-white p-8 rounded-xl shadow-lg transition duration-300">
                     <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mb-6">
                         <i class="fas fa-money-bill-wave text-purple-600 text-2xl"></i>
@@ -336,8 +527,6 @@
                     <h3 class="text-xl font-bold mb-3">Économies de personnel</h3>
                     <p class="text-base text-gray-600">Automatisez les paiements d’entrées et de vestiaire, libérant votre réceptionniste pour des tâches essentielles comme l’organisation du vestiaire. Fini les espèces, les erreurs, ou les risques de vol, pour des opérations fluides et sécurisées.</p>
                 </div>
-                
-                <!-- Feature 11: Gestion de capacité -->
                 <div class="feature-card bg-white p-8 rounded-xl shadow-lg transition duration-300">
                     <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mb-6">
                         <i class="fas fa-building text-purple-600 text-2xl"></i>
@@ -345,8 +534,6 @@
                     <h3 class="text-xl font-bold mb-3">Gestion de capacité</h3>
                     <p class="text-base text-gray-600">Affichez en temps réel la capacité actuelle, le nombre de clients présents, et la capacité maximum. Respectez les réglementations avec des alertes dynamiques pour optimiser vos entrées.</p>
                 </div>
-                
-                <!-- Feature 12: Planification des codes jour -->
                 <div class="feature-card bg-white p-8 rounded-xl shadow-lg transition duration-300">
                     <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mb-6">
                         <i class="fas fa-calendar-alt text-purple-600 text-2xl"></i>
@@ -359,15 +546,13 @@
     </section>
 
     <!-- Kiosque + Formule Logicielle Section -->
-    <section id="kiosque-formule" class="py-16 bg-gray-50">
+    <section id="kiosque-formule" class="py-16" style="background-color: #F8F9FA;">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12">
                 <h2 class="text-3xl md:text-4xl font-bold mb-4">Kiosque + Formule logicielle</h2>
                 <p class="text-xl text-gray-600 max-w-3xl mx-auto">Un modèle simple pour transformer vos entrées</p>
             </div>
-            
             <div class="grid md:grid-cols-2 gap-8">
-                <!-- Kiosque physique -->
                 <div class="bg-white p-8 rounded-xl shadow-lg">
                     <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mb-6">
                         <i class="fas fa-desktop text-purple-600 text-2xl"></i>
@@ -377,8 +562,6 @@
                     <p class="text-base text-gray-600 mb-2"><strong>Achat unique</strong> : Prix estimé entre 1 000 et 1 600 € (contactez-nous pour un devis).</p>
                     <p class="text-base text-gray-600"><strong>Support</strong> : Installation en moins de 2 heures, avec assistance 24/7.</p>
                 </div>
-                
-                <!-- Formule logicielle -->
                 <div class="bg-white p-8 rounded-xl shadow-lg">
                     <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mb-6">
                         <i class="fas fa-cloud text-purple-600 text-2xl"></i>
@@ -399,9 +582,7 @@
                 <h2 class="text-3xl md:text-4xl font-bold mb-4">Tarifs de l'abonnement logiciel</h2>
                 <p class="text-xl text-gray-600 max-w-3xl mx-auto">Choisissez la formule qui correspond à votre établissement. Kiosque physique requis (achat séparé).</p>
             </div>
-            
             <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-                <!-- Club Plan -->
                 <div class="pricing-card bg-white border-2 border-purple-600 rounded-xl shadow-lg overflow-hidden relative">
                     <div class="absolute top-0 right-0 bg-purple-600 text-white text-xs font-semibold px-3 py-1 transform translate-x-2 -translate-y-2 rounded-bl-lg">
                         Le plus populaire
@@ -455,8 +636,6 @@
                         <a href="#contact" class="block w-full py-3 px-4 text-center bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-md">Essai gratuit</a>
                     </div>
                 </div>
-                
-                <!-- VIP Plan -->
                 <div class="pricing-card bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
                     <div class="px-6 py-8">
                         <h3 class="text-lg font-medium text-gray-900">VIP</h3>
@@ -492,7 +671,6 @@
                     </div>
                 </div>
             </div>
-            
             <div class="mt-12 text-center">
                 <p class="text-gray-600">Tous nos plans incluent l'hébergement cloud sécurisé, les mises à jour logicielles et un support 24/7. Kiosque physique requis (achat séparé, contactez-nous pour un devis).</p>
             </div>
@@ -500,17 +678,15 @@
     </section>
 
     <!-- FAQ Section -->
-    <section id="faq" class="py-16 bg-gray-50">
+    <section id="faq" class="py-16" style="background-color: #F8F9FA;">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12">
                 <h2 class="text-3xl md:text-4xl font-bold mb-4">Questions fréquentes</h2>
                 <p class="text-xl text-gray-600">Trouvez les réponses aux questions les plus courantes</p>
             </div>
-            
             <div class="space-y-6">
-                <!-- FAQ Item 1 -->
                 <div class="faq-item bg-white p-6 rounded-lg shadow">
-                    <button class="faq-question flex justify-between items-center w-full text-left font-medium text-gray-900">
+                    <button class="faq-question flex justify-between items-center w-full text-left font-medium text-gray-900" aria-expanded="false">
                         <span>Combien de temps prend l’installation d’un kiosque pour discothèque ?</span>
                         <i class="fas fa-chevron-down text-purple-600 transition-transform duration-300"></i>
                     </button>
@@ -518,10 +694,8 @@
                         <p>Votre kiosque d’entrée est opérationnel en moins de 2 heures ! Installez-le vous-même en toute simplicité ou laissez une équipe spécialisée assurer une mise en place fluide, sans perturber votre discothèque. Profitez d’une assistance 24/7 pour une tranquillité d’esprit totale.</p>
                     </div>
                 </div>
-                
-                <!-- FAQ Item 2 -->
                 <div class="faq-item bg-white p-6 rounded-lg shadow">
-                    <button class="faq-question flex justify-between items-center w-full text-left font-medium text-gray-900">
+                    <button class="faq-question flex justify-between items-center w-full text-left font-medium text-gray-900" aria-expanded="false">
                         <span>Puis-je personnaliser l’interface des kiosques pour ma discothèque ?</span>
                         <i class="fas fa-chevron-down text-purple-600 transition-transform duration-300"></i>
                     </button>
@@ -529,10 +703,8 @@
                         <p>Faites briller votre discothèque ! Personnalisez l’écran d’accueil de votre kiosque d’entrée avec votre logo, des visuels uniques, et des messages qui captent l’ambiance de votre club. Ajustez les formules, promotions, et options comme le vestiaire en un clic pour une billetterie 100% à votre image.</p>
                     </div>
                 </div>
-                
-                <!-- FAQ Item 3 -->
                 <div class="faq-item bg-white p-6 rounded-lg shadow">
-                    <button class="faq-question flex justify-between items-center w-full text-left font-medium text-gray-900">
+                    <button class="faq-question flex justify-between items-center w-full text-left font-medium text-gray-900" aria-expanded="false">
                         <span>Comment gérez-vous les problèmes techniques pour les kiosques de discothèque ?</span>
                         <i class="fas fa-chevron-down text-purple-600 transition-transform duration-300"></i>
                     </button>
@@ -540,10 +712,8 @@
                         <p>Pas de panique, votre soirée reste au top ! Notre assistance 24/7 pour votre kiosque, dépannage à distance immédiat ou une intervention rapide par des équipes spécialisées, partout en France. Notre système de sauvegarde cloud garantit que votre kiosque d’entrée et votre billetterie restent opérationnels, même en cas de panne.</p>
                     </div>
                 </div>
-                
-                <!-- FAQ Item 4 -->
                 <div class="faq-item bg-white p-6 rounded-lg shadow">
-                    <button class="faq-question flex justify-between items-center w-full text-left font-medium text-gray-900">
+                    <button class="faq-question flex justify-between items-center w-full text-left font-medium text-gray-900" aria-expanded="false">
                         <span>Quels modes de paiement les kiosques de billetterie pour discothèques acceptent-ils ?</span>
                         <i class="fas fa-chevron-down text-purple-600 transition-transform duration-300"></i>
                     </button>
@@ -551,10 +721,8 @@
                         <p>Attirez tous vos clients avec des paiements fluides ! Nos kiosques d’entrée acceptent cartes bancaires, paiements sans contact (Apple Pay, Google Pay). Transactions sécurisées, frais réduits, pour une billetterie rapide et une soirée sans accroc.</p>
                     </div>
                 </div>
-                
-                <!-- FAQ Item 5 -->
                 <div class="faq-item bg-white p-6 rounded-lg shadow">
-                    <button class="faq-question flex justify-between items-center w-full text-left font-medium text-gray-900">
+                    <button class="faq-question flex justify-between items-center w-full text-left font-medium text-gray-900" aria-expanded="false">
                         <span>Comment vos kiosques pour discothèques préviennent-ils les fraudes ?</span>
                         <i class="fas fa-chevron-down text-purple-600 transition-transform duration-300"></i>
                     </button>
@@ -562,10 +730,8 @@
                         <p>Protégez votre club avec une sécurité imbattable ! Nos kiosques utilisent des codes uniques par client et par jour, programmables via un planning intuitif, avec validation en temps réel pour bloquer les fraudes. L’analyse comportementale garantit une billetterie sécurisée, pour des soirées sans souci.</p>
                     </div>
                 </div>
-                
-                <!-- FAQ Item 6 -->
                 <div class="faq-item bg-white p-6 rounded-lg shadow">
-                    <button class="faq-question flex justify-between items-center w-full text-left font-medium text-gray-900">
+                    <button class="faq-question flex justify-between items-center w-full text-left font-medium text-gray-900" aria-expanded="false">
                         <span>Comment fonctionne le kiosque de billetterie automatique pour ma discothèque ?</span>
                         <i class="fas fa-chevron-down text-purple-600 transition-transform duration-300"></i>
                     </button>
@@ -573,10 +739,8 @@
                         <p>Tape 2 Enter révolutionne votre discothèque ! Notre kiosque tout-en-un offre : un terminal robuste avec écran tactile et paiements sans contact, générant un ticket d’entrée et deux tickets vestiaire (un pour le client avec ses sélections, un pour la réceptionniste) ; un logiciel intuitif pour gérer entrées, réservations VIP, taxes, et analytics en temps réel ; une sécurité anti-fraude avec codes uniques par client et par jour. Boostez vos heures creuses avec des offres sur mesure.</p>
                     </div>
                 </div>
-                
-                <!-- FAQ Item 7 -->
                 <div class="faq-item bg-white p-6 rounded-lg shadow">
-                    <button class="faq-question flex justify-between items-center w-full text-left font-medium text-gray-900">
+                    <button class="faq-question flex justify-between items-center w-full text-left font-medium text-gray-900" aria-expanded="false">
                         <span>Quels types de rapports puis-je obtenir ?</span>
                         <i class="fas fa-chevron-down text-purple-600 transition-transform duration-300"></i>
                     </button>
@@ -584,10 +748,8 @@
                         <p>Obtenez des rapports détaillés sur le taux d’occupation (par genre, heure), les ventes de tickets, l’historique, la trésorerie, et le chiffre d’affaires, exportables en PDF depuis votre tableau de bord, même en déplacement. Prenez des décisions éclairées pour maximiser vos revenus.</p>
                     </div>
                 </div>
-                
-                <!-- FAQ Item 8 -->
                 <div class="faq-item bg-white p-6 rounded-lg shadow">
-                    <button class="faq-question flex justify-between items-center w-full text-left font-medium text-gray-900">
+                    <button class="faq-question flex justify-between items-center w-full text-left font-medium text-gray-900" aria-expanded="false">
                         <span>Comment gérer la capacité maximum de mon club ?</span>
                         <i class="fas fa-chevron-down text-purple-600 transition-transform duration-300"></i>
                     </button>
@@ -595,10 +757,8 @@
                         <p>Notre kiosque affiche dynamiquement la capacité actuelle et le nombre de clients présents, avec des alertes pour respecter la capacité maximum. Gérez vos entrées en toute conformité et optimisez votre fréquentation sans effort.</p>
                     </div>
                 </div>
-                
-                <!-- FAQ Item 9 -->
                 <div class="faq-item bg-white p-6 rounded-lg shadow">
-                    <button class="faq-question flex justify-between items-center w-full text-left font-medium text-gray-900">
+                    <button class="faq-question flex justify-between items-center w-full text-left font-medium text-gray-900" aria-expanded="false">
                         <span>Comment Tape 2 Enter réduit-il les coûts de personnel ?</span>
                         <i class="fas fa-chevron-down text-purple-600 transition-transform duration-300"></i>
                     </button>
@@ -606,10 +766,8 @@
                         <p>Nos kiosques automatisent les paiements d’entrées et de vestiaire, libérant votre réceptionniste pour des tâches essentielles comme l’accueil ou l’organisation du vestiaire. Fini la manipulation d’espèces, les erreurs, ou les risques de vol, pour des opérations fluides et sécurisées.</p>
                     </div>
                 </div>
-                
-                <!-- FAQ Item 10 -->
                 <div class="faq-item bg-white p-6 rounded-lg shadow">
-                    <button class="faq-question flex justify-between items-center w-full text-left font-medium text-gray-900">
+                    <button class="faq-question flex justify-between items-center w-full text-left font-medium text-gray-900" aria-expanded="false">
                         <span>Est-ce que Tape 2 Enter convient aux petits clubs ?</span>
                         <i class="fas fa-chevron-down text-purple-600 transition-transform duration-300"></i>
                     </button>
@@ -618,7 +776,6 @@
                     </div>
                 </div>
             </div>
-            
             <div class="mt-12 text-center">
                 <p class="text-gray-600">Vous avez d'autres questions ? <a href="#contact" class="text-purple-600 font-medium hover:underline">Contactez notre équipe</a></p>
             </div>
@@ -715,15 +872,14 @@
     }
     </script>
 
-    <!-- Contact Section -->
-    <section id="contact" class="py-16 bg-white">
+<!-- Contact Section -->
+    <section id="contact" class="py-16 bg-white relative z-10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="lg:grid lg:grid-cols-2 lg:gap-12 items-center">
                 <div class="mb-12 lg:mb-0">
                     <h2 class="text-3xl md:text-4xl font-bold mb-6">Prêt à booster votre club ?</h2>
                     <p class="text-xl text-gray-600 mb-4">Testez Tape 2 Enter gratuitement pendant 14 jours et prenez le contrôle de vos entrées.</p>
                     <p class="text-xl text-gray-600 mb-8">Votre feedback compte ! Dites-nous comment nous pouvons rendre Tape 2 Enter encore meilleur pour votre club.</p>
-                    
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <div class="flex items-start">
                             <div class="flex-shrink-0 mt-1">
@@ -733,7 +889,6 @@
                                 <p class="text-gray-700 font-medium">Billetterie sécurisée et fluide</p>
                             </div>
                         </div>
-                        
                         <div class="flex items-start">
                             <div class="flex-shrink-0 mt-1">
                                 <i class="fas fa-desktop text-purple-600 text-2xl"></i>
@@ -742,7 +897,6 @@
                                 <p class="text-gray-700 font-medium">Kiosques d’entrée autonomes</p>
                             </div>
                         </div>
-                        
                         <div class="flex items-start">
                             <div class="flex-shrink-0 mt-1">
                                 <i class="fas fa-credit-card text-purple-600 text-2xl"></i>
@@ -751,7 +905,6 @@
                                 <p class="text-gray-700 font-medium">Paiements sans contact</p>
                             </div>
                         </div>
-                        
                         <div class="flex items-start">
                             <div class="flex-shrink-0 mt-1">
                                 <i class="fas fa-shirt text-purple-600 text-2xl"></i>
@@ -760,7 +913,6 @@
                                 <p class="text-gray-700 font-medium">Vestiaire automatisé</p>
                             </div>
                         </div>
-                        
                         <div class="flex items-start">
                             <div class="flex-shrink-0 mt-1">
                                 <i class="fas fa-file-pdf text-purple-600 text-2xl"></i>
@@ -769,7 +921,6 @@
                                 <p class="text-gray-700 font-medium">Rapports exportables en PDF</p>
                             </div>
                         </div>
-                        
                         <div class="flex items-start">
                             <div class="flex-shrink-0 mt-1">
                                 <i class="fas fa-bolt text-purple-600 text-2xl"></i>
@@ -779,7 +930,6 @@
                                 <p class="text-gray-600 text-sm">Moins de 2 heures</p>
                             </div>
                         </div>
-                        
                         <div class="flex items-start">
                             <div class="flex-shrink-0 mt-1">
                                 <i class="fas fa-headset text-purple-600 text-2xl"></i>
@@ -790,10 +940,8 @@
                             </div>
                         </div>
                     </div>
-                    
                     <p class="text-base text-gray-600 mt-8">Transformez votre discothèque avec une billetterie automatique sécurisée, des kiosques autonomes, des paiements sans contact, et un vestiaire automatisé. Gérez vos heures creuses avec des offres personnalisées, appliquez des taux de TVA sur mesure, et exportez des rapports détaillés en PDF pour optimiser vos revenus.</p>
                 </div>
-                
                 <div class="bg-gray-50 p-8 rounded-xl shadow-lg">
                     <h3 class="text-2xl font-bold mb-6 text-center">Contactez-nous</h3>
                     <form id="contact-form" class="space-y-6">
@@ -801,173 +949,123 @@
                             <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nom complet</label>
                             <input type="text" id="name" name="name" required class="form-input w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent">
                         </div>
-                        
                         <div>
                             <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email professionnel</label>
                             <input type="email" id="email" name="email" required class="form-input w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent">
                         </div>
-                        
+                        <div>
+                            <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Téléphone (facultatif)</label>
+                            <input type="tel" id="phone" name="phone" class="form-input w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent">
+                        </div>
                         <div>
                             <label for="club" class="block text-sm font-medium text-gray-700 mb-1">Nom de votre discothèque</label>
                             <input type="text" id="club" name="club" required class="form-input w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent">
                         </div>
-                        
                         <div>
-                            <label for="feature" class="block text-sm font-medium text-gray-700 mb-1">Quelles fonctionnalités souhaitez-vous ?</label>
-                            <select id="feature" name="feature" required class="form-input w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent">
-                                <option value="analytics">Analytics avancés</option>
-                                <option value="capacity">Gestion de capacité</option>
-                                <option value="vip">Gestion VIP</option>
-                                <option value="cloakroom">Vestiaire automatisé</option>
-                                <option value="other">Autre</option>
+                            <label for="subject" class="block text-sm font-medium text-gray-700 mb-1">Objet de votre demande</label>
+                            <select id="subject" name="subject" required class="form-input w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent">
+                                <option value="demo">Demander une démo</option>
+                                <option value="feature">Demande d'amélioration ou nouvelle fonctionnalité</option>
+                                <option value="partnership">Demande de partenariat</option>
+                                <option value="support">Support technique</option>
+                                <option value="general">Questions générales</option>
                             </select>
                         </div>
-
                         <div>
                             <label for="message" class="block text-sm font-medium text-gray-700 mb-1">Votre message</label>
-                            <textarea id="message" name="message" rows="4" class="form-input w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"></textarea>
+                            <textarea id="message" name="message" rows="4" placeholder="Décrivez-nous votre besoin..." class="form-input w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"></textarea>
                         </div>
-                      
-                        <!-- Champ "Objet" dynamique (affiché si "Autre" est sélectionné) -->
-                        <div id="subject-field" class="hidden">
-                            <label for="subject" class="block text-sm font-medium text-gray-700 mb-1">Objet</label>
-                            <input type="text" id="subject" name="subject" class="form-input w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent">
+                        <!-- Nouvelle option : Souhaitez-vous être contacté par téléphone ? -->
+                        <div>
+                            <label class="inline-flex items-center">
+                                <input type="checkbox" id="phone-contact" name="phone-contact" class="form-checkbox h-4 w-4 text-purple-600 border-gray-300 rounded focus:ring-purple-600">
+                                <span class="ml-2 text-sm text-gray-700">Souhaitez-vous être contacté par téléphone ?</span>
+                            </label>
                         </div>
-
+                        <!-- Champs conditionnels -->
+                        <div id="phone-contact-details" class="space-y-4 hidden">
+                            <div>
+                                <label for="preferred-date" class="block text-sm font-medium text-gray-700 mb-1">Date souhaitée pour le rappel</label>
+                                <input type="date" id="preferred-date" name="preferred-date" class="form-input w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent">
+                                <p class="text-sm text-gray-500 mt-1">Choisissez le jour où vous souhaitez être rappelé(e).</p>
+                            </div>
+                            <div>
+                                <label for="preferred-time" class="block text-sm font-medium text-gray-700 mb-1">Créneau horaire préféré</label>
+                                <select id="preferred-time" name="preferred-time" class="form-input w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent">
+                                    <option value="9h-12h">9h - 12h</option>
+                                    <option value="12h-14h">12h - 14h</option>
+                                    <option value="14h-17h">14h - 17h</option>
+                                    <option value="17h-20h">17h - 20h</option>
+                                </select>
+                                <p class="text-sm text-gray-500 mt-1">Indiquez la tranche horaire pendant laquelle vous êtes disponible.</p>
+                            </div>
+                            <p id="phone-contact-message" class="text-sm text-gray-600" aria-live="polite">Nous ferons de notre mieux pour vous rappeler à la date et l’heure indiquées.</p>
+                        </div>
+                        <div>
+                            <label class="inline-flex items-center">
+                                <input type="checkbox" id="privacy" name="privacy" required class="form-checkbox h-4 w-4 text-purple-600 border-gray-300 rounded focus:ring-purple-600">
+                                <span class="ml-2 text-sm text-gray-700">J’ai lu et j’accepte la <a href="/privacy" class="text-purple-600 hover:underline">politique de confidentialité</a></span>
+                            </label>
+                        </div>
                         <div class="text-center">
-                            <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-md">Demander un essai gratuit</button>
+                            <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-md">Nous contacter</button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
     </section>
-
+  
 <!-- SEO Content Section -->
-<section id="seo-content" class="py-16 bg-white">
+<section id="seo-content" class="py-16" style="background-color: #F8F9FA;">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 class="text-3xl md:text-4xl font-bold mb-6 text-center">Révolutionnez votre discothèque avec la billetterie automatique</h2>
-        
-        <h3 class="text-2xl font-bold mb-4">Pourquoi adopter un kiosque de billetterie automatique pour votre discothèque ?</h3>
-        <p class="text-base text-gray-600 mb-8">Dites adieu aux tracas et boostez votre discothèque avec Tape 2 Enter ! Nos kiosques automatisés transforment vos soirées :</p>
-        
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-12">
-            <div class="flex items-start">
-                <div class="flex-shrink-0 mt-1">
-                    <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center">
-                        <i class="fas fa-money-bill-wave text-purple-600 text-2xl"></i>
-                    </div>
-                </div>
-                <div class="ml-3">
-                    <p class="text-gray-700 font-medium">Réduisez vos coûts</p>
-                    <p class="text-gray-600 text-sm">Automatisez les paiements pour libérer votre équipe, éliminez la manipulation d’espèces et les risques de vol.</p>
-                </div>
-            </div>
-            
-            <div class="flex items-start">
-                <div class="flex-shrink-0 mt-1">
-                    <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center">
-                        <i class="fas fa-smile text-purple-600 text-2xl"></i>
-                    </div>
-                </div>
-                <div class="ml-3">
-                    <p class="text-gray-700 font-medium">Ravissez vos clients</p>
-                    <p class="text-gray-600 text-sm">Tickets ultra-rapides, vestiaire intégré, et paiements sans contact pour une entrée fluide.</p>
-                </div>
-            </div>
-            
-            <div class="flex items-start">
-                <div class="flex-shrink-0 mt-1">
-                    <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center">
-                        <i class="fas fa-users text-purple-600 text-2xl"></i>
-                    </div>
-                </div>
-                <div class="ml-3">
-                    <p class="text-gray-700 font-medium">Maîtrisez votre capacité</p>
-                    <p class="text-gray-600 text-sm">Analytics en temps réel pour respecter les limites légales, avec alertes dynamiques.</p>
-                </div>
-            </div>
-            
-            <div class="flex items-start">
-                <div class="flex-shrink-0 mt-1">
-                    <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center">
-                        <i class="fas fa-chart-line text-purple-600 text-2xl"></i>
-                    </div>
-                </div>
-                <div class="ml-3">
-                    <p class="text-gray-700 font-medium">Optimisez vos revenus</p>
-                    <p class="text-gray-600 text-sm">Offres sur mesure pour les heures creuses et rapports détaillés exportables en PDF (taux d’occupation, CA, trésorerie).</p>
-                </div>
-            </div>
-            
-            <div class="flex items-start">
-                <div class="flex-shrink-0 mt-1">
-                    <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center">
-                        <i class="fas fa-file-invoice text-purple-600 text-2xl"></i>
-                    </div>
-                </div>
-                <div class="ml-3">
-                    <p class="text-gray-700 font-medium">Simplifiez la fiscalité</p>
-                    <p class="text-gray-600 text-sm">Taux de TVA personnalisés pour une gestion conforme.</p>
-                </div>
-            </div>
-            
-            <div class="flex items-start">
-                <div class="flex-shrink-0 mt-1">
-                    <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center">
-                        <i class="fas fa-lock text-purple-600 text-2xl"></i>
-                    </div>
-                </div>
-                <div class="ml-3">
-                    <p class="text-gray-700 font-medium">Sécurisez vos accès</p>
-                    <p class="text-gray-600 text-sm">Codes uniques par jour programmés via un planning intuitif pour bloquer les fraudes.</p>
-                </div>
-            </div>
+        <h3 class="text-2xl font-bold mt-8 mb-4">Pourquoi adopter un kiosque de billetterie automatique pour votre discothèque ?</h3>
+        <p class="text-base text-gray-600">Dites adieu aux tracas et boostez votre discothèque avec Tape 2 Enter ! Nos kiosques automatisés transforment vos soirées :</p>
+        <div class="space-y-3">
+            <p>
+                <span class="font-medium text-gray-700">Réduisez vos coûts :</span>
+                <span class="text-gray-600 ml-1">Automatisez les paiements pour libérer votre équipe, éliminez la manipulation d’espèces et les risques de vol.</span>
+            </p>
+            <p>
+                <span class="font-medium text-gray-700">Ravissez vos clients :</span>
+                <span class="text-gray-600 ml-1">Tickets ultra-rapides, vestiaire intégré, et paiements sans contact pour une entrée fluide.</span>
+            </p>
+            <p>
+                <span class="font-medium text-gray-700">Maîtrisez votre capacité :</span>
+                <span class="text-gray-600 ml-1">Analytics en temps réel pour respecter les limites légales, avec alertes dynamiques.</span>
+            </p>
+            <p>
+                <span class="font-medium text-gray-700">Optimisez vos revenus :</span>
+                <span class="text-gray-600 ml-1">Offres sur mesure pour les heures creuses et rapports détaillés exportables en PDF (taux d’occupation, CA, trésorerie).</span>
+            </p>
+            <p>
+                <span class="font-medium text-gray-700">Simplifiez la fiscalité :</span>
+                <span class="text-gray-600 ml-1">Taux de TVA personnalisés pour une gestion conforme.</span>
+            </p>
+            <p>
+                <span class="font-medium text-gray-700">Sécurisez vos accès :</span>
+                <span class="text-gray-600 ml-1">Codes uniques par jour programmés via un planning intuitif pour bloquer les fraudes.</span>
+            </p>
         </div>
-        
-        <h3 class="text-2xl font-bold mb-4">Comment fonctionne le kiosque de billetterie automatique pour ma discothèque ?</h3>
-        <p class="text-base text-gray-600 mb-8">Notre kiosque tout-en-un simplifie la gestion de votre discothèque :</p>
-        
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-            <div class="flex items-start">
-                <div class="flex-shrink-0 mt-1">
-                    <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center">
-                        <i class="fas fa-desktop text-purple-600 text-2xl"></i>
-                    </div>
-                </div>
-                <div class="ml-3">
-                    <p class="text-gray-700 font-medium">Kiosque robuste</p>
-                    <p class="text-gray-600 text-sm">Design élégant, écran tactile haute résolution, paiements sans contact, tickets d’entrée et vestiaire intégrés.</p>
-                </div>
-            </div>
-            
-            <div class="flex items-start">
-                <div class="flex-shrink-0 mt-1">
-                    <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center">
-                        <i class="fas fa-cogs text-purple-600 text-2xl"></i>
-                    </div>
-                </div>
-                <div class="ml-3">
-                    <p class="text-gray-700 font-medium">Logiciel intuitif</p>
-                    <p class="text-gray-600 text-sm">Gérez entrées, VIP, vestiaire, taxes, et analytics en un clin d’œil. Exportez vos rapports en PDF pour une analyse facile.</p>
-                </div>
-            </div>
-            
-            <div class="flex items-start">
-                <div class="flex-shrink-0 mt-1">
-                    <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center">
-                        <i class="fas fa-shield-alt text-purple-600 text-2xl"></i>
-                    </div>
-                </div>
-                <div class="ml-3">
-                    <p class="text-gray-700 font-medium">Sécurité maximale</p>
-                    <p class="text-gray-600 text-sm">Codes uniques par client et par jour, avec planning pour une gestion proactive des accès.</p>
-                </div>
-            </div>
+        <h3 class="text-2xl font-bold mt-8 mb-4">Comment fonctionne le kiosque de billetterie automatique pour ma discothèque ?</h3>
+        <p class="text-base text-gray-600">Notre kiosque tout-en-un simplifie la gestion de votre discothèque :</p>
+        <div class="space-y-3">
+            <p>
+                <span class="font-medium text-gray-700">Kiosque robuste :</span>
+                <span class="text-gray-600 ml-1">Design élégant, écran tactile haute résolution, paiements sans contact, tickets d’entrée et vestiaire intégrés.</span>
+            </p>
+            <p>
+                <span class="font-medium text-gray-700">Logiciel intuitif :</span>
+                <span class="text-gray-600 ml-1">Gérez entrées, VIP, vestiaire, taxes, et analytics en un clin d’œil. Exportez vos rapports en PDF pour une analyse facile.</span>
+            </p>
+            <p>
+                <span class="font-medium text-gray-700">Sécurité maximale :</span>
+                <span class="text-gray-600 ml-1">Codes uniques par client et par jour, avec planning pour une gestion proactive des accès.</span>
+            </p>
         </div>
-        
-        <h3 class="text-2xl font-bold mb-4">Optimisez votre gestion des entrées dès aujourd'hui</h3>
-        <p class="text-base text-gray-600 mb-8">Que vous dirigiez une petite discothèque intimiste ou un grand club branché, Tape 2 Enter propose une solution adaptée à vos besoins. Achetez votre kiosque (prix à confirmer) et souscrivez à une formule logicielle à partir de 99€ HT/mois, incluant le logiciel, l’hébergement sécurisé et le support technique.</p>
+        <h3 class="text-2xl font-bold mt-8 mb-4">Optimisez votre gestion des entrées dès aujourd'hui</h3>
+        <p class="text-base text-gray-600">Que vous dirigiez une petite discothèque intimiste ou un grand club branché, Tape 2 Enter propose une solution adaptée à vos besoins. Achetez votre kiosque (prix à confirmer) et souscrivez à une formule logicielle à partir de 99€ HT/mois, incluant le logiciel, l’hébergement sécurisé et le support technique.</p>
     </div>
 </section>
 
@@ -982,7 +1080,6 @@
                 </div>
                 <p class="text-gray-400">La solution de billetterie automatique pour discothèques. Boostez vos entrées, réduisez les fraudes, et offrez une expérience client exceptionnelle.</p>
             </div>
-            
             <div>
                 <h4 class="text-lg font-bold mb-4">Liens rapides</h4>
                 <ul class="space-y-2">
@@ -993,7 +1090,6 @@
                     <li><a href="#contact" class="text-gray-400 hover:text-white">Contact</a></li>
                 </ul>
             </div>
-            
             <div>
                 <h4 class="text-lg font-bold mb-4">Contactez-nous</h4>
                 <ul class="space-y-2 text-gray-400">
@@ -1002,7 +1098,6 @@
                     <li><i class="fas fa-map-marker-alt mr-2"></i> 123 Rue de la Nuit, 75001 Paris</li>
                 </ul>
             </div>
-            
             <div>
                 <h4 class="text-lg font-bold mb-4">Suivez-nous</h4>
                 <div class="flex space-x-4">
@@ -1013,7 +1108,6 @@
                 </div>
             </div>
         </div>
-        
         <div class="mt-12 pt-8 border-t border-gray-700 text-center text-gray-400">
             <p>© 2025 Tape 2 Enter. Tous droits réservés.</p>
             <p class="mt-2">
@@ -1027,156 +1121,157 @@
 
 <!-- JavaScript -->
 <script>
-// Mobile menu toggle
-const menuBtn = document.getElementById('menu-btn');
-const mobileMenu = document.getElementById('mobile-menu');
-menuBtn.addEventListener('click', () => {
-    mobileMenu.classList.toggle('hidden');
-});
-
-// FAQ accordion
-const faqQuestions = document.querySelectorAll('.faq-question');
-faqQuestions.forEach(question => {
-    question.addEventListener('click', () => {
-        const answer = question.nextElementSibling;
-        const icon = question.querySelector('i');
-        answer.classList.toggle('hidden');
-        icon.classList.toggle('fa-chevron-down');
-        icon.classList.toggle('fa-chevron-up');
+    // Mobile menu toggle
+    const menuBtn = document.getElementById('menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    menuBtn.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
     });
-});
 
-// Demo video modal
-const demoVideoBtn = document.getElementById('demo-video-btn');
-const demoVideoModal = document.getElementById('demo-video-modal');
-const closeModal = document.getElementById('close-modal');
+    // FAQ accordion
+    const faqQuestions = document.querySelectorAll('.faq-question');
+    faqQuestions.forEach(question => {
+        question.addEventListener('click', () => {
+            const answer = question.nextElementSibling;
+            const icon = question.querySelector('i');
+            const isExpanded = answer.classList.contains('hidden');
+            answer.classList.toggle('hidden');
+            icon.classList.toggle('fa-chevron-down');
+            icon.classList.toggle('fa-chevron-up');
+            question.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
+        });
+    });
 
-demoVideoBtn.addEventListener('click', () => {
-    demoVideoModal.classList.remove('hidden');
-});
+        // Demo video modal
+        const demoVideoBtn = document.getElementById('demo-video-btn');
+        const demoVideoModal = document.getElementById('demo-video-modal');
+        const closeModal = document.getElementById('close-modal');
 
-closeModal.addEventListener('click', () => {
-    demoVideoModal.classList.add('hidden');
-});
+        demoVideoBtn.addEventListener('click', () => {
+            demoVideoModal.classList.remove('hidden');
+        });
 
-// Form submission (placeholder)
-const contactForm = document.getElementById('contact-form');
-contactForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    alert('Merci pour votre demande ! Notre équipe vous contactera sous 24h.');
-    contactForm.reset();
-});
+        closeModal.addEventListener('click', () => {
+            demoVideoModal.classList.add('hidden');
+        });
 
-// Initialize Particles.js with verification
-window.onload = function() {
-    if (typeof particlesJS === 'undefined') {
-        console.error('Particles.js n\'est pas chargé. Vérifiez le CDN ou la connexion.');
-    } else {
-        console.log('Particles.js chargé avec succès !');
-        particlesJS('particles-js', {
-            "particles": {
-                "number": {
-                    "value": 80,
-                    "density": {
-                        "enable": true,
-                        "value_area": 800
-                    }
-                },
-                "color": {
-                    "value": "#ffffff"
-                },
-                "shape": {
-                    "type": ["circle", "triangle", "square"], // Formes géométriques variées
-                    "stroke": {
-                        "width": 0,
-                        "color": "#000000"
-                    }
-                },
-                "opacity": {
-                    "value": 0.5,
-                    "random": false,
-                    "anim": {
-                        "enable": false,
-                        "speed": 1,
-                        "opacity_min": 0.1,
-                        "sync": false
-                    }
-                },
-                "size": {
-                    "value": 5,
-                    "random": true,
-                    "anim": {
-                        "enable": true,
-                        "speed": 10,
-                        "size_min": 0.1,
-                        "sync": false
-                    }
-                },
-                "line_linked": {
-                    "enable": true,
-                    "distance": 150,
-                    "color": "#ffffff",
-                    "opacity": 0.4,
-                    "width": 1
-                },
-                "move": {
-                    "enable": true,
-                    "speed": 3,
-                    "direction": "none",
-                    "random": false,
-                    "straight": false,
-                    "out_mode": "out",
-                    "bounce": false,
-                    "attract": {
-                        "enable": false,
-                        "rotateX": 600,
-                        "rotateY": 1200
-                    }
-                }
-            },
-            "interactivity": {
-                "detect_on": "canvas",
-                "events": {
-                    "onhover": {
-                        "enable": true,
-                        "mode": "repulse"
-                    },
-                    "onclick": {
-                        "enable": true,
-                        "mode": "push"
-                    },
-                    "resize": true
-                },
-                "modes": {
-                    "grab": {
-                        "distance": 400,
-                        "line_linked": {
-                            "opacity": 1
+        // Phone contact conditional fields
+        const phoneContactCheckbox = document.getElementById('phone-contact');
+        const phoneContactDetails = document.getElementById('phone-contact-details');
+
+        phoneContactCheckbox.addEventListener('change', () => {
+            if (phoneContactCheckbox.checked) {
+                phoneContactDetails.classList.remove('hidden');
+            } else {
+                phoneContactDetails.classList.add('hidden');
+            }
+        });
+
+        // Particles.js initialization
+        if (window.innerWidth > 768) {
+            particlesJS('particles-js', {
+                "particles": {
+                    "number": {
+                        "value": 80,
+                        "density": {
+                            "enable": true,
+                            "value_area": 800
                         }
                     },
-                    "bubble": {
-                        "distance": 400,
-                        "size": 40,
-                        "duration": 2,
-                        "opacity": 8,
-                        "speed": 3
+                    "color": {
+                        "value": "#ffffff"
                     },
-                    "repulse": {
-                        "distance": 100,
-                        "duration": 0.4
+                    "shape": {
+                        "type": ["circle", "triangle", "square"],
+                        "stroke": {
+                            "width": 0,
+                            "color": "#000000"
+                        }
                     },
-                    "push": {
-                        "particles_nb": 4
+                    "opacity": {
+                        "value": 0.5,
+                        "random": false,
+                        "anim": {
+                            "enable": false,
+                            "speed": 1,
+                            "opacity_min": 0.1,
+                            "sync": false
+                        }
                     },
-                    "remove": {
-                        "particles_nb": 2
+                    "size": {
+                        "value": 5,
+                        "random": true,
+                        "anim": {
+                            "enable": true,
+                            "speed": 10,
+                            "size_min": 0.1,
+                            "sync": false
+                        }
+                    },
+                    "line_linked": {
+                        "enable": true,
+                        "distance": 150,
+                        "color": "#ffffff",
+                        "opacity": 0.4,
+                        "width": 1
+                    },
+                    "move": {
+                        "enable": true,
+                        "speed": 3,
+                        "direction": "none",
+                        "random": false,
+                        "straight": false,
+                        "out_mode": "out",
+                        "bounce": false,
+                        "attract": {
+                            "enable": false,
+                            "rotateX": 600,
+                            "rotateY": 1200
+                        }
                     }
-                }
-            },
-            "retina_detect": true
-        });
-    }
-};
-</script>
+                },
+                "interactivity": {
+                    "detect_on": "canvas",
+                    "events": {
+                        "onhover": {
+                            "enable": true,
+                            "mode": "repulse"
+                        },
+                        "onclick": {
+                            "enable": true,
+                            "mode": "push"
+                        },
+                        "resize": true
+                    },
+                    "modes": {
+                        "grab": {
+                            "distance": 400,
+                            "line_linked": {
+                                "opacity": 1
+                            }
+                        },
+                        "bubble": {
+                            "distance": 400,
+                            "size": 40,
+                            "duration": 2,
+                            "opacity": 8,
+                            "speed": 3
+                        },
+                        "repulse": {
+                            "distance": 200,
+                            "duration": 0.4
+                        },
+                        "push": {
+                            "particles_nb": 4
+                        },
+                        "remove": {
+                            "particles_nb": 2
+                        }
+                    }
+                },
+                "retina_detect": true
+            });
+        }
+    </script>
 </body>
 </html>
