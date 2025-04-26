@@ -11,6 +11,7 @@
         <div class="header">
             <h1>Sélection</h1>
             <div class="subtitle">Qui êtes-vous ce soir ?</div>
+            <div class="subtitle-note">(Pour tarifs et statistiques)</div>
         </div>
 
         <div class="items-container">
@@ -117,6 +118,14 @@
             font-size: clamp(12px, 3vw, 16px);
             color: #b3b3b3;
             font-style: italic;
+            margin-bottom: 4px;
+        }
+
+        .subtitle-note {
+            font-size: clamp(10px, 2.5vw, 12px);
+            color: #b3b3b3;
+            font-style: normal;
+            opacity: 0.8;
         }
 
         .items-container {
@@ -164,8 +173,8 @@
 
         .gender-option.selected {
             border-color: #E0E0E0;
-            background: linear-gradient(135deg, rgba(224, 224, 224, 0.3), rgba(32, 37, 38, 0.9));
-            box-shadow: 0 0 25px rgba(224, 224, 224, 0.9);
+            background: linear-gradient(135deg, rgba(224, 224, 224, 0.2), rgba(32, 37, 38, 0.9));
+            box-shadow: 0 0 15px rgba(224, 224, 224, 0.6);
             transform: scale(1.1) rotate(0deg);
         }
 
@@ -233,7 +242,11 @@
             text-transform: uppercase;
         }
 
-        .checkout-btn:hover {
+        .checkout-btn:not(:disabled) {
+            animation: pulse 1.5s infinite;
+        }
+
+        .checkout-btn:hover:not(:disabled) {
             box-shadow: 0 0 20px rgba(151, 51, 238, 0.8);
             transform: scale(1.05);
         }
@@ -250,6 +263,12 @@
             0% { opacity: 1; }
             50% { opacity: 0.8; }
             100% { opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 10px rgba(151, 51, 238, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(151, 51, 238, 0.8); }
+            100% { box-shadow: 0 0 10px rgba(151, 51, 238, 0.5); }
         }
 
         @keyframes pulse-bg {
