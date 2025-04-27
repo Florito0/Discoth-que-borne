@@ -2,17 +2,22 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <!-- Définit l'encodage des caractères en UTF-8 pour supporter les caractères spéciaux -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Assure une mise en page responsive adaptée aux appareils mobiles -->
     <title>Gestion des Codes Jour - Discothèque</title>
+    <!-- Titre de la page affiché dans l'onglet du navigateur -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <!-- Inclure html2pdf.js pour la génération de PDF -->
+    <!-- Importe la police Roboto depuis Google Fonts pour une typographie moderne -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- Inclut la bibliothèque html2pdf.js pour générer des PDF à partir du contenu HTML -->
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Roboto', sans-serif;
+            /* Réinitialise les marges et paddings, utilise box-sizing: border-box pour inclure padding/border dans les dimensions, et applique la police Roboto */
         }
         
         body {
@@ -20,6 +25,7 @@
             color: #ffffff;
             padding: 20px;
             min-height: 100vh;
+            /* Définit un fond sombre, texte blanc, padding global, et hauteur minimale couvrant la fenêtre */
         }
 
         .container {
@@ -28,6 +34,7 @@
             max-width: 1200px;
             margin: 0 auto;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            /* Conteneur principal avec fond légèrement plus clair, coins arrondis, largeur max, centré, et ombre pour effet 3D */
         }
 
         .header {
@@ -35,6 +42,7 @@
             padding: 20px;
             text-align: center;
             border-bottom: 1px solid #333;
+            /* En-tête avec fond distinct, padding, texte centré, et bordure inférieure subtile */
         }
 
         .year-month-nav {
@@ -46,6 +54,7 @@
             background: linear-gradient(135deg, #1c2526 0%, #2a3b4c 100%);
             overflow-x: auto;
             position: relative;
+            /* Barre de navigation pour année/mois avec flexbox pour alignement, dégradé de fond, défilement horizontal si nécessaire */
         }
 
         .year-select-btn {
@@ -57,17 +66,20 @@
             transition: background-color 0.3s, box-shadow 0.3s;
             font-size: 14px;
             position: relative;
+            /* Bouton de sélection d'année avec style sombre, bordure, coins arrondis, curseur cliquable, et transitions fluides */
         }
 
         .year-select-btn:hover {
             background: #555;
             box-shadow: 0 0 10px #9733EE, 0 0 5px #00D4FF;
+            /* Effet au survol : fond plus clair et ombres colorées pour un style futuriste */
         }
 
         .year-select-btn:after {
             content: ' ▼';
             font-size: 12px;
             margin-left: 5px;
+            /* Ajoute une flèche vers le bas après le texte du bouton pour indiquer un menu déroulant */
         }
 
         .year-dropdown {
@@ -81,6 +93,7 @@
             min-width: 100px;
             top: 100%;
             left: 0;
+            /* Menu déroulant pour sélection d'année, caché par défaut, positionné absolument sous le bouton */
         }
 
         .year-option {
@@ -89,10 +102,12 @@
             cursor: pointer;
             font-size: 14px;
             transition: background-color 0.2s;
+            /* Options du menu déroulant avec padding, texte blanc, curseur cliquable, et transition au survol */
         }
 
         .year-option:hover {
             background: #444;
+            /* Fond plus clair au survol des options pour feedback visuel */
         }
 
         .month-btn {
@@ -104,19 +119,23 @@
             transition: background-color 0.3s, box-shadow 0.3s;
             white-space: nowrap;
             font-size: 14px;
+            /* Boutons de sélection de mois avec style sombre, bordure, et transitions fluides */
         }
 
         .month-btn:hover {
             background: #555;
             box-shadow: 0 0 10px #9733EE, 0 0 5px #00D4FF;
+            /* Effet au survol : fond plus clair et ombres colorées */
         }
 
         .month-btn.active {
             background: linear-gradient(to right, #9733EE, #DA22FF);
+            /* Style pour le mois actif avec dégradé violet/rose */
         }
 
         .calendar {
             padding: 20px;
+            /* Conteneur du calendrier avec padding pour espacement interne */
         }
 
         .week-row {
@@ -124,6 +143,7 @@
             grid-template-columns: repeat(7, 1fr);
             gap: 5px;
             margin-bottom: 5px;
+            /* Ligne de semaine en grille avec 7 colonnes égales, espacement entre cellules, et marge inférieure */
         }
 
         .day-cell {
@@ -132,14 +152,17 @@
             border-radius: 8px;
             text-align: center;
             min-height: 80px;
+            /* Cellule de jour avec padding, fond sombre, coins arrondis, texte centré, et hauteur minimale */
         }
 
         .day-cell:hover {
             box-shadow: 0 0 5px #00D4FF;
+            /* Ombre cyan au survol des cellules pour feedback visuel */
         }
 
         .day-cell.today {
-            border: 2px solid #FF00FF; /* Bordure rose pour le jour actuel */
+            border: 2px solid #FF00FF;
+            /* Bordure rose pour mettre en évidence le jour actuel */
         }
 
         .day-cell input {
@@ -151,12 +174,14 @@
             border-radius: 4px;
             text-align: center;
             margin-top: 5px;
+            /* Champs de saisie pour les codes avec style sombre, bordure subtile, texte centré, et marge */
         }
 
         .day-cell input:focus {
             background: #444;
             box-shadow: 0 0 5px #00D4FF;
             outline: none;
+            /* Style au focus : fond plus clair, ombre cyan, et suppression de la bordure par défaut */
         }
 
         .controls {
@@ -165,12 +190,14 @@
             gap: 15px;
             justify-content: center;
             align-items: center;
+            /* Conteneur des boutons de contrôle avec flexbox pour centrage et espacement */
         }
 
         .generate-label {
             font-size: 16px;
             margin-right: 10px;
-            cursor: default; /* Pas cliquable */
+            cursor: default;
+            /* Étiquette pour génération de codes, non cliquable */
         }
 
         .generate-option {
@@ -181,15 +208,18 @@
             cursor: pointer;
             transition: background-color 0.3s, box-shadow 0.3s;
             margin-left: 5px;
+            /* Boutons pour génération de codes (mois/année) avec style sombre et transitions */
         }
 
         .generate-option:hover {
             background: #555;
             box-shadow: 0 0 10px #9733EE, 0 0 5px #00D4FF;
+            /* Effet au survol : fond plus clair et ombres colorées */
         }
 
         .generate-option.active {
             background: linear-gradient(to right, #9733EE, #DA22FF);
+            /* Style pour le bouton de génération actif avec dégradé violet/rose */
         }
 
         .export-btn {
@@ -199,10 +229,12 @@
             cursor: pointer;
             transition: box-shadow 0.3s;
             background: #444;
+            /* Bouton d'exportation PDF avec style sombre et transition pour l'ombre */
         }
 
         .export-btn:hover {
             box-shadow: 0 0 10px #9733EE, 0 0 5px #00D4FF;
+            /* Ombre colorée au survol du bouton d'exportation */
         }
     </style>
 </head>
@@ -211,42 +243,55 @@
         <div class="header">
             <h1>Gestion des Codes Jour</h1>
             <div class="subtitle">Planning Annuel des Codes Discothèque</div>
+            <!-- En-tête avec titre principal et sous-titre pour contextualiser l'application -->
         </div>
 
         <div class="year-month-nav" id="yearMonthNav"></div>
-        
+        <!-- Conteneur pour la navigation année/mois, rendu dynamiquement via JavaScript -->
+
         <div class="calendar" id="calendar"></div>
+        <!-- Conteneur pour le calendrier, rendu dynamiquement avec les jours et codes -->
 
         <div class="controls">
             <span class="generate-label">Générer Code Automatique</span>
+            <!-- Étiquette pour les options de génération -->
             <button class="generate-option" onclick="generateCodes('month')">Mois</button>
+            <!-- Bouton pour générer des codes pour le mois actuel -->
             <button class="generate-option" onclick="generateCodes('year')">Année</button>
+            <!-- Bouton pour générer des codes pour toute l'année -->
             <button class="export-btn" onclick="exportToPDF()">Exporter en PDF</button>
+            <!-- Bouton pour exporter le planning en PDF -->
         </div>
     </div>
 
     <script>
+        // Définitions des constantes pour les mois et jours abrégés
         const months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
         const days = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
-        let currentYear = new Date().getFullYear(); // Année actuelle (2025)
-        let currentMonth = new Date().getMonth(); // Mois actuel
-        let codes = {};
-        let lastGenerateType = 'month'; // Par défaut, génération par mois
-        let yearDropdown = null; // Variable globale pour stocker le dropdown
+
+        // Variables globales
+        let currentYear = new Date().getFullYear(); // Année actuelle (ex: 2025)
+        let currentMonth = new Date().getMonth(); // Mois actuel (0-11)
+        let codes = {}; // Objet stockant les codes au format { "YYYY-MM-DD": "L 123" }
+        let lastGenerateType = 'month'; // Type de génération par défaut (mois)
+        let yearDropdown = null; // Référence au menu déroulant des années
 
         function init() {
-            renderYearMonthNav();
-            renderCalendar(currentYear, currentMonth);
-            createYearDropdown(); // Créer le dropdown une seule fois à l'initialisation
+            // Fonction d'initialisation appelée au chargement de la page
+            renderYearMonthNav(); // Rend la barre de navigation année/mois
+            renderCalendar(currentYear, currentMonth); // Rend le calendrier
+            createYearDropdown(); // Crée le menu déroulant des années
         }
 
         function renderYearMonthNav() {
+            // Rend la barre de navigation avec le sélecteur d'année et les boutons de mois
             const nav = document.getElementById('yearMonthNav');
             nav.innerHTML = `
                 <div class="year-select-btn" id="yearSelectBtn">${currentYear}</div>
                 <div class="month-nav" id="monthNav"></div>
             `;
 
+            // Ajoute les boutons pour chaque mois
             const monthNav = document.getElementById('monthNav');
             months.forEach((month, index) => {
                 const btn = document.createElement('button');
@@ -260,9 +305,10 @@
                 monthNav.appendChild(btn);
             });
 
+            // Attache l'événement de clic pour afficher/masquer le menu déroulant
             const yearBtn = document.getElementById('yearSelectBtn');
             if (yearBtn) {
-                yearBtn.removeEventListener('click', toggleYearDropdown);
+                yearBtn.removeEventListener('click', toggleYearDropdown); // Évite les doublons d'écouteurs
                 yearBtn.addEventListener('click', (e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -272,7 +318,7 @@
         }
 
         function createYearDropdown() {
-            // Créer le conteneur de la liste personnalisée
+            // Crée le menu déroulant pour sélectionner l'année
             yearDropdown = document.createElement('div');
             yearDropdown.className = 'year-dropdown';
             yearDropdown.id = 'yearDropdown';
@@ -280,7 +326,7 @@
             yearDropdown.style.position = 'absolute';
             yearDropdown.style.zIndex = '1000';
 
-            // Ajouter les options d'années
+            // Ajoute les options d'années (2025, 2026, 2027)
             const years = [2025, 2026, 2027];
             years.forEach(year => {
                 const option = document.createElement('div');
@@ -288,19 +334,19 @@
                 option.textContent = year;
                 option.onclick = () => {
                     currentYear = year;
-                    codes = {}; // Réinitialiser les codes pour la nouvelle année
+                    codes = {}; // Réinitialise les codes pour la nouvelle année
                     renderYearMonthNav();
                     renderCalendar(currentYear, currentMonth);
-                    yearDropdown.style.display = 'none'; // Masquer après sélection
+                    yearDropdown.style.display = 'none';
                 };
                 yearDropdown.appendChild(option);
             });
 
-            // Ajouter au body
-            document.body.appendChild(yearDropdown);
+            document.body.appendChild(yearDropdown); // Ajoute au DOM
         }
 
         function toggleYearDropdown() {
+            // Affiche ou masque le menu déroulant des années
             const yearBtn = document.getElementById('yearSelectBtn');
             if (!yearBtn) {
                 console.error('Élément yearSelectBtn non trouvé.');
@@ -311,8 +357,8 @@
                 createYearDropdown();
             }
 
+            // Positionne le menu sous le bouton
             if (yearDropdown.style.display === 'none' || yearDropdown.style.display === '') {
-                // Positionner le dropdown sous le bouton
                 const rect = yearBtn.getBoundingClientRect();
                 yearDropdown.style.left = rect.left + 'px';
                 yearDropdown.style.top = rect.bottom + 'px';
@@ -322,7 +368,7 @@
                 yearDropdown.style.display = 'none';
             }
 
-            // Fermer le dropdown si clic ailleurs
+            // Ferme le menu si clic ailleurs
             document.addEventListener('click', function closeDropdown(event) {
                 if (!yearDropdown.contains(event.target) && event.target !== yearBtn) {
                     yearDropdown.style.display = 'none';
@@ -332,10 +378,11 @@
         }
 
         function renderCalendar(year, month) {
+            // Rend le calendrier pour l'année et le mois donnés
             const calendar = document.getElementById('calendar');
             calendar.innerHTML = '';
-            
-            // Header avec les jours de la semaine
+
+            // Ajoute l'en-tête des jours (L, M, M, J, V, S, D)
             const header = document.createElement('div');
             header.className = 'week-row';
             ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'].forEach(day => {
@@ -346,7 +393,7 @@
             });
             calendar.appendChild(header);
 
-            // Calcul des jours du mois
+            // Calcule les jours du mois
             const firstDay = new Date(year, month, 1).getDay();
             const daysInMonth = new Date(year, month + 1, 0).getDate();
             let dayCount = 1;
@@ -355,14 +402,16 @@
             const today = new Date();
             const isCurrentMonth = year === today.getFullYear() && month === today.getMonth();
 
+            // Crée les lignes de semaines
             for (let i = 0; i < weeks; i++) {
                 const row = document.createElement('div');
                 row.className = 'week-row';
-                
+
                 for (let j = 0; j < 7; j++) {
                     const cell = document.createElement('div');
                     cell.className = 'day-cell';
-                    
+
+                    // Gère les jours avant/après le mois
                     if ((i === 0 && j < (firstDay || 7) - 1) || dayCount > daysInMonth) {
                         cell.textContent = '';
                     } else {
@@ -384,24 +433,27 @@
         }
 
         function updateCode(date, value) {
+            // Met à jour le code pour une date donnée, converti en majuscules
             codes[date] = value.toUpperCase();
         }
 
         function generateCodes(type) {
+            // Gère la génération de codes pour le mois ou l'année
             lastGenerateType = type;
             if (type === 'month') {
                 generateMonthCodes();
             } else if (type === 'year') {
                 generateYearCodes();
             }
-            // Mettre à jour l'apparence des boutons pour indiquer l'option active
+            // Met à jour l'état actif des boutons
             document.querySelectorAll('.generate-option').forEach(btn => {
                 btn.classList.remove('active');
-                if (btn.textContent === type) btn.classList.add('active');
+                if (btn.textContent.toLowerCase() === type) btn.classList.add('active');
             });
         }
 
         function generateMonthCodes() {
+            // Génère des codes uniques pour chaque jour du mois actuel
             const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
             const usedNumbers = new Set();
 
@@ -419,6 +471,7 @@
         }
 
         function generateYearCodes() {
+            // Génère des codes uniques pour chaque jour des années 2025-2027
             for (let year of [2025, 2026, 2027]) {
                 for (let month = 0; month < 12; month++) {
                     const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -442,6 +495,7 @@
         }
 
         function exportToPDF() {
+            // Exporte le contenu du conteneur en PDF
             try {
                 const element = document.querySelector('.container');
                 if (!element) {
@@ -454,6 +508,7 @@
                     throw new Error('html2pdf.js n\'est pas chargé.');
                 }
 
+                // Configure et génère le PDF
                 html2pdf(element, {
                     margin: 10,
                     filename: `Planning_${currentYear}_${months[currentMonth].replace(' ', '_')}.pdf`,
@@ -472,7 +527,7 @@
             }
         }
 
-        init();
+        init(); // Lance l'initialisation au chargement de la page
     </script>
 </body>
 </html>
