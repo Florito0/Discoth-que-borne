@@ -1747,6 +1747,7 @@ function renderPrestations() {
     addTooltipsToPrestations();
 }
 
+ // Fonction pour afficher une infobulle au survol d'un élément. 
     function showTooltip(e) {
         let tooltip = document.querySelector('.tooltip');
         if (!tooltip) {
@@ -1759,6 +1760,7 @@ function renderPrestations() {
         positionTooltip.call(this, e);
     }
 
+  // Fonction pour masquer l'infobulle lorsqu'on quitte l'élément.
     function hideTooltip() {
         const tooltip = document.querySelector('.tooltip');
         if (tooltip) {
@@ -1766,6 +1768,7 @@ function renderPrestations() {
         }
     }
 
+  // Fonction pour positionner l'infobulle en fonction de la souris et de la fenêtre.
     function positionTooltip(e) {
         const tooltip = document.querySelector('.tooltip');
         if (!tooltip || !tooltip.classList.contains('visible')) return;
@@ -1791,6 +1794,7 @@ function renderPrestations() {
 
     let draggedItem = null;
 
+  // Gestionnaire d'événement déclenché au début du glisser d'un élément.
     function handleDragStart(e) {
         draggedItem = this;
         this.classList.add('dragging');
@@ -1798,11 +1802,13 @@ function renderPrestations() {
         e.dataTransfer.setData('text/html', this.innerHTML);
     }
 
+  // Gestionnaire d'événement déclenché lorsqu'un élément est survolé pendant le glisser.
     function handleDragOver(e) {
         e.preventDefault();
         e.dataTransfer.dropEffect = 'move';
     }
 
+  // Gestionnaire d'événement déclenché lorsqu'un élément est déposé.
     function handleDrop(e) {
         e.preventDefault();
         if (draggedItem !== this) {
@@ -1816,11 +1822,13 @@ function renderPrestations() {
         }
     }
 
+  // Gestionnaire d'événement déclenché à la fin du glisser.
     function handleDragEnd() {
         this.classList.remove('dragging');
         draggedItem = null;
     }
 
+  // Fonction pour filtrer les prestations par jour.
     function filterByDay(day) {
         const buttons = document.querySelectorAll('.day-btn');
         const previewBtn = document.querySelector('.preview-btn');
@@ -1832,12 +1840,14 @@ function renderPrestations() {
         renderPrestations();
     }
 
+  // Fonction pour supprimer une prestation
     function deletePrestation(index) {
         prestations.splice(index, 1);
         renderPrestations();
         renderKioskItems();
     }
 
+  // Fonction pour éditer une prestation existante
     function editPrestation(index) {
         const prestation = prestations[index];
         document.querySelectorAll('input[name="days"]').forEach(checkbox => checkbox.checked = prestation.days.includes(checkbox.value));
@@ -1930,6 +1940,7 @@ function renderPrestations() {
         renderPrestations();
     }
 
+  // Fonction pour afficher un aperçu des prestations par jour.
     function showPreview() {
         const previewSection = document.getElementById('preview-section');
         const accessList = document.getElementById('access-prestations-list');
@@ -2074,6 +2085,7 @@ function renderPrestations() {
     const currentDay = daysOfWeek[today.getDay()];
     document.getElementById('kiosk-subtitle').textContent = `Aujourd'hui : ${currentDay} ${today.toLocaleDateString('fr-FR')}`;
 
+ // Fonction pour afficher les éléments du kiosque pour le jour actuel. 
     function renderKioskItems() {
         const accessContainer = document.getElementById('access-items');
         const pureContainer = document.getElementById('pure-items');
@@ -2111,6 +2123,8 @@ function renderPrestations() {
                         </div>
                     `;
                 }
+              
+  // Ajoute un élément pour l'accès "Entrée + Alcool" si défini.       
 if (prestation.presentationNormal) {
     const id = `access-normal-${prestationIndex}`;
     kioskItems[id] = { name: prestation.presentationNormal, price, qty: 0, maxQty: 10 };
@@ -2130,6 +2144,8 @@ if (prestation.presentationNormal) {
         </div>
     `;
 }
+              
+  // Ajoute un élément pour l'accès "Entrée + Soft" si défini.         
 if (prestation.presentationAlcohol) {
     const id = `access-alcohol-${prestationIndex}`;
     kioskItems[id] = { name: prestation.presentationAlcohol, price, qty: 0, maxQty: 10 };
@@ -2240,6 +2256,7 @@ if (prestation.presentationSoft) {
         updateKioskTotal();
     }
 
+  // Fonction pour attacher les gestionnaires d'événements aux boutons de quantité du kiosque.
     function attachKioskQuantityListeners() {
         document.querySelectorAll('.kiosk-qty-btn').forEach(button => {
             button.removeEventListener('click', handleKioskQuantityClick);
@@ -2247,12 +2264,14 @@ if (prestation.presentationSoft) {
         });
     }
 
+  // Gestionnaire d'événement pour les clics sur les boutons de quantité.
     function handleKioskQuantityClick() {
         const id = this.dataset.id;
         const action = this.dataset.action;
         updateKioskQuantity(id, action === 'increase' ? 1 : -1);
     }
 
+  // Fonction pour mettre à jour la quantité d'un élément dans le kiosque.
     function updateKioskQuantity(itemId, change) {
         if (!kioskItems[itemId]) return;
         const item = kioskItems[itemId];
@@ -2271,6 +2290,7 @@ if (prestation.presentationSoft) {
         }
     }
 
+  // Fonction pour calculer et afficher le total dans le kiosque.
     function updateKioskTotal() {
         let total = 0;
         let discountTotal = 0;
@@ -2308,6 +2328,7 @@ if (prestation.presentationSoft) {
         alert(summary);
     });
 
+  // Fonction pour basculer entre le tableau de bord et le kiosque.
     function toggleInterface() {
         const dashboard = document.getElementById('dashboard');
         const kiosk = document.getElementById('kiosk');
