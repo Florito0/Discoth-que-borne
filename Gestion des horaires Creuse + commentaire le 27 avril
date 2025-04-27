@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+    <!-- Définir l'encodage et la responsivité -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestion des Horaires</title>
     <style>
+        /* Réinitialisation des marges, paddings et style de boîte */
         * {
             margin: 0;
             padding: 0;
@@ -12,6 +14,7 @@
             font-family: 'Roboto', sans-serif;
         }
         
+        /* Style du corps avec thème sombre et centrage */
         body {
             background-color: #121212;
             color: #ffffff;
@@ -22,6 +25,7 @@
             padding: 20px;
         }
         
+        /* Conteneur principal avec fond sombre et ombre */
         .container {
             background-color: #1e1e1e;
             border-radius: 12px;
@@ -31,6 +35,7 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
         
+        /* En-tête avec fond distinct et texte centré */
         .header {
             background-color: #2c2c2c;
             padding: 20px;
@@ -38,38 +43,45 @@
             border-bottom: 1px solid #333;
         }
         
+        /* Style du titre principal */
         h1 {
             font-size: 24px;
             font-weight: 700;
             margin-bottom: 8px;
         }
         
+        /* Style du sous-titre avec couleur atténuée */
         .subtitle {
             font-size: 16px;
             color: #b3b3b3;
         }
         
+        /* Conteneur du tableau des horaires */
         .tarif-table {
             padding: 20px;
         }
         
+        /* Tableau occupant toute la largeur avec bordures collapsées */
         table {
             width: 100%;
             border-collapse: collapse;
         }
         
+        /* Style des cellules avec bordure inférieure */
         th, td {
             padding: 15px;
             text-align: left;
             border-bottom: 1px solid #333;
         }
         
+        /* Entêtes avec police en gras et positionnement relatif pour tooltips */
         th {
             font-weight: 700;
             font-size: 18px;
             position: relative; /* For tooltip positioning */
         }
         
+        /* Style des champs de saisie d'heure */
         td input[type="time"] {
             width: 90px;
             padding: 8px;
@@ -80,10 +92,12 @@
             transition: background-color 0.2s;
         }
         
+        /* Effet de survol sur les champs d'heure */
         td input[type="time"]:hover {
             background-color: #444;
         }
         
+        /* Ligne contenant les champs d'heure et boutons */
         .time-row {
             display: flex;
             align-items: center;
@@ -91,17 +105,20 @@
             margin-bottom: 10px;
         }
         
+        /* Conteneur pour les champs d'heure avec espacement */
         .time-inputs {
             display: flex;
             align-items: center;
             gap: 10px;
         }
         
+        /* Conteneur pour les boutons copier/coller */
         .action-buttons {
             display: flex;
             gap: 6px;
         }
         
+        /* Style des boutons copier/coller (ronds avec icônes) */
         .copy-btn, .paste-btn {
             width: 24px;
             height: 24px;
@@ -114,6 +131,7 @@
             transition: transform 0.2s ease;
         }
         
+        /* Fond dégradé pour les boutons copier/coller */
         .copy-btn::before, .paste-btn::before {
             content: '';
             position: absolute;
@@ -126,10 +144,12 @@
             transition: opacity 0.2s ease;
         }
         
+        /* Fond dégradé différent pour les boutons coller */
         .paste-btn::before {
             background: linear-gradient(135deg, #4CAF50 0%, #81C784 100%);
         }
         
+        /* Icône SVG pour les boutons copier */
         .copy-btn::after, .paste-btn::after {
             content: '';
             position: absolute;
@@ -142,19 +162,23 @@
             transform: translate(-50%, -50%);
         }
         
+        /* Icône SVG pour les boutons coller */
         .paste-btn::after {
             background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm5 18H7V7h10v14z"/></svg>') no-repeat center;
             background-size: contain;
         }
         
+        /* Augmentation de l'opacité au survol des boutons */
         .copy-btn:hover::before, .paste-btn:hover::before {
             opacity: 1;
         }
         
+        /* Animation de zoom au survol des boutons */
         .copy-btn:hover, .paste-btn:hover {
             transform: scale(1.1);
         }
         
+        /* Style du bouton de sauvegarde */
         .save-btn {
             padding: 15px;
             background: linear-gradient(to right, #9733EE, #DA22FF);
@@ -169,11 +193,12 @@
             width: calc(100% - 40px);
         }
         
+        /* Effet de survol pour le bouton de sauvegarde */
         .save-btn:hover {
             opacity: 0.9;
         }
         
-        /* Tooltip Styles */
+        /* Style des icônes de tooltip (cercles avec ?) */
         .tooltip-icon {
             display: inline-flex;
             justify-content: center;
@@ -191,10 +216,12 @@
             transition: background-color 0.3s;
         }
 
+        /* Changement de couleur au survol des icônes de tooltip */
         .tooltip-icon:hover {
             background-color: #3a3a3a;
         }
 
+        /* Style des tooltips (infobulles) */
         .tooltip {
             position: absolute;
             background-color: #333;
@@ -214,10 +241,12 @@
             margin-top: 5px;
         }
 
+        /* Affichage du tooltip lorsqu'il est actif */
         .tooltip.visible {
             display: block;
         }
         
+        /* Styles responsifs pour écrans plus petits */
         @media (max-width: 768px) {
             th, td {
                 padding: 10px;
@@ -237,17 +266,21 @@
     </style>
 </head>
 <body>
+    <!-- Conteneur principal de l'application -->
     <div class="container">
+        <!-- En-tête avec titre et sous-titre -->
         <div class="header">
             <h1>GESTION DES HORAIRES</h1>
             <div class="subtitle">Configuration des heures creuses par jour</div>
         </div>
         
+        <!-- Section contenant le tableau des horaires -->
         <div class="tarif-table">
             <table>
                 <thead>
                     <tr>
                         <th>Jour</th>
+                        <!-- Colonne pour Heures Creuses 1 avec tooltip -->
                         <th>
                             Heures Creuses 1
                             <span class="tooltip-icon" data-tooltip="hc1">?</span>
@@ -256,6 +289,7 @@
                                 <p>Mardi 00h00 à 01h30 : cela couvre le début de la journée de mardi.</p>
                             </div>
                         </th>
+                        <!-- Colonne pour Heures Creuses 2 avec tooltip -->
                         <th>
                             Heures Creuses 2
                             <span class="tooltip-icon" data-tooltip="hc2">?</span>
@@ -267,9 +301,11 @@
                     </tr>
                 </thead>
                 <tbody>
+                    <!-- Ligne pour le jour Lundi -->
                     <tr data-day="lundi">
                         <td>Lundi</td>
                         <td>
+                            <!-- Plage horaire 1 avec champs de saisie et boutons -->
                             <div class="time-row">
                                 <div class="time-inputs">
                                     <input type="time" class="heure-debut-1" aria-label="Début heures creuses 1"> - 
@@ -282,6 +318,7 @@
                             </div>
                         </td>
                         <td>
+                            <!-- Plage horaire 2 avec champs de saisie et boutons -->
                             <div class="time-row">
                                 <div class="time-inputs">
                                     <input type="time" class="heure-debut-2" aria-label="Début heures creuses 2"> - 
@@ -294,9 +331,11 @@
                             </div>
                         </td>
                     </tr>
+                    <!-- Ligne pour le jour Mardi -->
                     <tr data-day="mardi">
                         <td>Mardi</td>
                         <td>
+                            <!-- Plage horaire 1 avec champs de saisie et boutons -->
                             <div class="time-row">
                                 <div class="time-inputs">
                                     <input type="time" class="heure-debut-1" aria-label="Début heures creuses 1"> - 
@@ -309,6 +348,7 @@
                             </div>
                         </td>
                         <td>
+                            <!-- Plage horaire 2 avec champs de saisie et boutons -->
                             <div class="time-row">
                                 <div class="time-inputs">
                                     <input type="time" class="heure-debut-2" aria-label="Début heures creuses 2"> - 
@@ -321,9 +361,11 @@
                             </div>
                         </td>
                     </tr>
+                    <!-- Ligne pour le jour Mercredi -->
                     <tr data-day="mercredi">
                         <td>Mercredi</td>
                         <td>
+                            <!-- Plage horaire 1 avec champs de saisie et boutons -->
                             <div class="time-row">
                                 <div class="time-inputs">
                                     <input type="time" class="heure-debut-1" aria-label="Début heures creuses 1"> - 
@@ -336,6 +378,7 @@
                             </div>
                         </td>
                         <td>
+                            <!-- Plage horaire 2 avec champs de saisie et boutons -->
                             <div class="time-row">
                                 <div class="time-inputs">
                                     <input type="time" class="heure-debut-2" aria-label="Début heures creuses 2"> - 
@@ -348,9 +391,11 @@
                             </div>
                         </td>
                     </tr>
+                    <!-- Ligne pour le jour Jeudi -->
                     <tr data-day="jeudi">
                         <td>Jeudi</td>
                         <td>
+                            <!-- Plage horaire 1 avec champs de saisie et boutons -->
                             <div class="time-row">
                                 <div class="time-inputs">
                                     <input type="time" class="heure-debut-1" aria-label="Début heures creuses 1"> - 
@@ -363,6 +408,7 @@
                             </div>
                         </td>
                         <td>
+                            <!-- Plage horaire 2 avec champs de saisie et boutons -->
                             <div class="time-row">
                                 <div class="time-inputs">
                                     <input type="time" class="heure-debut-2" aria-label="Début heures creuses 2"> - 
@@ -375,9 +421,11 @@
                             </div>
                         </td>
                     </tr>
+                    <!-- Ligne pour le jour Vendredi -->
                     <tr data-day="vendredi">
                         <td>Vendredi</td>
                         <td>
+                            <!-- Plage horaire 1 avec champs de saisie et boutons -->
                             <div class="time-row">
                                 <div class="time-inputs">
                                     <input type="time" class="heure-debut-1" aria-label="Début heures creuses 1"> - 
@@ -390,6 +438,7 @@
                             </div>
                         </td>
                         <td>
+                            <!-- Plage horaire 2 avec champs de saisie et boutons -->
                             <div class="time-row">
                                 <div class="time-inputs">
                                     <input type="time" class="heure-debut-2" aria-label="Début heures creuses 2"> - 
@@ -402,9 +451,11 @@
                             </div>
                         </td>
                     </tr>
+                    <!-- Ligne pour le jour Samedi -->
                     <tr data-day="samedi">
                         <td>Samedi</td>
                         <td>
+                            <!-- Plage horaire 1 avec champs de saisie et boutons -->
                             <div class="time-row">
                                 <div class="time-inputs">
                                     <input type="time" class="heure-debut-1" aria-label="Début heures creuses 1"> - 
@@ -417,6 +468,7 @@
                             </div>
                         </td>
                         <td>
+                            <!-- Plage horaire 2 avec champs de saisie et boutons -->
                             <div class="time-row">
                                 <div class="time-inputs">
                                     <input type="time" class="heure-debut-2" aria-label="Début heures creuses 2"> - 
@@ -429,9 +481,11 @@
                             </div>
                         </td>
                     </tr>
+                    <!-- Ligne pour le jour Dimanche -->
                     <tr data-day="dimanche">
                         <td>Dimanche</td>
                         <td>
+                            <!-- Plage horaire 1 avec champs de saisie et boutons -->
                             <div class="time-row">
                                 <div class="time-inputs">
                                     <input type="time" class="heure-debut-1" aria-label="Début heures creuses 1"> - 
@@ -444,6 +498,7 @@
                             </div>
                         </td>
                         <td>
+                            <!-- Plage horaire 2 avec champs de saisie et boutons -->
                             <div class="time-row">
                                 <div class="time-inputs">
                                     <input type="time" class="heure-debut-2" aria-label="Début heures creuses 2"> - 
@@ -458,15 +513,17 @@
                     </tr>
                 </tbody>
             </table>
+            <!-- Bouton pour sauvegarder les horaires -->
             <button class="save-btn" id="save-btn">Sauvegarder</button>
         </div>
     </div>
 
     <script>
+        // Variables globales pour stocker les horaires et les données copiées
         let horaires = {};
         let copiedHoraires = null;
 
-        // Charger les horaires depuis localStorage ou initialiser
+        // Charger les horaires depuis localStorage ou initialiser avec des valeurs vides
         function loadHoraires() {
             const saved = localStorage.getItem('horaires');
             horaires = saved ? JSON.parse(saved) : {
@@ -481,7 +538,7 @@
             initializeForm();
         }
 
-        // Remplir les champs avec les données chargées
+        // Remplir les champs du formulaire avec les horaires chargés
         function initializeForm() {
             document.querySelectorAll('tbody tr').forEach(row => {
                 const day = row.dataset.day;
@@ -503,6 +560,7 @@
             const debutInput = row.querySelector(`.heure-debut-${slot}`);
             const finInput = row.querySelector(`.heure-fin-${slot}`);
             
+            // Vérifier que les champs ne sont pas vides
             if (!debutInput.value || !finInput.value) {
                 alert('Veuillez d\'abord définir des horaires à copier.');
                 return;
@@ -516,8 +574,9 @@
             alert(`Horaires de ${day} (Plage ${slot}) copiés !`);
         }
 
-        // Coller les horaires sur un slot spécifique
+        // Coller les horaires copiés dans un slot spécifique
         function pasteHoraires(day, slot) {
+            // Vérifier si des horaires ont été copiés
             if (!copiedHoraires) {
                 alert('Aucun horaire copié. Veuillez copier un horaire d’abord.');
                 return;
@@ -527,6 +586,7 @@
             const debutInput = row.querySelector(`.heure-debut-${slot}`);
             const finInput = row.querySelector(`.heure-fin-${slot}`);
             
+            // Appliquer les valeurs copiées aux champs
             debutInput.value = copiedHoraires.debut;
             finInput.value = copiedHoraires.fin;
             
@@ -540,7 +600,7 @@
             alert(`Horaires collés à ${day} (Plage ${slot}) !`);
         }
 
-        // Sauvegarder les horaires
+        // Sauvegarder les horaires dans localStorage avec validation
         function saveHoraires() {
             document.querySelectorAll('tbody tr').forEach(row => {
                 const day = row.dataset.day;
@@ -549,30 +609,32 @@
                 const debut2 = row.querySelector('.heure-debut-2').value;
                 const fin2 = row.querySelector('.heure-fin-2').value;
 
-                // Vérification Plage 1
+                // Vérifier que l'heure de fin est après l'heure de début pour la plage 1
                 if (debut1 && fin1 && new Date(`2000-01-01 ${debut1}`) >= new Date(`2000-01-01 ${fin1}`)) {
                     alert(`Erreur : L'heure de fin doit être après l'heure de début pour ${day} (Plage 1)`);
                     return;
                 }
 
-                // Vérification Plage 2
+                // Vérifier que l'heure de fin est après l'heure de début pour la plage 2
                 if (debut2 && fin2 && new Date(`2000-01-01 ${debut2}`) >= new Date(`2000-01-01 ${fin2}`)) {
                     alert(`Erreur : L'heure de fin doit être après l'heure de début pour ${day} (Plage 2)`);
                     return;
                 }
 
+                // Mettre à jour l'objet horaires avec les valeurs saisies
                 horaires[day] = {
                     slot1: { debut: debut1, fin: fin1 },
                     slot2: { debut: debut2, fin: fin2 }
                 };
             });
 
+            // Sauvegarder les horaires dans localStorage
             localStorage.setItem('horaires', JSON.stringify(horaires));
             console.log('Horaires sauvegardés:', horaires);
             alert('Horaires sauvegardés avec succès!');
         }
 
-        // Gestion des tooltips
+        // Gestion des tooltips (affichage au survol)
         document.querySelectorAll('.tooltip-icon').forEach(icon => {
             icon.addEventListener('mouseenter', function() {
                 const tooltipId = this.getAttribute('data-tooltip');
@@ -580,6 +642,7 @@
                 tooltip.classList.add('visible');
             });
 
+            // Masquer le tooltip lorsque la souris quitte l'icône
             icon.addEventListener('mouseleave', function() {
                 const tooltipId = this.getAttribute('data-tooltip');
                 const tooltip = document.getElementById(`tooltip-${tooltipId}`);
@@ -587,7 +650,7 @@
             });
         });
 
-        // Ajouter les événements aux boutons
+        // Ajouter des écouteurs d'événements aux boutons de copie
         document.querySelectorAll('.copy-btn').forEach(button => {
             button.addEventListener('click', function() {
                 const day = this.getAttribute('data-day');
@@ -596,6 +659,7 @@
             });
         });
 
+        // Ajouter des écouteurs d'événements aux boutons de collage
         document.querySelectorAll('.paste-btn').forEach(button => {
             button.addEventListener('click', function() {
                 const day = this.getAttribute('data-day');
@@ -604,9 +668,10 @@
             });
         });
 
+        // Ajouter un écouteur d'événement au bouton de sauvegarde
         document.getElementById('save-btn').addEventListener('click', saveHoraires);
 
-        // Initialisation
+        // Initialiser l'application en chargeant les horaires
         loadHoraires();
     </script>
 </body>
