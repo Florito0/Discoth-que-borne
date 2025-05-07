@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vestiaire Automatique</title>
+  <style>
+    /* Réinitialisation des marges et paddings pour une mise en page cohérente */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Roboto', sans-serif;
+    }
+    
+    /* Style du corps de la page avec un fond sombre et un centrage vertical/horizontal */
+    body {
+      background-color: #121212;
+      color: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 10px;
+    }
+    
+    /* Conteneurs principaux pour les interfaces client et admin */
+    .container, .admin-container {
+      background-color: #1e1e1e;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 600px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      margin: 10px auto;
+    }
+    
+    /* En-tête des interfaces avec un fond légèrement plus clair */
+    .header {
+      background-color: #2c2c2c;
+      padding: 15px;
+      text-align: center;
+      border-bottom: 1px solid #333;
+    }
+    
+    /* Titre principal avec une taille adaptative */
+    h1 {
+      font-size: clamp(18px, 4vw, 24px);
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #fff;
+    }
+    
+    /* Sous-titre avec une couleur plus claire pour contraste */
+    .subtitle {
+      font-size: clamp(12px, 3vw, 16px);
+      color: #b3b3b3;
+    }
+    
+    /* Conteneurs pour les listes d'articles client et admin */
+    .items-container, .admin-items {
+      padding: 15px;
+    }
+    
+    /* Message affiché quand aucune donnée n'est disponible */
+    .empty-message {
+      text-align: center;
+      color: #b3b3b3;
+      font-size: clamp(14px, 3.5vw, 18px);
+      padding: 20px 0;
+    }
+    
+    /* Style pour les notifications temporaires */
+    .notification {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #333;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 6px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      font-size: clamp(12px, 3vw, 16px);
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    /* Classe pour afficher la notification */
+    .notification.show {
+      opacity: 1;
+    }
+    
+    /* Grille pour afficher chaque article dans l'interface client */
+    .item {
+      display: grid;
+      grid-template-columns: 2fr 1fr 2fr;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #333;
+    }
+    
+    /* Supprime la bordure pour le dernier article */
+    .item:last-child {
+      border-bottom: none;
+    }
+    
+    /* Style du nom de l'article avec gestion du texte long */
+    .item-name {
+      font-size: clamp(14px, 3.5vw, 18px);
+      font-weight: 500;
+      white-space: normal;
+      overflow-wrap: break-word;
+      word-break: break-word;
+      line-height: 1.2;
+    }
+    
+    /* Style du prix de l'article, centré */
+    .item-price {
+      font-size: clamp(14px, 3.5vw, 18px);
+      color: #b3b3b3;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-width: 40px;
+    }
+    
+    /* Contrôle de la quantité avec boutons plus/moins */
+    .quantity-control {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 5px;
+    }
+    
+    /* Style des boutons de quantité */
+    .qty-btn {
+      width: clamp(28px, 8vw, 36px);
+      height: clamp(28px, 8vw, 36px);
+      border-radius: 50%;
+      border: none;
+      background-color: #333;
+      color: white;
+      font-size: clamp(14px, 4vw, 18px);
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: background-color 0.2s;
+    }
+    
+    /* Effet au survol des boutons de quantité */
+    .qty-btn:hover {
+      background-color: #444;
+    }
+    
+    /* Effet au clic des boutons de quantité */
+    .qty-btn:active {
+      background-color: #555;
+    }
+    
+    /* Affichage de la valeur de quantité */
+    .qty-value {
+      width: clamp(30px, 10vw, 40px);
+      text-align: center;
+      font-size: clamp(14px, 3.5vw, 18px);
+    }
+    
+    /* Section pour afficher le total */
+    .total-section {
+      background-color: #2c2c2c;
+      padding: 15px;
+      border-top: 1px solid #333;
+    }
+    
+    /* Ligne affichant le total */
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: clamp(16px, 4vw, 20px);
+      font-weight: 700;
+      margin-bottom: 15px;
+    }
+    
+    /* Bouton de validation de la sélection */
+    .checkout-btn {
+      display: block;
+      width: 100%;
+      padding: clamp(10px, 3vw, 15px);
+      background: linear-gradient(to right, #9733EE, #DA22FF);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: clamp(14px, 3.5vw, 18px);
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    
+    /* Effet au survol du bouton de validation */
+    .checkout-btn:hover {
+      opacity: 0.9;
+    }
+    
+    /* Effet au clic du bouton de validation */
+    .checkout-btn:active {
+      opacity: 0.8;
+    }
+    
+    /* Style lorsque le bouton de validation est désactivé */
+    .checkout-btn:disabled {
+      background: #444;
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    /* Bouton pour continuer sans vestiaire */
+    .no-vestiaire-btn {
+      display: block;
+      width: 100%;
+      padding: clamp(10px, 3vw, 15px);
+      background: #444;
+      color: #b3b3b3;
+      border: 1px solid #666;
+      border-radius: 6px;
+      font-size: clamp(14px, 3.5vw, 18px);
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s, color 0.2s;
+      margin-top: 10px;
+    }
+    
+    /* Effet au survol du bouton sans vestiaire */
+    .no-vestiaire-btn:hover {
+      background: #555;
+      color: #ccc;
+    }
+    
+    /* Effet au clic du bouton sans vestiaire */
+    .no-vestiaire-btn:active {
+      background: #666;
+    }
+
+    /* Conteneur pour l'interface admin */
+    .admin-container {
+      display: block;
+    }
+    
+    /* Style des articles dans l'interface admin, avec support drag-and-drop */
+    .admin-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #333;
+      cursor: move;
+      transition: background-color 0.2s;
+    }
+    
+    /* Effet visuel lorsqu'un article est en train d'être déplacé */
+    .admin-item.dragging {
+      opacity: 0.5;
+      background-color: #333;
+    }
+    
+    /* Formulaire pour ajouter un nouvel article */
+    .admin-form {
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    /* Style des champs de saisie dans le formulaire admin */
+    .admin-form input {
+      padding: clamp(6px, 2vw, 8px);
+      background-color: #333;
+      border: none;
+      color: white;
+      border-radius: 4px;
+      font-size: clamp(12px, 3vw, 16px);
+    }
+    
+    /* Bouton pour ajouter un article dans l'interface admin */
+    .admin-btn {
+      padding: clamp(8px, 2.5vw, 10px);
+      background-color: #9733EE;
+      border: none;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: clamp(12px, 3vw, 16px);
+    }
+    
+    /* Effet au survol du bouton admin */
+    .admin-btn:hover {
+      background-color: #DA22FF;
+    }
+    
+    /* Bouton de suppression d'un article */
+    .delete-btn {
+      width: clamp(28px, 8vw, 32px);
+      height: clamp(28px, 8vw, 32px);
+      background-color: #ff4444;
+      border: none;
+      border-radius: 50%;
+      color: white;
+      font-size: clamp(12px, 4vw, 16px);
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: background-color 0.2s, transform 0.2s;
+    }
+    
+    /* Effet au survol du bouton de suppression */
+    .delete-btn:hover {
+      background-color: #ff6666;
+      transform: scale(1.1);
+    }
+    
+    /* Effet au clic du bouton de suppression */
+    .delete-btn:active {
+      transform: scale(0.95);
+    }
+    
+    /* Style pour le bouton de bascule entre interfaces */
+    .toggle-btn {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      padding: 10px 20px;
+      background: #444;
+      border: 1px solid #333;
+      border-radius: 4px;
+      cursor: pointer;
+      color: white;
+      transition: background-color 0.3s;
+      z-index: 1000;
+    }
+
+    /* Effet au survol du bouton de bascule */
+    .toggle-btn:hover {
+      background: #555;
+    }
+    
+    /* Adaptation pour écrans jusqu'à 768px */
+    @media (max-width: 768px) {
+      .item {
+        grid-template-columns: 1fr 1fr 1fr;
+        padding: 8px 0;
+      }
+      .quantity-control {
+        gap: 3px;
+      }
+    }
+
+    /* Adaptation pour écrans jusqu'à 480px */
+    @media (max-width: 480px) {
+      .item {
+        grid-template-columns: 2fr 1fr 2fr;
+        padding: 6px 0;
+      }
+      .header {
+        padding: 10px;
+      }
+      .items-container, .admin-items, .total-section, .admin-form {
+        padding: 10px;
+      }
+      .total-row {
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+      }
+      .quantity-control {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Élément pour afficher les notifications temporaires -->
+  <div id="notification" class="notification"></div>
+
+  <!-- Interface utilisateur pour les clients -->
+  <div class="container" id="client-interface" style="display: none;">
+    <div class="header">
+      <h1>VESTIAIRE</h1>
+      <div class="subtitle">Sélectionnez vos articles</div>
+    </div>
+    
+    <!-- Conteneur pour la liste des articles disponibles -->
+    <div class="items-container" id="items-container"></div>
+    
+    <!-- Section pour afficher le total et les boutons d'action -->
+    <div class="total-section">
+      <div class="total-row">
+        <div>TOTAL</div>
+        <div id="total-price">0€</div>
+      </div>
+      <!-- Bouton pour valider la sélection -->
+      <button id="checkout-btn" class="checkout-btn" disabled onclick="validateSelection()" aria-label="Valider la sélection">VALIDER</button>
+      <!-- Bouton pour continuer sans sélectionner d'articles -->
+      <button id="no-vestiaire-btn" class="no-vestiaire-btn" onclick="noVestiaire()" aria-label="Continuer sans vestiaire">SANS VESTIAIRE</button>
+    </div>
+  </div>
+
+  <!-- Interface pour le gérant (administration) -->
+  <div class="admin-container" id="admin-interface" style="display: block;">
+    <div class="header">
+      <h1>GESTION VESTIAIRE</h1>
+      <div class="subtitle">Modifier les articles</div>
+    </div>
+    
+    <!-- Conteneur pour la liste des articles dans l'interface admin -->
+    <div class="admin-items" id="admin-items"></div>
+    
+    <!-- Formulaire pour ajouter un nouvel article -->
+    <div class="admin-form">
+      <input type="text" id="new-item-name" placeholder="Nom de l'article" aria-label="Nom de l'article">
+      <input type="number" id="new-item-price" placeholder="Prix (€)" step="0.01" aria-label="Prix de l'article en euros">
+      <button class="admin-btn" onclick="addItem()" aria-label="Ajouter un article">Ajouter Article</button>
+    </div>
+  </div>
+
+  <!-- Bouton pour basculer entre les interfaces client et admin -->
+  <button class="toggle-btn" id="toggle-btn" onclick="toggleInterface()" aria-label="Basculer entre les interfaces">Passer au Kiosque</button>
+
+  <script>
+    // Tableau pour stocker les articles (nom, prix, quantité, ID)
+    let items = [];
+
+    // Affiche une notification temporaire avec un message donné
+    function showNotification(message) {
+      const notification = document.getElementById('notification');
+      notification.textContent = message;
+      notification.classList.add('show');
+      setTimeout(() => notification.classList.remove('show'), 3000);
+    }
+
+    // Rend la liste des articles dans l'interface client
+    function renderItems() {
+      const container = document.getElementById('items-container');
+      if (!container) {
+        console.error("Conteneur client non trouvé");
+        return;
+      }
+      container.innerHTML = '';
+      if (items.length === 0) {
+        container.innerHTML = '<div class="empty-message">Aucun article disponible pour le moment.</div>';
+      } else {
+        items.forEach(item => {
+          container.innerHTML += `
+            <div class="item">
+              <div class="item-name">${item.name}</div>
+              <div class="item-price">${item.price.toFixed(2)}€</div>
+              <div class="quantity-control">
+                <button class="qty-btn" data-id="${item.id}" data-action="decrease" aria-label="Diminuer la quantité de ${item.name}">-</button>
+                <div id="${item.id}-qty" class="qty-value">${item.qty}</div>
+                <button class="qty-btn" data-id="${item.id}" data-action="increase" aria-label="Augmenter la quantité de ${item.name}">+</button>
+              </div>
+            </div>
+          `;
+        });
+      }
+      updateTotal();
+      attachQuantityListeners();
+    }
+
+    // Attache les écouteurs d'événements aux boutons de quantité
+    function attachQuantityListeners() {
+      const container = document.getElementById('items-container');
+      if (!container) return;
+      container.querySelectorAll('.qty-btn').forEach(btn => {
+        btn.removeEventListener('click', handleQuantityClick);
+        btn.addEventListener('click', handleQuantityClick);
+      });
+    }
+
+    // Gère les clics sur les boutons de quantité
+    function handleQuantityClick(event) {
+      const id = event.target.dataset.id;
+      const action = event.target.dataset.action;
+      updateQuantity(id, action === 'increase' ? 1 : -1);
+    }
+
+    // Met à jour la quantité d'un article spécifique
+    function updateQuantity(itemId, change) {
+      const item = items.find(i => i.id === itemId);
+      if (!item) {
+        console.error(`Article non trouvé : ${itemId}`);
+        return;
+      }
+      const newQty = item.qty + change;
+      if (newQty >= 0) {
+        item.qty = newQty;
+        const qtyElement = document.getElementById(`${itemId}-qty`);
+        if (qtyElement) qtyElement.textContent = newQty;
+        updateTotal();
+      }
+    }
+
+    // Calcule et affiche le total de la sélection
+    function updateTotal() {
+      let total = 0;
+      let itemCount = 0;
+      items.forEach(item => {
+        total += item.price * item.qty;
+        itemCount += item.qty;
+      });
+      const totalElement = document.getElementById('total-price');
+      const checkoutBtn = document.getElementById('checkout-btn');
+      if (totalElement && checkoutBtn) {
+        totalElement.textContent = `${total.toFixed(2)}€`;
+        checkoutBtn.disabled = itemCount === 0;
+      }
+    }
+
+    // Valide la sélection et réinitialise les quantités
+    function validateSelection() {
+      items.forEach(item => item.qty = 0);
+      renderItems();
+      showNotification('Sélection validée !');
+    }
+
+    // Passe à l'interface admin
+    function switchToAdmin() {
+      document.getElementById('client-interface').style.display = 'none';
+      document.getElementById('admin-interface').style.display = 'block';
+      document.getElementById('toggle-btn').textContent = 'Passer au Kiosque';
+      renderAdminItems();
+    }
+
+    // Passe à l'interface client
+    function switchToClient() {
+      document.getElementById('admin-interface').style.display = 'none';
+      document.getElementById('client-interface').style.display = 'block';
+      document.getElementById('toggle-btn').textContent = "Passer à l'accès gérant";
+      renderItems();
+    }
+
+    // Réinitialise les quantités et notifie l'utilisateur
+    function noVestiaire() {
+      items.forEach(item => item.qty = 0);
+      renderItems();
+      showNotification('Continuer sans vestiaire.');
+    }
+
+    // Rend la liste des articles dans l'interface admin
+    function renderAdminItems() {
+      const adminContainer = document.getElementById('admin-items');
+      if (!adminContainer) {
+        console.error("Conteneur admin non trouvé");
+        return;
+      }
+      adminContainer.innerHTML = '';
+      if (items.length === 0) {
+        adminContainer.innerHTML = '<div class="empty-message">Aucun article pour le moment. Ajoutez-en un ci-dessous.</div>';
+      } else {
+        items.forEach(item => {
+          const itemDiv = document.createElement('div');
+          itemDiv.className = 'admin-item';
+          itemDiv.draggable = true;
+          itemDiv.dataset.id = item.id;
+          itemDiv.innerHTML = `
+            <span>${item.name} - ${item.price.toFixed(2)}€</span>
+            <button class="delete-btn" data-id="${item.id}" aria-label="Supprimer ${item.name}">🗑️</button>
+          `;
+          adminContainer.appendChild(itemDiv);
+        });
+      }
+      attachDeleteListeners();
+      attachDragAndDropListeners();
+    }
+
+    // Attache les écouteurs d'événements aux boutons de suppression
+    function attachDeleteListeners() {
+      const adminContainer = document.getElementById('admin-items');
+      if (!adminContainer) return;
+      adminContainer.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.removeEventListener('click', handleDeleteClick);
+        btn.addEventListener('click', handleDeleteClick);
+      });
+    }
+
+    // Gère les clics sur les boutons de suppression
+    function handleDeleteClick(event) {
+      const id = event.target.dataset.id;
+      deleteItem(id);
+    }
+
+    // Configure le drag-and-drop pour réorganiser les articles
+    function attachDragAndDropListeners() {
+      const adminContainer = document.getElementById('admin-items');
+      if (!adminContainer) return;
+      const adminItems = adminContainer.querySelectorAll('.admin-item');
+
+      adminItems.forEach(item => {
+        item.addEventListener('dragstart', (e) => {
+          item.classList.add('dragging');
+          e.dataTransfer.setData('text/plain', item.dataset.id);
+        });
+
+        item.addEventListener('dragend', () => {
+          item.classList.remove('dragging');
+        });
+
+        item.addEventListener('dragover', (e) => {
+          e.preventDefault();
+        });
+
+        item.addEventListener('drop', (e) => {
+          e.preventDefault();
+          const draggedId = e.dataTransfer.getData('text/plain');
+          const draggedItem = items.find(i => i.id === draggedId);
+          const targetId = item.dataset.id;
+          const targetItem = items.find(i => i.id === targetId);
+
+          if (draggedId && targetId && draggedId !== targetId) {
+            const draggedIndex = items.indexOf(draggedItem);
+            const targetIndex = items.indexOf(targetItem);
+            if (draggedIndex !== -1 && targetIndex !== -1) {
+              items.splice(draggedIndex, 1); // Supprime l'élément déplacé
+              items.splice(targetIndex, 0, draggedItem); // Insère à la nouvelle position
+              renderAdminItems();
+              renderItems();
+            }
+          }
+        });
+      });
+    }
+
+    // Ajoute un nouvel article à partir du formulaire admin
+    function addItem() {
+      const name = document.getElementById('new-item-name').value.trim();
+      const priceInput = document.getElementById('new-item-price').value;
+      const price = priceInput ? parseFloat(priceInput) : NaN;
+
+      if (name && !isNaN(price) && price >= 0) {
+        const id = name.toLowerCase().replace(/\s+/g, '-') + '-' + Date.now(); // Génération d'un ID unique
+        if (items.some(i => i.name.toLowerCase() === name.toLowerCase())) {
+          showNotification('Cet article existe déjà !');
+          return;
+        }
+        items.push({ id, name, price, qty: 0 });
+        document.getElementById('new-item-name').value = '';
+        document.getElementById('new-item-price').value = '';
+        renderAdminItems();
+        renderItems();
+        showNotification('Article ajouté avec succès !');
+      } else {
+        showNotification('Veuillez entrer un nom valide et un prix positif.');
+      }
+    }
+
+    // Supprime un article par son ID
+    function deleteItem(itemId) {
+      const itemIndex = items.findIndex(i => i.id === itemId);
+      if (itemIndex === -1) {
+        console.error(`Article non trouvé pour suppression : ${itemId}`);
+        return;
+      }
+      items.splice(itemIndex, 1);
+      renderAdminItems();
+      renderItems();
+      showNotification('Article supprimé.');
+    }
+
+    // Bascule entre les interfaces client et admin
+    function toggleInterface() {
+      const clientInterface = document.getElementById('client-interface');
+      if (clientInterface.style.display === 'none') {
+        switchToClient();
+      } else {
+        switchToAdmin();
+      }
+    }
+
+    // Initialisation au chargement de la page
+    window.onload = () => {
+      document.getElementById('admin-interface').style.display = 'block';
+      document.getElementById('client-interface').style.display = 'none';
+      document.getElementById('toggle-btn').textContent = 'Passer au Kiosque';
+      renderAdminItems();
+    };
+  </script>
+</body>
+</html>
