@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Réservations - Discothèque</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            background-color: #1e1e1e;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 1000px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        .header {
+            background-color: #2c2c2c;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid #333;
+        }
+        
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .subtitle {
+            font-size: 16px;
+            color: #b3b3b3;
+        }
+        
+        .reservation-section {
+            padding: 20px;
+        }
+        
+        .reservation-form {
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+            align-items: flex-start;
+        }
+        
+        .form-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        label {
+            font-size: 16px;
+            font-weight: 500;
+        }
+        
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        input[type="time"],
+        textarea {
+            padding: 8px;
+            background-color: #333;
+            border: 1px solid #333;
+            color: white;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+        
+        input:hover, input:focus,
+        textarea:hover, textarea:focus {
+            background-color: #444;
+            box-shadow: 0 0 5px #00D4FF;
+            outline: none;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+        
+        .date-time-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .date-time-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .error {
+            color: #ff4444;
+            font-size: 12px;
+            display: none;
+            margin-top: 5px;
+        }
+        
+        .save-btn {
+            padding: 15px;
+            background: linear-gradient(to right, #9733EE, #DA22FF);
+            color: white;
+            border: 1px solid #333;
+            border-radius: 6px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: box-shadow 0.3s;
+            margin: 20px 0;
+            width: 100%;
+        }
+        
+        .save-btn:hover {
+            box-shadow: 0 0 10px #9733EE, 0 0 5px #00D4FF;
+        }
+        
+        .reservation-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background: linear-gradient(135deg, #2a3435 0%, #3b4c5d 100%);
+            border: 1px solid #FF00FF;
+        }
+        
+        .reservation-table th, .reservation-table td {
+            padding: 10px;
+            border: 1px solid #555;
+            text-align: left;
+            white-space: normal;
+            word-wrap: break-word;
+        }
+        
+        .reservation-table th {
+            background-color: #444;
+            font-weight: 700;
+            border-bottom: 2px solid #00D4FF;
+            padding: 12px;
+            font-size: 14px;
+        }
+        
+        .reservation-table th:nth-child(1), .reservation-table td:nth-child(1) {
+            width: 30px;
+        }
+        
+        .reservation-table th:nth-child(2), .reservation-table td:nth-child(2) {
+            width: 150px;
+        }
+        
+        .reservation-table th:nth-child(3), .reservation-table td:nth-child(3) {
+            width: 110px;
+        }
+        
+        .reservation-table th:nth-child(4), .reservation-table td:nth-child(4) {
+            width: 90px;
+        }
+        
+        .reservation-table th:nth-child(5), .reservation-table td:nth-child(5) {
+            width: 70px;
+            text-align: center;
+        }
+        
+        .reservation-table th:nth-child(6), .reservation-table td:nth-child(6) {
+            width: 180px;
+        }
+        
+        .reservation-table th:nth-child(7), .reservation-table td:nth-child(7) {
+            width: 200px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
+        .reservation-table th:nth-child(8), .reservation-table td:nth-child(8) {
+            width: 100px;
+            text-align: center;
+        }
+        
+        .edit-btn, .delete-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: box-shadow 0.3s, transform 0.3s;
+            margin: 0 5px;
+        }
+        
+        .edit-btn {
+            background-color: #9733EE;
+        }
+        
+        .delete-btn {
+            background-color: #ff4444;
+        }
+        
+        .edit-btn:hover {
+            box-shadow: 0 0 10px #9733EE, 0 0 5px #00D4FF;
+            transform: scale(1.1);
+        }
+        
+        .delete-btn:hover {
+            box-shadow: 0 0 10px #ff4444, 0 0 5px #00D4FF;
+            transform: scale(1.1);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .select-all-btn {
+            padding: 10px;
+            background: #444;
+            border: 1px solid #333;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .select-all-btn:hover {
+            background: #555;
+        }
+        
+        .edit-form {
+            display: none;
+            padding: 20px;
+            background: #2c2c2c;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: #2c2c2c;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            width: 300px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content p {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .modal-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .modal-btn.yes {
+            background-color: #ff4444;
+            color: white;
+        }
+
+        .modal-btn.yes:hover {
+            background-color: #cc3333;
+        }
+
+        .modal-btn.no {
+            background-color: #444;
+            color: white;
+        }
+
+        .modal-btn.no:hover {
+            background-color: #555;
+        }
+        
+        @media (max-width: 768px) {
+            .form-group, .date-time-group {
+                flex-direction: column;
+            }
+            .reservation-table {
+                font-size: 14px;
+            }
+            .edit-btn, .delete-btn {
+                width: 28px;
+                height: 28px;
+                font-size: 14px;
+            }
+            .reservation-table th, .reservation-table td {
+                width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Gestion des Réservations</h1>
+            <p class="subtitle">Création et gestion des réservations</p>
+        </div>
+        
+        <div class="reservation-section">
+            <div class="reservation-form">
+                <div class="form-group">
+                    <div class="form-item">
+                        <label for="reservation-code">Code de réservation</label>
+                        <input type="text" id="reservation-code" placeholder="Ex: 001478" pattern="[A-Za-z0-9]{6}" required>
+                        <span class="error" id="code-error">Le code doit être alphanumérique (6 caractères)</span>
+                    </div>
+                    <div class="form-item">
+                        <label for="places">Nombre de places</label>
+                        <input type="number" id="places" min="1" placeholder="Ex: 5" required>
+                        <span class="error" id="places-error">Minimum 1 place</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="form-item">
+                        <label for="client-name">Nom du client</label>
+                        <input type="text" id="client-name" placeholder="Nom du client" required>
+                        <span class="error" id="name-error">Veuillez entrer un nom valide</span>
+                    </div>
+                    <div class="form-item">
+                        <label for="phone">Numéro de téléphone</label>
+                        <input type="text" id="phone" placeholder="Ex: 06 12 34 56 78">
+                        <span class="error" id="phone-error">Format invalide</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="form-item">
+                        <label for="misc">Divers</label>
+                        <textarea id="misc" placeholder="Ex:
+- 1 bouteille Vodka 3L
+- 2 bouteilles Whisky 1.5L"></textarea>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="form-item">
+                        <label>Validité de la réservation</label>
+                        <div class="date-time-group">
+                            <div class="date-time-item">
+                                <label for="start-date">Date de début</label>
+                                <div class="date-time-row">
+                                    <input type="date" id="start-date" required>
+                                    <input type="time" id="start-time" required>
+                                </div>
+                            </div>
+                            <div class="date-time-item">
+                                <label for="end-date">Date de fin</label>
+                                <div class="date-time-row">
+                                    <input type="date" id="end-date" required>
+                                    <input type="time" id="end-time" required>
+                                </div>
+                            </div>
+                        </div>
+                        <span class="error" id="date-error">Dates/heures invalides</span>
+                    </div>
+                </div>
+                
+                <button class="save-btn" onclick="saveReservation()">Enregistrer la réservation</button>
+            </div>
+            
+            <div id="reservation-history" style="display: none;">
+                <h2>Historique des réservations</h2>
+                <table class="reservation-table">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" id="select-all" onclick="toggleSelectAll()"></th>
+                            <th>Nom du client</th>
+                            <th>Numéro de téléphone</th>
+                            <th>Code de réservation</th>
+                            <th>Nombre de places</th>
+                            <th>Date et heure</th>
+                            <th>Divers</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reservation-list"></tbody>
+                </table>
+                <div class="action-buttons">
+                    <button class="select-all-btn" onclick="selectAllReservations()">Tout sélectionner</button>
+                </div>
+            </div>
+            
+            <div class="edit-form" id="edit-form">
+                <h2>Modifier la réservation</h2>
+                <div class="form-group">
+                    <div class="form-item">
+                        <label for="edit-code">Code de réservation</label>
+                        <input type="text" id="edit-code" pattern="[A-Za-z0-9]{6}" required>
+                    </div>
+                    <div class="form-item">
+                        <label for="edit-places">Nombre de places</label>
+                        <input type="number" id="edit-places" min="1" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="form-item">
+                        <label for="edit-name">Nom du client</label>
+                        <input type="text" id="edit-name" required>
+                    </div>
+                    <div class="form-item">
+                        <label for="edit-phone">Numéro de téléphone</label>
+                        <input type="text" id="edit-phone">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="form-item">
+                        <label for="edit-misc">Divers</label>
+                        <textarea id="edit-misc" placeholder="Ex:
+- 1 bouteille Vodka 3L
+- 2 bouteilles Whisky 1.5L"></textarea>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="form-item">
+                        <label>Validité de la réservation</label>
+                        <div class="date-time-group">
+                            <div class="date-time-item">
+                                <label for="edit-start-date">Date de début</label>
+                                <div class="date-time-row">
+                                    <input type="date" id="edit-start-date" required>
+                                    <input type="time" id="edit-start-time" required>
+                                </div>
+                            </div>
+                            <div class="date-time-item">
+                                <label for="edit-end-date">Date de fin</label>
+                                <div class="date-time-row">
+                                    <input type="date" id="edit-end-date" required>
+                                    <input type="time" id="edit-end-time" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="save-btn" onclick="saveEditedReservation()">Enregistrer les modifications</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="confirm-delete-modal">
+        <div class="modal-content">
+            <p>Confirmer l'annulation de la réservation ?</p>
+            <div class="modal-buttons">
+                <button class="modal-btn yes" onclick="confirmDelete()">Oui</button>
+                <button class="modal-btn no" onclick="cancelDelete()">Non</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let reservations = [];
+        let editingIndex = -1;
+        let deleteIndex = -1;
+
+        function formatDateTime(date, time) {
+            const [year, month, day] = date.split('-');
+            return `${day}/${month}/${year} à ${time}`;
+        }
+
+        function parseDateTime(dateTimeStr) {
+            const [date, , time] = dateTimeStr.split(' ');
+            const [day, month, year] = date.split('/');
+            return new Date(`${year}-${month}-${day}T${time}`);
+        }
+
+        function saveReservation() {
+            const code = document.getElementById('reservation-code').value;
+            const places = document.getElementById('places').value;
+            const name = document.getElementById('client-name').value;
+            const phone = document.getElementById('phone').value;
+            const misc = document.getElementById('misc').value;
+            const startDate = document.getElementById('start-date').value;
+            const startTime = document.getElementById('start-time').value;
+            const endDate = document.getElementById('end-date').value;
+            const endTime = document.getElementById('end-time').value;
+
+            // Vérifications des champs requis
+            const codeRegex = /^[A-Za-z0-9]{6}$/;
+            if (!codeRegex.test(code)) {
+                document.getElementById('code-error').style.display = 'block';
+                return;
+            }
+            if (places < 1 || isNaN(places)) {
+                document.getElementById('places-error').style.display = 'block';
+                return;
+            }
+            if (name.trim() === '') {
+                document.getElementById('name-error').style.display = 'block';
+                return;
+            }
+            const phoneRegex = /^(0[1-9])[0-9]{8}$/;
+            if (phone && !phoneRegex.test(phone)) {
+                document.getElementById('phone-error').style.display = 'block';
+                return;
+            }
+            // Vérification des champs de date et heure
+            if (!startDate || !startTime || !endDate || !endTime) {
+                document.getElementById('date-error').style.display = 'block';
+                document.getElementById('date-error').textContent = 'Veuillez remplir tous les champs de date et heure.';
+                return;
+            }
+            // Vérification : date de fin >= date de début
+            if (endDate < startDate) {
+                document.getElementById('date-error').style.display = 'block';
+                document.getElementById('date-error').textContent = 'La date de fin doit être égale ou postérieure à la date de début.';
+                return;
+            }
+            // Vérification : heure de fin > heure de début si même date
+            const startDateTime = new Date(`${startDate}T${startTime}`);
+            const endDateTime = new Date(`${endDate}T${endTime}`);
+            if (startDate === endDate && startTime >= endTime) {
+                document.getElementById('date-error').style.display = 'block';
+                document.getElementById('date-error').textContent = 'L\'heure de fin doit être postérieure à l\'heure de début pour le même jour.';
+                return;
+            }
+            if (startDateTime >= endDateTime) {
+                document.getElementById('date-error').style.display = 'block';
+                document.getElementById('date-error').textContent = 'La date et l\'heure de fin doivent être postérieures à la date et l\'heure de début.';
+                return;
+            }
+
+            document.querySelectorAll('.error').forEach(e => e.style.display = 'none');
+
+            reservations.push({
+                code,
+                places: parseInt(places),
+                name,
+                phone: phone || '',
+                misc: misc || '',
+                start: formatDateTime(startDate, startTime),
+                end: formatDateTime(endDate, endTime)
+            });
+
+            resetForm();
+            renderReservations();
+            document.getElementById('reservation-history').style.display = 'block';
+        }
+
+        function resetForm() {
+            document.getElementById('reservation-code').value = '';
+            document.getElementById('places').value = '';
+            document.getElementById('client-name').value = '';
+            document.getElementById('phone').value = '';
+            document.getElementById('misc').value = '';
+            document.getElementById('start-date').value = '';
+            document.getElementById('start-time').value = '';
+            document.getElementById('end-date').value = '';
+            document.getElementById('end-time').value = '';
+        }
+
+        function renderReservations() {
+            const list = document.getElementById('reservation-list');
+            list.innerHTML = '';
+
+            reservations.sort((a, b) => parseDateTime(a.start) - parseDateTime(b.start));
+
+            reservations.forEach((res, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><input type="checkbox" class="reservation-checkbox" data-index="${index}"></td>
+                    <td>${res.name}</td>
+                    <td>${res.phone || 'Non fourni'}</td>
+                    <td>${res.code}</td>
+                    <td>${res.places}</td>
+                    <td>Début: ${res.start}<br>Fin: ${res.end}</td>
+                    <td>${res.misc || 'Aucune info'}</td>
+                    <td>
+                        <button class="edit-btn" onclick="editReservation(${index})">✏️</button>
+                        <button class="delete-btn" onclick="deleteReservation(${index})">🗑️</button>
+                    </td>
+                `;
+                list.appendChild(row);
+            });
+        }
+
+        function autoDeleteExpiredReservations() {
+            const now = new Date();
+            const initialLength = reservations.length;
+
+            reservations = reservations.filter(res => {
+                const endTime = parseDateTime(res.end);
+                return endTime > now;
+            });
+
+            if (reservations.length < initialLength) {
+                renderReservations();
+            }
+
+            setTimeout(autoDeleteExpiredReservations, 60000);
+        }
+
+        function deleteReservation(index) {
+            deleteIndex = index;
+            document.getElementById('confirm-delete-modal').style.display = 'flex';
+        }
+
+        function confirmDelete() {
+            if (deleteIndex !== -1) {
+                reservations.splice(deleteIndex, 1);
+                renderReservations();
+                cancelDelete();
+            }
+        }
+
+        function cancelDelete() {
+            document.getElementById('confirm-delete-modal').style.display = 'none';
+            deleteIndex = -1;
+        }
+
+        function toggleSelectAll() {
+            const selectAll = document.getElementById('select-all').checked;
+            document.querySelectorAll('.reservation-checkbox').forEach(cb => cb.checked = selectAll);
+        }
+
+        function selectAllReservations() {
+            document.querySelectorAll('.reservation-checkbox').forEach(cb => cb.checked = true);
+            document.getElementById('select-all').checked = true;
+        }
+
+        function editReservation(index) {
+            editingIndex = index;
+            const res = reservations[index];
+            document.getElementById('edit-code').value = res.code;
+            document.getElementById('edit-places').value = res.places;
+            document.getElementById('edit-name').value = res.name;
+            document.getElementById('edit-phone').value = res.phone || '';
+            document.getElementById('edit-misc').value = res.misc || '';
+            const [startDate, , startTime] = res.start.split(' ');
+            const [startDay, startMonth, startYear] = startDate.split('/');
+            document.getElementById('edit-start-date').value = `${startYear}-${startMonth}-${startDay}`;
+            document.getElementById('edit-start-time').value = startTime;
+            const [endDate, , endTime] = res.end.split(' ');
+            const [endDay, endMonth, endYear] = endDate.split('/');
+            document.getElementById('edit-end-date').value = `${endYear}-${endMonth}-${endDay}`;
+            document.getElementById('edit-end-time').value = endTime;
+            // Mettre à jour l'attribut min pour la date de fin
+            document.getElementById('edit-end-date').min = document.getElementById('edit-start-date').value;
+            document.getElementById('edit-form').style.display = 'block';
+            window.scrollTo(0, document.getElementById('edit-form').offsetTop);
+        }
+
+        function saveEditedReservation() {
+            const code = document.getElementById('edit-code').value;
+            const places = document.getElementById('edit-places').value;
+            const name = document.getElementById('edit-name').value;
+            const phone = document.getElementById('edit-phone').value;
+            const misc = document.getElementById('edit-misc').value;
+            const startDate = document.getElementById('edit-start-date').value;
+            const startTime = document.getElementById('edit-start-time').value;
+            const endDate = document.getElementById('edit-end-date').value;
+            const endTime = document.getElementById('edit-end-time').value;
+
+            const codeRegex = /^[A-Za-z0-9]{6}$/;
+            if (!codeRegex.test(code)) {
+                alert('Le code doit être alphanumérique (6 caractères).');
+                return;
+            }
+            if (places < 1 || isNaN(places)) {
+                alert('Le nombre de places doit être supérieur à 0.');
+                return;
+            }
+            if (name.trim() === '') {
+                alert('Le nom du client est requis.');
+                return;
+            }
+            const phoneRegex = /^(0[1-9])[0-9]{8}$/;
+            if (phone && !phoneRegex.test(phone)) {
+                alert('Format de téléphone invalide.');
+                return;
+            }
+            // Vérification des champs de date et heure
+            if (!startDate || !startTime || !endDate || !endTime) {
+                alert('Veuillez remplir tous les champs de date et heure.');
+                return;
+            }
+            // Vérification : date de fin >= date de début
+            if (endDate < startDate) {
+                alert('La date de fin doit être égale ou postérieure à la date de début.');
+                return;
+            }
+            // Vérification : heure de fin > heure de début si même date
+            const startDateTime = new Date(`${startDate}T${startTime}`);
+            const endDateTime = new Date(`${endDate}T${endTime}`);
+            if (startDate === endDate && startTime >= endTime) {
+                alert('L\'heure de fin doit être postérieure à l\'heure de début pour le même jour.');
+                return;
+            }
+            if (startDateTime >= endDateTime) {
+                alert('La date et l\'heure de fin doivent être postérieures à la date et l\'heure de début.');
+                return;
+            }
+
+            reservations[editingIndex] = {
+                code,
+                places: parseInt(places),
+                name,
+                phone: phone || '',
+                misc: misc || '',
+                start: formatDateTime(startDate, startTime),
+                end: formatDateTime(endDate, endTime)
+            };
+            document.getElementById('edit-form').style.display = 'none';
+            renderReservations();
+        }
+
+        // Bloquer la date de fin pour qu'elle soit égale ou postérieure à la date de début
+        document.getElementById('start-date').addEventListener('change', function() {
+            const startDate = this.value;
+            const endDateInput = document.getElementById('end-date');
+            endDateInput.min = startDate;
+            if (endDateInput.value && endDateInput.value < startDate) {
+                endDateInput.value = startDate;
+            }
+        });
+
+        // Même logique pour le formulaire de modification
+        document.getElementById('edit-start-date').addEventListener('change', function() {
+            const startDate = this.value;
+            const endDateInput = document.getElementById('edit-end-date');
+            endDateInput.min = startDate;
+            if (endDateInput.value && endDateInput.value < startDate) {
+                endDateInput.value = startDate;
+            }
+        });
+
+        window.onload = () => {
+            autoDeleteExpiredReservations();
+        };
+    </script>
+</body>
+</html>
