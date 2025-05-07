@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Horaires</title>
+    <style>
+        /* Réinitialisation des styles par défaut pour une mise en page cohérente */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        /* Style du corps avec un thème sombre et centrage du contenu */
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        /* Conteneur principal avec fond sombre et ombre */
+        .container {
+            background-color: #1e1e1e;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 900px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        /* En-tête avec fond distinct et texte centré */
+        .header {
+            background-color: #2c2c2c;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid #333;
+        }
+        
+        /* Style des titres principaux */
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        /* Sous-titre avec couleur atténuée */
+        .subtitle {
+            font-size: 16px;
+            color: #b3b3b3;
+        }
+        
+        /* Conteneur du tableau des tarifs/horaires */
+        .tarif-table {
+            padding: 20px;
+        }
+        
+        /* Style du tableau pour occuper toute la largeur */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        /* Style des cellules avec bordure inférieure */
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #333;
+        }
+        
+        /* Entêtes du tableau avec positionnement relatif pour les tooltips */
+        th {
+            font-weight: 700;
+            font-size: 18px;
+            position: relative;
+        }
+        
+        /* Style des champs de saisie d'heure */
+        td input[type="time"] {
+            width: 90px;
+            padding: 8px;
+            background-color: #333;
+            border: none;
+            color: white;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        
+        /* Effet de survol pour les champs d'heure */
+        td input[type="time"]:hover {
+            background-color: #444;
+        }
+        
+        /* Conteneur pour une ligne d'horaires (champs + boutons) */
+        .time-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        /* Conteneur pour les champs d'heure avec espacement */
+        .time-inputs {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* Conteneur pour les boutons d'action (copier/coller) */
+        .action-buttons {
+            display: flex;
+            gap: 6px;
+        }
+        
+        /* Style des boutons copier/coller (ronds avec icônes SVG) */
+        .copy-btn, .paste-btn {
+            width: 24px;
+            height: 24px;
+            border: none;
+            border-radius: 50%;
+            background: none;
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+            transition: transform 0.2s ease;
+        }
+        
+        /* Fond dégradé pour les boutons copier */
+        .copy-btn::before, .paste-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #9733EE 0%, #DA22FF 100%);
+            opacity: 0.7;
+            transition: opacity 0.2s ease;
+        }
+        
+        /* Fond dégradé différent pour les boutons coller */
+        .paste-btn::before {
+            background: linear-gradient(135deg, #4CAF50 0%, #81C784 100%);
+        }
+        
+        /* Icônes SVG pour les boutons copier */
+        .copy-btn::after, .paste-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 12px;
+            height: 12px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm-1 4H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h7a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 16H8V7h7v14z"/></svg>') no-repeat center;
+            background-size: contain;
+            transform: translate(-50%, -50%);
+        }
+        
+        /* Icônes SVG pour les boutons coller */
+        .paste-btn::after {
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm5 18H7V7h10v14z"/></svg>') no-repeat center;
+            background-size: contain;
+        }
+        
+        /* Effet de survol pour les boutons (opacité accrue) */
+        .copy-btn:hover::before, .paste-btn:hover::before {
+            opacity: 1;
+        }
+        
+        /* Animation de zoom au survol des boutons */
+        .copy-btn:hover, .paste-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        /* Style du bouton de sauvegarde */
+        .save-btn {
+            padding: 15px;
+            background: linear-gradient(to right, #9733EE, #DA22FF);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            margin: 20px;
+            width: calc(100% - 40px);
+        }
+        
+        /* Effet de survol pour le bouton sauvegarder */
+        .save-btn:hover {
+            opacity: 0.9;
+        }
+        
+        /* Style des icônes de tooltip (petits cercles avec ?) */
+        .tooltip-icon {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 16px;
+            height: 16px;
+            background-color: #2a2a2a;
+            color: #b3b3b3;
+            border-radius: 50%;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-left: 5px;
+            vertical-align: middle;
+            transition: background-color 0.3s;
+        }
+
+        /* Effet de survol pour les icônes de tooltip */
+        .tooltip-icon:hover {
+            background-color: #3a3a3a;
+        }
+
+        /* Style des tooltips (infobulles) */
+        .tooltip {
+            position: absolute;
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 14px;
+            z-index: 10;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+            display: none;
+            max-width: 300px;
+            pointer-events: none;
+            white-space: normal;
+            line-height: 1.4;
+            top: 100%;
+            left: 0;
+            margin-top: 5px;
+        }
+
+        /* Affichage du tooltip lorsque visible */
+        .tooltip.visible {
+            display: block;
+        }
+        
+        /* Responsive : ajustements pour écrans < 768px */
+        @media (max-width: 768px) {
+            th, td {
+                padding: 10px;
+            }
+            td input[type="time"] {
+                width: 70px;
+            }
+            .time-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            .action-buttons {
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Conteneur principal -->
+    <div class="container">
+        <!-- En-tête avec titre et sous-titre -->
+        <div class="header">
+            <h1>GESTION DES HORAIRES</h1>
+            <div class="subtitle">Configuration des heures creuses par jour</div>
+        </div>
+        
+        <!-- Section du tableau des horaires -->
+        <div class="tarif-table">
+            <table>
+                <thead>
+                    < ratings
+                    <tr>
+                        <th>Jour</th>
+                        <!-- Colonne Heures Creuses 1 avec tooltip -->
+                        <th>
+                            Heures Creuses 1
+                            <span class="tooltip-icon" data-tooltip="hc1">?</span>
+                            <div class="tooltip" id="tooltip-hc1">
+                                <p>Lundi 23h00 à 00h00 : cela couvre la fin de la journée de lundi.</p>
+                                <p>Mardi 00h00 à 01h30 : cela couvre le début de la journée de mardi.</p>
+                            </div>
+                        </th>
+                        <!-- Colonne Heures Creuses 2 avec tooltip -->
+                        <th>
+                            Heures Creuses 2
+                            <span class="tooltip-icon" data-tooltip="hc2">?</span>
+                            <div class="tooltip" id="tooltip-hc2">
+                                <p>Lundi 23h00 à 00h00 : cela couvre la fin de la journée de lundi.</p>
+                                <p>Mardi 00h00 à 01h30 : cela couvre le début de la journée de mardi.</p>
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Ligne pour Lundi -->
+                    <tr data-day="lundi">
+                        <td>Lundi</td>
+                        <td>
+                            <!-- Plage horaire 1 avec champs et boutons -->
+                            <div class="time-row">
+                                <div class="time-inputs">
+                                    <input type="time" class="heure-debut-1" aria-label="Début heures creuses 1"> - 
+                                    <input type="time" class="heure-fin-1" aria-label="Fin heures creuses 1">
+                                </div>
+                                <div class="action-buttons">
+                                    <button class="copy-btn" data-day="lundi" data-slot="1" title="Copier"></button>
+                                    <button class="paste-btn" data-day="lundi" data-slot="1" title="Coller"></button>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <!-- Plage horaire 2 avec champs et boutons -->
+                            <div class="time-row">
+                                <div class="time-inputs">
+                                    <input type="time" class="heure-debut-2" aria-label="Début heures creuses 2"> - 
+                                    <input type="time" class="heure-fin-2" aria-label="Fin heures creuses 2">
+                                </div>
+                                <div class="action-buttons">
+                                    <button class="copy-btn" data-day="lundi" data-slot="2" title="Copier"></button>
+                                    <button class="paste-btn" data-day="lundi" data-slot="2" title="Coller"></button>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <!-- Ligne pour Mardi -->
+                    <tr data-day="mardi">
+                        <td>Mardi</td>
+                        <td>
+                            <!-- Plage horaire 1 avec champs et boutons -->
+                            <div class="time-row">
+                                <div class="time-inputs">
+                                    <input type="time" class="heure-debut-1" aria-label="Début heures creuses 1"> - 
+                                    <input type="time" class="heure-fin-1" aria-label="Fin heures creuses 1">
+                                </div>
+                                <div class="action-buttons">
+                                    <button class="copy-btn" data-day="mardi" data-slot="1" title="Copier"></button>
+                                    <button class="paste-btn" data-day="mardi" data-slot="1" title="Coller"></button>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <!-- Plage horaire 2 avec champs et boutons -->
+                            <div class="time-row">
+                                <div class="time-inputs">
+                                    <input type="time" class="heure-debut-2" aria-label="Début heures creuses 2"> - 
+                                    <input type="time" class="heure-fin-2" aria-label="Fin heures creuses 2">
+                                </div>
+                                <div class="action-buttons">
+                                    <button class="copy-btn" data-day="mardi" data-slot="2" title="Copier"></button>
+                                    <button class="paste-btn" data-day="mardi" data-slot="2" title="Coller"></button>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <!-- Ligne pour Mercredi -->
+                    <tr data-day="mercredi">
+                        <td>Mercredi</td>
+                        <td>
+                            <!-- Plage horaire 1 avec champs et boutons -->
+                            <div class="time-row">
+                                <div class="time-inputs">
+                                    <input type="time" class="heure-debut-1" aria-label="Début heures creuses 1"> - 
+                                    <input type="time" class="heure-fin-1" aria-label="Fin heures creuses 1">
+                                </div>
+                                <div class="action-buttons">
+                                    <button class="copy-btn" data-day="mercredi" data-slot="1" title="Copier"></button>
+                                    <button class="paste-btn" data-day="mercredi" data-slot="1" title="Coller"></button>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <!-- Plage horaire 2 avec champs et boutons -->
+                            <div class="time-row">
+                                <div class="time-inputs">
+                                    <input type="time" class="heure-debut-2" aria-label="Début heures creuses 2"> - 
+                                    <input type="time" class="heure-fin-2" aria-label="Fin heures creuses 2">
+                                </div>
+                                <div class="action-buttons">
+                                    <button class="copy-btn" data-day="mercredi" data-slot="2" title="Copier"></button>
+                                    <button class="paste-btn" data-day="mercredi" data-slot="2" title="Coller"></button>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <!-- Ligne pour Jeudi -->
+                    <tr data-day="jeudi">
+                        <td>Jeudi</td>
+                        <td>
+                            <!-- Plage horaire 1 avec champs et boutons -->
+                            <div class="time-row">
+                                <div class="time-inputs">
+                                    <input type="time" class="heure-debut-1" aria-label="Début heures creuses 1"> - 
+                                    <input type="time" class="heure-fin-1" aria-label="Fin heures creuses 1">
+                                </div>
+                                <div class="action-buttons">
+                                    <button class="copy-btn" data-day="jeudi" data-slot="1" title="Copier"></button>
+                                    <button class="paste-btn" data-day="jeudi" data-slot="1" title="Coller"></button>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <!-- Plage horaire 2 avec champs et boutons -->
+                            <div class="time-row">
+                                <div class="time-inputs">
+                                    <input type="time" class="heure-debut-2" aria-label="Début heures creuses 2"> - 
+                                    <input type="time" class="heure-fin-2" aria-label="Fin heures creuses 2">
+                                </div>
+                                <div class="action-buttons">
+                                    <button class="copy-btn" data-day="jeudi" data-slot="2" title="Copier"></button>
+                                    <button class="paste-btn" data-day="jeudi" data-slot="2" title="Coller"></button>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <!-- Ligne pour Vendredi -->
+                    <tr data-day="vendredi">
+                        <td>Vendredi</td>
+                        <td>
+                            <!-- Plage horaire 1 avec champs et boutons -->
+                            <div class="time-row">
+                                <div class="time-inputs">
+                                    <input type="time" class="heure-debut-1" aria-label="Début heures creuses 1"> - 
+                                    <input type="time" class="heure-fin-1" aria-label="Fin heures creuses 1">
+                                </div>
+                                <div class="action-buttons">
+                                    <button class="copy-btn" data-day="vendredi" data-slot="1" title="Copier"></button>
+                                    <button class="paste-btn" data-day="vendredi" data-slot="1" title="Coller"></button>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <!-- Plage horaire 2 avec champs et boutons -->
+                            <div class="time-row">
+                                <div class="time-inputs">
+                                    <input type="time" class="heure-debut-2" aria-label="Début heures creuses 2"> - 
+                                    <input type="time" class="heure-fin-2" aria-label="Fin heures creuses 2">
+                                </div>
+                                <div class="action-buttons">
+                                    <button class="copy-btn" data-day="vendredi" data-slot="2" title="Copier"></button>
+                                    <button class="paste-btn" data-day="vendredi" data-slot="2" title="Coller"></button>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <!-- Ligne pour Samedi -->
+                    <tr data-day="samedi">
+                        <td>Samedi</td>
+                        <td>
+                            <!-- Plage horaire 1 avec champs et boutons -->
+                            <div class="time-row">
+                                <div class="time-inputs">
+                                    <input type="time" class="heure-debut-1" aria-label="Début heures creuses 1"> - 
+                                    <input type="time" class="heure-fin-1" aria-label="Fin heures creuses 1">
+                                </div>
+                                <div class="action-buttons">
+                                    <button class="copy-btn" data-day="samedi" data-slot="1" title="Copier"></button>
+                                    <button class="paste-btn" data-day="samedi" data-slot="1" title="Coller"></button>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <!-- Plage horaire 2 avec champs et boutons -->
+                            <div class="time-row">
+                                <div class="time-inputs">
+                                    <input type="time" class="heure-debut-2" aria-label="Début heures creuses 2"> - 
+                                    <input type="time" class="heure-fin-2" aria-label="Fin heures creuses 2">
+                                </div>
+                                <div class="action-buttons">
+                                    <button class="copy-btn" data-day="samedi" data-slot="2" title="Copier"></button>
+                                    <button class="paste-btn" data-day="samedi" data-slot="2" title="Coller"></button>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <!-- Ligne pour Dimanche -->
+                    <tr data-day="dimanche">
+                        <td>Dimanche</td>
+                        <td>
+                            <!-- Plage horaire 1 avec champs et boutons -->
+                            <div class="time-row">
+                                <div class="time-inputs">
+                                    <input type="time" class="heure-debut-1" aria-label="Début heures creuses 1"> - 
+                                    <input type="time" class="heure-fin-1" aria-label="Fin heures creuses 1">
+                                </div>
+                                <div class="action-buttons">
+                                    <button class="copy-btn" data-day="dimanche" data-slot="1" title="Copier"></button>
+                                    <button class="paste-btn" data-day="dimanche" data-slot="1" title="Coller"></button>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <!-- Plage horaire 2 avec champs et boutons -->
+                            <div class="time-row">
+                                <div class="time-inputs">
+                                    <input type="time" class="heure-debut-2" aria-label="Début heures creuses 2"> - 
+                                    <input type="time" class="heure-fin-2" aria-label="Fin heures creuses 2">
+                                </div>
+                                <div class="action-buttons">
+                                    <button class="copy-btn" data-day="dimanche" data-slot="2" title="Copier"></button>
+                                    <button class="paste-btn" data-day="dimanche" data-slot="2" title="Coller"></button>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <!-- Bouton pour sauvegarder les horaires -->
+            <button class="save-btn" id="save-btn">Sauvegarder</button>
+        </div>
+    </div>
+
+    <script>
+        // Objet pour stocker les horaires
+        let horaires = {};
+        // Variable pour stocker les horaires copiés
+        let copiedHoraires = null;
+
+        // Charger les horaires depuis localStorage ou initialiser avec des valeurs par défaut
+        function loadHoraires() {
+            const saved = localStorage.getItem('horaires');
+            horaires = saved ? JSON.parse(saved) : {
+                lundi: { slot1: {debut: '', fin: ''}, slot2: {debut: '', fin: ''} },
+                mardi: { slot1: {debut: '', fin: ''}, slot2: {debut: '', fin: ''} },
+                mercredi: { slot1: {debut: '', fin: ''}, slot2: {debut: '', fin: ''} },
+                jeudi: { slot1: {debut: '', fin: ''}, slot2: {debut: '', fin: ''} },
+                vendredi: { slot1: {debut: '', fin: ''}, slot2: {debut: '', fin: ''} },
+                samedi: { slot1: {debut: '', fin: ''}, slot2: {debut: '', fin: ''} },
+                dimanche: { slot1: {debut: '', fin: ''}, slot2: {debut: '', fin: ''} }
+            };
+            initializeForm();
+        }
+
+        // Remplir les champs du formulaire avec les horaires chargés
+        function initializeForm() {
+            document.querySelectorAll('tbody tr').forEach(row => {
+                const day = row.dataset.day;
+                const slot1Debut = row.querySelector('.heure-debut-1');
+                const slot1Fin = row.querySelector('.heure-fin-1');
+                const slot2Debut = row.querySelector('.heure-debut-2');
+                const slot2Fin = row.querySelector('.heure-fin-2');
+                
+                slot1Debut.value = horaires[day].slot1.debut || '';
+                slot1Fin.value = horaires[day].slot1.fin || '';
+                slot2Debut.value = horaires[day].slot2.debut || '';
+                slot2Fin.value = horaires[day].slot2.fin || '';
+            });
+        }
+
+        // Copier les horaires d’un slot spécifique dans copiedHoraires
+        function copyHoraires(day, slot) {
+            const row = document.querySelector(`tr[data-day="${day}"]`);
+            const debutInput = row.querySelector(`.heure-debut-${slot}`);
+            const finInput = row.querySelector(`.heure-fin-${slot}`);
+            
+            // Vérifier si les champs ne sont pas vides
+            if (!debutInput.value || !finInput.value) {
+                alert('Veuillez d\'abord définir des horaires à copier.');
+                return;
+            }
+            
+            copiedHoraires = {
+                debut: debutInput.value,
+                fin: finInput.value
+            };
+            console.log(`Copié depuis ${day} slot ${slot}:`, copiedHoraires);
+            alert(`Horaires de ${day} (Plage ${slot}) copiés !`);
+        }
+
+        // Coller les horaires copiés dans un slot spécifique
+        function pasteHoraires(day, slot) {
+            // Vérifier si des horaires ont été copiés
+            if (!copiedHoraires) {
+                alert('Aucun horaire copié. Veuillez copier un horaire d’abord.');
+                return;
+            }
+
+            const row = document.querySelector(`tr[data-day="${day}"]`);
+            const debutInput = row.querySelector(`.heure-debut-${slot}`);
+            const finInput = row.querySelector(`.heure-fin-${slot}`);
+            
+            // Appliquer les valeurs copiées
+            debutInput.value = copiedHoraires.debut;
+            finInput.value = copiedHoraires.fin;
+            
+            // Mettre à jour l’objet horaires
+            horaires[day][`slot${slot}`] = {
+                debut: copiedHoraires.debut,
+                fin: copiedHoraires.fin
+            };
+            
+            console.log(`Collé sur ${day} slot ${slot}:`, copiedHoraires);
+            alert(`Horaires collés à ${day} (Plage ${slot}) !`);
+        }
+
+        // Sauvegarder les horaires dans localStorage avec validation
+        function saveHoraires() {
+            document.querySelectorAll('tbody tr').forEach(row => {
+                const day = row.dataset.day;
+                const debut1 = row.querySelector('.heure-debut-1').value;
+                const fin1 = row.querySelector('.heure-fin-1').value;
+                const debut2 = row.querySelector('.heure-debut-2').value;
+                const fin2 = row.querySelector('.heure-fin-2').value;
+
+                // Vérifier que l’heure de fin est après l’heure de début pour la plage 1
+                if (debut1 && fin1 && new Date(`2000-01-01 ${debut1}`) >= new Date(`2000-01-01 ${fin1}`)) {
+                    alert(`Erreur : L'heure de fin doit être après l'heure de début pour ${day} (Plage 1)`);
+                    return;
+                }
+
+                // Vérifier que l’heure de fin est après l’heure de début pour la plage 2
+                if (debut2 && fin2 && new Date(`2000-01-01 ${debut2}`) >= new Date(`2000-01-01 ${fin2}`)) {
+                    alert(`Erreur : L'heure de fin doit être après l'heure de début pour ${day} (Plage 2)`);
+                    return;
+                }
+
+                // Mettre à jour l’objet horaires
+                horaires[day] = {
+                    slot1: { debut: debut1, fin: fin1 },
+                    slot2: { debut: debut2, fin: fin2 }
+                };
+            });
+
+            // Sauvegarder dans localStorage
+            localStorage.setItem('horaires', JSON.stringify(horaires));
+            console.log('Horaires sauvegardés:', horaires);
+            alert('Horaires sauvegardés avec succès!');
+        }
+
+        // Gestion des tooltips (affichage au survol)
+        document.querySelectorAll('.tooltip-icon').forEach(icon => {
+            icon.addEventListener('mouseenter', function() {
+                const tooltipId = this.getAttribute('data-tooltip');
+                const tooltip = document.getElementById(`tooltip-${tooltipId}`);
+                tooltip.classList.add('visible');
+            });
+
+            icon.addEventListener('mouseleave', function() {
+                const tooltipId = this.getAttribute('data-tooltip');
+                const tooltip = document.getElementById(`tooltip-${tooltipId}`);
+                tooltip.classList.remove('visible');
+            });
+        });
+
+        // Ajouter les écouteurs d’événements pour les boutons copier
+        document.querySelectorAll('.copy-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const day = this.getAttribute('data-day');
+                const slot = this.getAttribute('data-slot');
+                copyHoraires(day, slot);
+            });
+        });
+
+        // Ajouter les écouteurs d’événements pour les boutons coller
+        document.querySelectorAll('.paste-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const day = this.getAttribute('data-day');
+                const slot = this.getAttribute('data-slot');
+                pasteHoraires(day, slot);
+            });
+        });
+
+        // Ajouter l’écouteur pour le bouton sauvegarder
+        document.getElementById('save-btn').addEventListener('click', saveHoraires);
+
+        // Initialiser l’application au chargement
+        loadHoraires();
+    </script>
+</body>
+</html>
