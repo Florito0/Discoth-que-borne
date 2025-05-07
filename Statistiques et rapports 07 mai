@@ -1,0 +1,2371 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rapports et Statistiques - Discothèque</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        /* Styles généraux */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background-color: #ffffff;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        .main-content {
+            margin-left: 220px;
+            padding: 30px;
+            width: calc(100% - 220px);
+            transition: all 0.3s ease;
+        }
+
+        .main-content.collapsed {
+            margin-left: 60px;
+            width: calc(100% - 60px);
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .dashboard-card {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .dashboard-card h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .dashboard-card p {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #f5f5f5;
+            border: none;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #666;
+            transition: all 0.3s ease;
+        }
+
+        .tab:hover {
+            background: #e0e0e0;
+        }
+
+        .tab.active {
+            background: #ffffff;
+            color: #9733EE;
+            border-bottom: 2px solid #9733EE;
+        }
+
+        .tab-content {
+            display: none;
+            background: #ffffff;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            position: relative; /* Position relative pour que le z-index fonctionne */
+            z-index: 3; /* z-index plus bas que l'info-bulle */
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .tab-content h2 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filters select,
+        .filters input[type="number"],
+        .filters input[type="date"] {
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .filters label {
+            font-size: 14px;
+            color: #666;
+            margin-left: 5px;
+            margin-right: 10px;
+        }
+
+        .filters .gender-filter {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .filters .gender-filter input[type="checkbox"],
+        .filters .gender-filter input[type="radio"] {
+            margin-right: 5px;
+        }
+
+        .filters .input-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            flex-wrap: nowrap;
+        }
+
+        .chart-container {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .back-btn {
+            padding: 8px 16px;
+            background: #e0e0e0;
+            border: none;
+            border-radius: 8px;
+            color: #333;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 10px;
+            display: none;
+        }
+
+        .back-btn:hover {
+            background: #cccccc;
+        }
+
+        .chart-details {
+            background: #f9f9f9;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .chart-details p {
+            font-size: 14px;
+            margin: 5px 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .chart-details input[type="text"] {
+            margin-left: 10px;
+            padding: 5px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+            width: 300px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(to right, #9733EE, #DA22FF);
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(to right, #DA22FF, #9733EE);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(151, 51, 238, 0.3);
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #cccccc;
+        }
+
+        .btn-danger {
+            background: #ff5555;
+            color: #ffffff;
+        }
+
+        .btn-danger:hover {
+            background: #ff7777;
+        }
+
+        .vestiaire-gauge {
+            margin-bottom: 20px;
+        }
+
+        .vestiaire-gauge progress {
+            width: 100%;
+            height: 20px;
+            border-radius: 10px;
+        }
+
+        .vestiaire-gauge progress::-webkit-progress-value {
+            background: #4CAF50;
+            border-radius: 10px;
+        }
+
+        .vestiaire-gauge progress.warning::-webkit-progress-value {
+            background: #FF9800;
+        }
+
+        .vestiaire-gauge progress.danger::-webkit-progress-value {
+            background: #F44336;
+        }
+
+        .vestiaire-gauge p {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            overflow-y: visible; /* S'assure que l'info-bulle n'est pas coupée verticalement */
+            position: relative; /* Permet au z-index de fonctionner correctement */
+            z-index: 1; /* z-index bas pour que l'info-bulle passe au-dessus */
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .data-table th {
+            background: #f5f5f5;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .data-table td {
+            color: #666;
+        }
+
+        .data-table td.editable:hover {
+            background: #f0f0f0;
+            cursor: pointer;
+        }
+
+        .positive {
+            color: #4CAF50 !important;
+        }
+
+        .negative {
+            color: #F44336 !important;
+        }
+
+        .search-cancel {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-cancel input,
+        .search-cancel select {
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            width: 200px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .modal-content textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .modal-content .btn-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .total {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .loader {
+            font-size: 16px;
+            color: #666;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loader::before {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            border: 2px solid #9733EE;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linearinfinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Styles pour les lignes dépliables dans le tableau du CA */
+        .toggle-row {
+            cursor: pointer;
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+
+        .toggle-row:hover {
+            background-color: #e0e0e0;
+        }
+
+        .sub-row {
+            display: none;
+        }
+
+        .sub-row.visible {
+            display: table-row;
+        }
+
+        /* Style pour l'info-bulle de "Taux TVA" */
+        .tooltip {
+            position: relative; /* Position relative pour que l'info-bulle soit positionnée par rapport à cet élément */
+            display: inline-block; /* Permet à l'élément de s'intégrer dans le flux du texte */
+            margin-left: 5px; /* Espace à gauche pour l'esthétique */
+        }
+
+        /* Style de l'icône "?" */
+        .tooltip .tooltip-icon {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            background-color: rgba(151, 51, 238, 0.2); /* Couleur de fond violet clair */
+            color: #333; /* Couleur du texte */
+            border-radius: 50%; /* Forme circulaire */
+            text-align: center;
+            line-height: 16px; /* Centre verticalement le "?" */
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer; /* Indique que l'élément est interactif */
+            transition: background-color 0.3s ease; /* Transition fluide pour le survol */
+        }
+
+        /* Changement de couleur au survol de l'icône */
+        .tooltip .tooltip-icon:hover {
+            background-color: rgba(151, 51, 238, 0.4); /* Couleur plus foncée au survol */
+        }
+
+        /* Style de l'info-bulle */
+        .tooltip .tooltip-text {
+            visibility: hidden; /* Masquée par défaut */
+            width: 300px; /* Largeur fixe */
+            background-color: #333; /* Fond sombre pour meilleure lisibilité */
+            color: #fff; /* Texte blanc pour contraste */
+            text-align: center;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute; /* Position absolue par rapport à .tooltip */
+            z-index: 10000; /* z-index très élevé pour passer au-dessus du graphique */
+            top: -110%; /* Positionne l'info-bulle au-dessus de l'icône (ajusté pour éviter les débordements) */
+            left: 50%;
+            transform: translateX(-50%); /* Centre horizontalement */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Ombre pour effet de profondeur */
+            font-size: 12px;
+            opacity: 0; /* Invisible par défaut */
+            transition: opacity 0.3s ease, visibility 0.3s ease; /* Transition fluide pour l'apparition */
+        }
+
+        /* Affiche l'info-bulle au survol */
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        @media (max-width: 600px) {
+            .tooltip .tooltip-text {
+                width: 200px; /* Réduit la largeur pour les petits écrans */
+                font-size: 11px;
+                top: -120%; /* Ajuste la position pour éviter les débordements */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-content">
+        <h1>Statistiques et rapports</h1>
+
+        <!-- Tableau de bord global -->
+        <div class="dashboard">
+            <div class="dashboard-card">
+                <h3>Taux d'occupation</h3>
+                <p id="dashboardOccupancy">75%</p>
+            </div>
+            <div class="dashboard-card">
+                <h3>CA aujourd'hui</h3>
+                <p id="dashboardRevenue">3 500€</p>
+            </div>
+            <div class="dashboard-card">
+                <h3>Tickets vendus</h3>
+                <p id="dashboardTickets">200</p>
+            </div>
+            <div class="dashboard-card">
+                <h3>Vestiaire utilisé</h3>
+                <p id="vestiaireUsage">80/100</p>
+            </div>
+        </div>
+
+        <!-- Menu horizontal -->
+        <div class="tabs">
+            <button class="tab active" onclick="openTab('occupancy')">Taux d'occupation</button>
+            <button class="tab" onclick="openTab('tickets')">Rapport tickets</button>
+            <button class="tab" onclick="openTab('history')">Historique tickets</button>
+            <button class="tab" onclick="openTab('treasury')">Gestion trésorerie</button>
+            <button class="tab" onclick="openTab('revenue')">Rapport CA</button>
+        </div>
+
+        <!-- Contenu des onglets -->
+        <!-- Taux d'occupation -->
+        <div id="occupancy" class="tab-content active">
+            <h2>Taux d'occupation</h2>
+            <button class="btn btn-primary" onclick="exportToPDF('occupancy')">Exporter en PDF</button>
+            <div class="filters">
+                <select id="monthSelect" onchange="updateOccupancyChart()">
+                    <option value="2025-03">Mars 2025</option>
+                    <option value="2025-02">Février 2025</option>
+                    <option value="2025-01">Janvier 2025</option>
+                </select>
+                <select id="periodSelect" onchange="updateOccupancyChart()">
+                    <option value="month">Par mois</option>
+                    <option value="hour">Par heure</option>
+                    <option value="year">Par année</option>
+                </select>
+                <select id="ticketTypeSelect" onchange="updateOccupancyChart()">
+                    <option value="entry">Tickets d'entrée</option>
+                    <option value="vestiaire">Tickets vestiaire</option>
+                </select>
+                <div class="gender-filter">
+                    <input type="radio" id="genderTotal" name="gender" value="total" checked onchange="updateGenderSelection()">
+                    <label for="genderTotal">Total</label>
+                    <input type="checkbox" id="genderMen" name="genderMen" value="men" onchange="updateGenderSelection()">
+                    <label for="genderMen">Homme</label>
+                    <input type="checkbox" id="genderWomen" name="genderWomen" value="women" onchange="updateGenderSelection()">
+                    <label for="genderWomen">Femme</label>
+                </div>
+                <div class="input-group">
+                    <input type="number" id="capacityMax" min="1" value="500" onchange="updateCapacity()">
+                    <label for="capacityMax">Capacité d'accueil maximum</label>
+                </div>
+            </div>
+            <div class="loader" id="occupancyLoader" style="display: none; text-align: center; padding: 20px;">
+                <span>Chargement...</span>
+            </div>
+            <button class="back-btn" id="backBtn" onclick="backToMonthView()">Retour à la vue par mois</button>
+            <div class="chart-container">
+                <canvas id="occupancyChart"></canvas>
+            </div>
+            <div class="chart-details" id="chartDetails">
+                <p><strong>Date :</strong> <span id="detailDate">-</span></p>
+                <p><strong>Taux d'occupation :</strong> <span id="detailRate">-</span></p>
+                <p><strong>Information :</strong> <input type="text" id="detailInfo" value="-"></p>
+                <button class="btn btn-primary" onclick="saveInfo()">Sauvegarder</button>
+            </div>
+            <div class="data-table" id="occupancyTable">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Taux d'occupation</th>
+                            <th>Information</th>
+                        </tr>
+                    </thead>
+                    <tbody id="occupancyTableBody">
+                        <!-- Rempli dynamiquement -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Rapport tickets -->
+        <div id="tickets" class="tab-content">
+            <h2>Rapport tickets d'entrée et vestiaire</h2>
+            <button class="btn btn-primary" onclick="exportToPDF('tickets')">Exporter en PDF</button>
+            <div class="filters">
+                <select id="ticketPeriod" onchange="updateTicketsReport()">
+                    <option value="day">Jour</option>
+                    <option value="week">Semaine</option>
+                    <option value="month">Mois</option>
+                </select>
+                <select id="ticketMonth" onchange="updateTicketDays(); updateTicketsReport()">
+                    <option value="2025-03">Mars 2025</option>
+                    <option value="2025-02">Février 2025</option>
+                    <option value="2025-01">Janvier 2025</option>
+                </select>
+                <select id="ticketWeek" onchange="updateTicketsReport()" disabled>
+                    <option value="">Sélectionner une semaine</option>
+                </select>
+                <select id="ticketDay" onchange="updateTicketsReport()" disabled>
+                    <option value="">Sélectionner un jour</option>
+                </select>
+                <select id="entryTypeSelect" onchange="updateTicketsReport()">
+                    <option value="all">Tous les types d'entrée</option>
+                    <option value="noDrink">Entrée sans Boisson</option>
+                    <option value="withAlcohol">Entrée + Alcool</option>
+                    <option value="withBottle">Entrée avec Bouteille</option>
+                    <option value="offPeak">Heure Creuse</option>
+                    <option value="withSoft">Entrée + Soft</option>
+                </select>
+            </div>
+            <div class="loader" id="ticketsLoader" style="display: none; text-align: center; padding: 20px;">
+                <span>Chargement...</span>
+            </div>
+            <div class="total" id="occupancyImpact">
+                Taux d'occupation moyen : 75%
+            </div>
+            <div class="vestiaire-gauge">
+                <h3>Utilisation du vestiaire</h3>
+                <div class="filters">
+                    <div class="input-group">
+                        <input type="number" id="vestiaireMax" min="1" value="100" onchange="updateVestiaireGauge()">
+                        <label for="vestiaireMax">Définir la jauge maximum</label>
+                    </div>
+                </div>
+                <progress id="vestiaireProgress" value="80" max="100"></progress>
+                <p id="vestiaireText">80/100 cintres utilisés (maximum recommandé : 100)</p>
+            </div>
+            <div class="data-table" id="ticketsTable">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Homme</th>
+                            <th>Femme</th>
+                            <th>Total</th>
+                            <th>Impact sur le taux d'occupation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Rempli dynamiquement -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Historique tickets -->
+<div id="history" class="tab-content">
+    <h2>Historique des tickets</h2>
+    <button class="btn btn-primary" onclick="exportToPDF('history')">Exporter en PDF</button>
+    <div class="filters">
+        <select id="historyPeriod" onchange="updateHistory()">
+            <option value="month">Mois</option>
+            <option value="week">Semaine</option>
+            <option value="day">Jour</option>
+        </select>
+        <select id="historyMonth" onchange="updateHistoryDays(); updateHistory()">
+            <option value="2025-03">Mars 2025</option>
+            <option value="2025-02">Février 2025</option>
+            <option value="2025-01">Janvier 2025</option>
+        </select>
+        <select id="historyWeek" onchange="updateHistory()" disabled>
+            <option value="">Sélectionner une semaine</option>
+        </select>
+        <select id="historyDay" onchange="updateHistory()" disabled>
+            <option value="">Sélectionner un jour</option>
+        </select>
+        <select id="historyType" onchange="updateHistory()">
+            <option value="">Type : Tous</option>
+            <option value="entry">Type : Entrée</option>
+            <option value="entryNoDrink">Type : Entrée sans Boisson</option>
+            <option value="entryWithAlcohol">Type : Entrée + Alcool</option>
+            <option value="entryWithBottle">Type : Entrée avec Bouteille</option>
+            <option value="entryOffPeak">Type : Heure Creuse</option>
+            <option value="entryWithSoft">Type : Entrée + Soft</option>
+            <option value="vestiaire">Type : Vestiaire</option>
+        </select>
+        <select id="historyStatus" onchange="updateHistory()">
+            <option value="">Statut : Tous</option>
+            <option value="confirmed">Confirmé</option>
+            <option value="canceled">Annulé</option>
+        </select>
+    </div>
+    <div class="search-cancel">
+        <input type="text" id="historySearch" placeholder="Rechercher par ID ou date" onkeyup="updateHistory()">
+        <button class="btn btn-danger" onclick="showCancelModal()">Annuler commande</button>
+    </div>
+    <div class="total" id="historySummary">
+        Total tickets : 0 | Annulés : 0 | Montant total : 0€
+    </div>
+    <div class="loader" id="historyLoader" style="display: none; text-align: center; padding: 20px;">
+        <span>Chargement...</span>
+    </div>
+    <div class="data-table" id="historyTable">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Type</th>
+                    <th>Date</th>
+                    <th>Montant (€)</th>
+                    <th>Statut</th>
+                </tr>
+            </thead>
+            <tbody id="historyTableBody">
+                <!-- Rempli dynamiquement -->
+            </tbody>
+        </table>
+    </div>
+</div>
+      
+        <!-- Gestion trésorerie -->
+<div id="treasury" class="tab-content">
+            <h2>Gestion de la trésorerie</h2>
+            <button class="btn btn-primary" onclick="exportToPDF('treasury')">Exporter en PDF</button>
+            <div class="filters">
+                <select id="treasuryPeriod" onchange="updateTreasuryDays(); filterTreasury()">
+                    <option value="month">Mois</option>
+                    <option value="week">Semaine</option>
+                    <option value="day">Jour</option>
+                </select>
+                <select id="treasuryMonth" onchange="updateTreasuryDays(); filterTreasury()">
+                    <option value="2025-03">Mars 2025</option>
+                    <option value="2025-02">Février 2025</option>
+                    <option value="2025-01">Janvier 2025</option>
+                </select>
+                <select id="treasuryWeek" onchange="filterTreasury()" disabled>
+                    <option value="">Sélectionner une semaine</option>
+                </select>
+                <select id="treasuryDay" onchange="filterTreasury()" disabled>
+                    <option value="">Sélectionner un jour</option>
+                </select>
+                <select id="treasuryType" onchange="filterTreasury()">
+                    <option value="">Type : Tous</option>
+                    <option value="entry">Type : Entrée</option>
+                    <option value="entryNoDrink">Type : Entrée sans Boisson</option>
+                    <option value="entryWithAlcohol">Type : Entrée + Alcool</option>
+                    <option value="entryWithBottle">Type : Entrée avec Bouteille</option>
+                    <option value="entryOffPeak">Type : Heure Creuse</option>
+                    <option value="entryWithSoft">Type : Entrée + Soft</option>
+                    <option value="vestiaire">Type : Vestiaire</option>
+                </select>
+            </div>
+            <div class="loader" id="treasuryLoader" style="display: none; text-align: center; padding: 20px;">
+                <span>Chargement...</span>
+            </div>
+            <div class="total" id="treasuryTotal">
+                Total pour Mars 2025 : 0€
+            </div>
+            <div class="data-table" id="treasuryTable">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Montant HT (€)</th>
+                            <th>TVA (€)</th>
+                            <th>Montant TTC (€)</th>
+                            <th>Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Rempli dynamiquement -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Rapport CA -->
+        <div id="revenue" class="tab-content">
+            <h2>Rapport chiffre d'affaires</h2>
+            <button class="btn btn-primary" onclick="exportToPDF('revenue')">Exporter en PDF</button>
+            <div class="filters">
+                <select id="revenueYear" onchange="updateRevenueFilters()">
+                    <option value="2025">2025</option>
+                    <option value="2024">2024</option>
+                    <option value="2023">2023</option>
+                </select>
+                <select id="revenueMode" onchange="toggleRevenueFilters()">
+                    <option value="range">Période (De - À)</option>
+                    <option value="single">Mois unique</option>
+                </select>
+                <div id="rangeFilters" class="input-group">
+                    <label for="revenueFromMonth">De :</label>
+                    <select id="revenueFromMonth" onchange="updateRevenueReport()">
+                        <!-- Options remplies dynamiquement -->
+                    </select>
+                    <label for="revenueToMonth">À :</label>
+                    <select id="revenueToMonth" onchange="updateRevenueReport()">
+                        <!-- Options remplies dynamiquement -->
+                    </select>
+                </div>
+                <div id="singleMonthFilter" class="input-group" style="display: none;">
+                    <label for="revenueSingleMonth">Mois :</label>
+                    <select id="revenueSingleMonth" onchange="updateRevenueReport()">
+                        <!-- Options remplies dynamiquement -->
+                    </select>
+                </div>
+            </div>
+            <div class="loader" id="revenueLoader" style="display: none; text-align: center; padding: 20px;">
+                <span>Chargement...</span>
+            </div>
+            <div class="total" id="revenueTotal">
+                Total : 0€
+            </div>
+            <div class="chart-container" style="height: 400px; width: 100%;">
+                <canvas id="revenueChart"></canvas>
+            </div>
+            <div class="data-table" id="revenueTable">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Mois</th>
+                            <th>Catégorie</th>
+                            <th>Montant HT (€)</th>
+                            <th>Taux TVA <span class="tooltip"><span class="tooltip-icon">?</span><span class="tooltip-text">Vous pouvez configurer la TVA en allant dans : Configuration > Mode de paiement et Caisse > Paramètres de caisse > Paramètres de taxes.</span></span></th>
+                            <th>TVA (€)</th>
+                            <th>Montant TTC (€)</th>
+                            <th>Comparaison (€)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="revenueTableBody">
+                        <!-- Rempli dynamiquement -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Modale de confirmation pour annulation -->
+        <div id="cancelModal" class="modal">
+            <div class="modal-content">
+                <h3>Confirmer l'annulation</h3>
+                <textarea placeholder="Raison de l'annulation (obligatoire)" id="cancelReason"></textarea>
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="confirmCancel()">Confirmer</button>
+                    <button class="btn btn-secondary" onclick="closeCancelModal()">Annuler</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // === Données simulées (à remplacer par une API réelle) ===
+        // Données pour le taux d'occupation (par mois, jour, heure)
+        const occupancyData = {
+            '2025-03': Array.from({ length: 31 }, (_, i) => {
+                const menEntry = Math.floor(Math.random() * 150) + 50;
+                const womenEntry = Math.floor(Math.random() * 150) + 50;
+                const menVestiaire = Math.floor(Math.random() * 30) + 20;
+                const womenVestiaire = Math.floor(Math.random() * 30) + 20;
+                return {
+                    date: `2025-03-${String(i + 1).padStart(2, '0')}`,
+                    entry: { men: menEntry, women: womenEntry, total: menEntry + womenEntry },
+                    vestiaire: { men: menVestiaire, women: womenVestiaire, total: menVestiaire + womenVestiaire },
+                    hourlyData: Array.from({ length: 24 }, (_, h) => {
+    const hour = 12 + h; // Début à 12h
+    const hourStr = hour >= 24 ? `${String(hour - 24).padStart(2, '0')}:00` : `${hour}:00`;
+    const factor = Math.sin((h / 24) * Math.PI) * 0.8 + 0.2; // Ajustement pour 24h
+    return {
+        hour: hourStr,
+        entry: {
+            men: Math.round(menEntry * factor),
+            women: Math.round(womenEntry * factor),
+            total: Math.round((menEntry + womenEntry) * factor)
+        },
+        vestiaire: {
+            men: Math.round(menVestiaire * factor),
+            women: Math.round(womenVestiaire * factor),
+            total: Math.round((menVestiaire + womenVestiaire) * factor)
+        }
+    };
+}),
+                    info: i + 1 === 25 ? 'Soirée spéciale : forte affluence' : '-'
+                };
+            }),
+            '2025-02': Array.from({ length: 28 }, (_, i) => {
+                const menEntry = Math.floor(Math.random() * 150) + 50;
+                const womenEntry = Math.floor(Math.random() * 150) + 50;
+                const menVestiaire = Math.floor(Math.random() * 30) + 20;
+                const womenVestiaire = Math.floor(Math.random() * 30) + 20;
+                return {
+                    date: `2025-02-${String(i + 1).padStart(2, '0')}`,
+                    entry: { men: menEntry, women: womenEntry, total: menEntry + womenEntry },
+                    vestiaire: { men: menVestiaire, women: womenVestiaire, total: menVestiaire + womenVestiaire },
+                    hourlyData: Array.from({ length: 8 }, (_, h) => {
+                        const hour = 20 + h;
+                        const hourStr = hour >= 24 ? `0${hour - 24}:00` : `${hour}:00`;
+                        const factor = Math.sin((h / 8) * Math.PI) * 0.8 + 0.2;
+                        return {
+                            hour: hourStr,
+                            entry: {
+                                men: Math.round(menEntry * factor),
+                                women: Math.round(womenEntry * factor),
+                                total: Math.round((menEntry + womenEntry) * factor)
+                            },
+                            vestiaire: {
+                                men: Math.round(menVestiaire * factor),
+                                women: Math.round(womenVestiaire * factor),
+                                total: Math.round((menVestiaire + womenVestiaire) * factor)
+                            }
+                        };
+                    }),
+                    info: '-'
+                };
+            }),
+            '2025-01': Array.from({ length: 31 }, (_, i) => {
+                const menEntry = Math.floor(Math.random() * 150) + 50;
+                const womenEntry = Math.floor(Math.random() * 150) + 50;
+                const menVestiaire = Math.floor(Math.random() * 30) + 20;
+                const womenVestiaire = Math.floor(Math.random() * 30) + 20;
+                return {
+                    date: `2025-01-${String(i + 1).padStart(2, '0')}`,
+                    entry: { men: menEntry, women: womenEntry, total: menEntry + womenEntry },
+                    vestiaire: { men: menVestiaire, women: womenVestiaire, total: menVestiaire + womenVestiaire },
+                    hourlyData: Array.from({ length: 8 }, (_, h) => {
+                        const hour = 20 + h;
+                        const hourStr = hour >= 24 ? `0${hour - 24}:00` : `${hour}:00`;
+                        const factor = Math.sin((h / 8) * Math.PI) * 0.8 + 0.2;
+                        return {
+                            hour: hourStr,
+                            entry: {
+                                men: Math.round(menEntry * factor),
+                                women: Math.round(womenEntry * factor),
+                                total: Math.round((menEntry + womenEntry) * factor)
+                            },
+                            vestiaire: {
+                                men: Math.round(menVestiaire * factor),
+                                women: Math.round(womenVestiaire * factor),
+                                total: Math.round((menVestiaire + womenVestiaire) * factor)
+                            }
+                        };
+                    }),
+                    info: '-'
+                };
+            })
+        };
+
+        // Données simulées pour les tickets (par jour, semaine, mois)
+        const ticketsData = {
+            '2025-03': Array.from({ length: 31 }, (_, i) => {
+                const menNoDrink = Math.floor(Math.random() * 30) + 10;
+                const womenNoDrink = Math.floor(Math.random() * 30) + 10;
+                const menWithAlcohol = Math.floor(Math.random() * 40) + 15;
+                const womenWithAlcohol = Math.floor(Math.random() * 40) + 15;
+                const menWithBottle = Math.floor(Math.random() * 20) + 5;
+                const womenWithBottle = Math.floor(Math.random() * 20) + 5;
+                const menOffPeak = Math.floor(Math.random() * 25) + 10;
+                const womenOffPeak = Math.floor(Math.random() * 25) + 10;
+                const menWithSoft = Math.floor(Math.random() * 35) + 10;
+                const womenWithSoft = Math.floor(Math.random() * 35) + 10;
+
+                const totalNoDrink = menNoDrink + womenNoDrink;
+                const totalWithAlcohol = menWithAlcohol + womenWithAlcohol;
+                const totalWithBottle = menWithBottle + womenWithBottle;
+                const totalOffPeak = menOffPeak + womenOffPeak;
+                const totalWithSoft = menWithSoft + womenWithSoft;
+
+                const totalMenEntry = menNoDrink + menWithAlcohol + menWithBottle + menOffPeak + menWithSoft;
+                const totalWomenEntry = womenNoDrink + womenWithAlcohol + womenWithBottle + womenOffPeak + womenWithSoft;
+                const totalEntry = totalMenEntry + totalWomenEntry;
+
+                const menVestiaire = Math.floor(Math.random() * 30) + 20;
+                const womenVestiaire = Math.floor(Math.random() * 30) + 20;
+                return {
+                    date: `2025-03-${String(i + 1).padStart(2, '0')}`,
+                    entry: {
+                        noDrink: { men: menNoDrink, women: womenNoDrink, total: totalNoDrink },
+                        withAlcohol: { men: menWithAlcohol, women: womenWithAlcohol, total: totalWithAlcohol },
+                        withBottle: { men: menWithBottle, women: womenWithBottle, total: totalWithBottle },
+                        offPeak: { men: menOffPeak, women: womenOffPeak, total: totalOffPeak },
+                        withSoft: { men: menWithSoft, women: womenWithSoft, total: totalWithSoft },
+                        total: { men: totalMenEntry, women: totalWomenEntry, total: totalEntry }
+                    },
+                    vestiaire: { men: menVestiaire, women: womenVestiaire, total: menVestiaire + womenVestiaire },
+                    avgOccupancy: Math.round((totalEntry / 500) * 100)
+                };
+            }),
+            '2025-02': Array.from({ length: 28 }, (_, i) => {
+                const menNoDrink = Math.floor(Math.random() * 30) + 10;
+                const womenNoDrink = Math.floor(Math.random() * 30) + 10;
+                const menWithAlcohol = Math.floor(Math.random() * 40) + 15;
+                const womenWithAlcohol = Math.floor(Math.random() * 40) + 15;
+                const menWithBottle = Math.floor(Math.random() * 20) + 5;
+                const womenWithBottle = Math.floor(Math.random() * 20) + 5;
+                const menOffPeak = Math.floor(Math.random() * 25) + 10;
+                const womenOffPeak = Math.floor(Math.random() * 25) + 10;
+                const menWithSoft = Math.floor(Math.random() * 35) + 10;
+                const womenWithSoft = Math.floor(Math.random() * 35) + 10;
+
+                const totalNoDrink = menNoDrink + womenNoDrink;
+                const totalWithAlcohol = menWithAlcohol + womenWithAlcohol;
+                const totalWithBottle = menWithBottle + womenWithBottle;
+                const totalOffPeak = menOffPeak + womenOffPeak;
+                const totalWithSoft = menWithSoft + womenWithSoft;
+
+                const totalMenEntry = menNoDrink + menWithAlcohol + menWithBottle + menOffPeak + menWithSoft;
+                const totalWomenEntry = womenNoDrink + womenWithAlcohol + womenWithBottle + womenOffPeak + womenWithSoft;
+                const totalEntry = totalMenEntry + totalWomenEntry;
+
+                const menVestiaire = Math.floor(Math.random() * 30) + 20;
+                const womenVestiaire = Math.floor(Math.random() * 30) + 20;
+                return {
+                    date: `2025-02-${String(i + 1).padStart(2, '0')}`,
+                    entry: {
+                        noDrink: { men: menNoDrink, women: womenNoDrink, total: totalNoDrink },
+                        withAlcohol: { men: menWithAlcohol, women: womenWithAlcohol, total: totalWithAlcohol },
+                        withBottle: { men: menWithBottle, women: womenWithBottle, total: totalWithBottle },
+                        offPeak: { men: menOffPeak, women: womenOffPeak, total: totalOffPeak },
+                        withSoft: { men: menWithSoft, women: womenWithSoft, total: totalWithSoft },
+                        total: { men: totalMenEntry, women: totalWomenEntry, total: totalEntry }
+                    },
+                    vestiaire: { men: menVestiaire, women: womenVestiaire, total: menVestiaire + womenVestiaire },
+                    avgOccupancy: Math.round((totalEntry / 500) * 100)
+                };
+            }),
+            '2025-01': Array.from({ length: 31 }, (_, i) => {
+                const menNoDrink = Math.floor(Math.random() * 30) + 10;
+                const womenNoDrink = Math.floor(Math.random() * 30) + 10;
+                const menWithAlcohol = Math.floor(Math.random() * 40) + 15;
+                const womenWithAlcohol = Math.floor(Math.random() * 40) + 15;
+                const menWithBottle = Math.floor(Math.random() * 20) + 5;
+                const womenWithBottle = Math.floor(Math.random() * 20) + 5;
+                const menOffPeak = Math.floor(Math.random() * 25) + 10;
+                const womenOffPeak = Math.floor(Math.random() * 25) + 10;
+                const menWithSoft = Math.floor(Math.random() * 35) + 10;
+                const womenWithSoft = Math.floor(Math.random() * 35) + 10;
+
+                const totalNoDrink = menNoDrink + womenNoDrink;
+                const totalWithAlcohol = menWithAlcohol + womenWithAlcohol;
+                const totalWithBottle = menWithBottle + womenWithBottle;
+                const totalOffPeak = menOffPeak + womenOffPeak;
+                const totalWithSoft = menWithSoft + womenWithSoft;
+
+                const totalMenEntry = menNoDrink + menWithAlcohol + menWithBottle + menOffPeak + menWithSoft;
+                const totalWomenEntry = womenNoDrink + womenWithAlcohol + womenWithBottle + womenOffPeak + womenWithSoft;
+                const totalEntry = totalMenEntry + totalWomenEntry;
+
+                const menVestiaire = Math.floor(Math.random() * 30) + 20;
+                const womenVestiaire = Math.floor(Math.random() * 30) + 20;
+                return {
+                    date: `2025-01-${String(i + 1).padStart(2, '0')}`,
+                    entry: {
+                        noDrink: { men: menNoDrink, women: womenNoDrink, total: totalNoDrink },
+                        withAlcohol: { men: menWithAlcohol, women: womenWithAlcohol, total: totalWithAlcohol },
+                        withBottle: { men: menWithBottle, women: womenWithBottle, total: totalWithBottle },
+                        offPeak: { men: menOffPeak, women: womenOffPeak, total: totalOffPeak },
+                        withSoft: { men: menWithSoft, women: womenWithSoft, total: totalWithSoft },
+                        total: { men: totalMenEntry, women: totalWomenEntry, total: totalEntry }
+                    },
+                    vestiaire: { men: menVestiaire, women: womenVestiaire, total: menVestiaire + womenVestiaire },
+                    avgOccupancy: Math.round((totalEntry / 500) * 100)
+                };
+            })
+        };
+
+        // Données simulées pour le taux d'occupation annuel (moyenne mensuelle)
+        const yearlyData = Array.from({ length: 12 }, (_, i) => {
+            const month = String(i + 1).padStart(2, '0');
+            const monthKey = `2025-${month}`;
+            const monthData = occupancyData[monthKey] || [];
+            const avgEntryMen = monthData.length ? Math.round(monthData.reduce((sum, d) => sum + d.entry.men, 0) / monthData.length) : 0;
+            const avgEntryWomen = monthData.length ? Math.round(monthData.reduce((sum, d) => sum + d.entry.women, 0) / monthData.length) : 0;
+            const avgVestiaireMen = monthData.length ? Math.round(monthData.reduce((sum, d) => sum + d.vestiaire.men, 0) / monthData.length) : 0;
+            const avgVestiaireWomen = monthData.length ? Math.round(monthData.reduce((sum, d) => sum + d.vestiaire.women, 0) / monthData.length) : 0;
+            const info = monthData.find(d => d.info !== '-')?.info || '-';
+            return {
+                month: monthKey,
+                entry: { men: avgEntryMen, women: avgEntryWomen, total: avgEntryMen + avgEntryWomen },
+                vestiaire: { men: avgVestiaireMen, women: avgVestiaireWomen, total: avgVestiaireMen + avgVestiaireWomen },
+                info: info
+            };
+        });
+
+        // Données simulées pour le chiffre d'affaires (CA) avec montants TTC
+        const revenueData = {
+            '2025': [
+                { month: '2025-01', noDrink: 2000, withAlcoholBottle: 3000, offPeak: 1500, withSoft: 1500, vestiaire: 2000 },
+                { month: '2025-02', noDrink: 2500, withAlcoholBottle: 3500, offPeak: 2000, withSoft: 1500, vestiaire: 2500 },
+                { month: '2025-03', noDrink: 3000, withAlcoholBottle: 4000, offPeak: 2500, withSoft: 2500, vestiaire: 3000 }
+            ],
+            '2024': [
+                { month: '2024-01', noDrink: 1500, withAlcoholBottle: 2500, offPeak: 1500, withSoft: 1500, vestiaire: 1500 },
+                { month: '2024-02', noDrink: 2000, withAlcoholBottle: 3000, offPeak: 2000, withSoft: 1500, vestiaire: 1800 },
+                { month: '2024-03', noDrink: 2500, withAlcoholBottle: 3000, offPeak: 2000, withSoft: 1500, vestiaire: 2000 }
+            ],
+            '2023': [
+                { month: '2023-01', noDrink: 1500, withAlcoholBottle: 2000, offPeak: 1000, withSoft: 1500, vestiaire: 1200 },
+                { month: '2023-02', noDrink: 2000, withAlcoholBottle: 2500, offPeak: 1500, withSoft: 1500, vestiaire: 1500 },
+                { month: '2023-03', noDrink: 2000, withAlcoholBottle: 3000, offPeak: 1500, withSoft: 1500, vestiaire: 1600 }
+            ]
+        };
+
+        // === Variables globales ===
+        let occupancyChart = null;
+        let revenueChart = null;
+        let currentSelectedData = null;
+        let currentView = 'month';
+        let selectedDayData = null;
+        const savedInfo = JSON.parse(localStorage.getItem('occupancyInfo')) || {};
+
+        // Charger les informations sauvegardées
+        Object.keys(occupancyData).forEach(month => {
+            occupancyData[month].forEach(entry => {
+                if (savedInfo[entry.date]) {
+                    entry.info = savedInfo[entry.date];
+                }
+            });
+        });
+        yearlyData.forEach(entry => {
+            if (savedInfo[entry.month]) {
+                entry.info = savedInfo[entry.month];
+            }
+        });
+
+        const savedCapacityMax = localStorage.getItem('capacityMax');
+        if (savedCapacityMax) document.getElementById('capacityMax').value = savedCapacityMax;
+
+        const savedVestiaireMax = localStorage.getItem('vestiaireMax');
+        if (savedVestiaireMax) document.getElementById('vestiaireMax').value = savedVestiaireMax;
+
+        // === Fonctions utilitaires ===
+        function getDayInitial(dateStr) {
+            const date = new Date(dateStr);
+            const days = ['D', 'L', 'M', 'M', 'J', 'V', 'S'];
+            return days[date.getDay()];
+        }
+
+        function calculateOccupancyRates(data, ticketType, genderTotal, genderMen, genderWomen, max) {
+            const datasets = [];
+            if (genderTotal) {
+                const rates = data.map(d => Math.round((d[ticketType].total / max) * 100));
+                datasets.push({
+                    label: `Taux d'occupation (${ticketType === 'entry' ? "Tickets d'entrée" : 'Tickets vestiaire'} - Total) (%)`,
+                    data: rates,
+                    borderColor: '#9733EE',
+                    backgroundColor: 'rgba(151, 51, 238, 0.2)',
+                    fill: true,
+                });
+            } else {
+                if (genderMen) {
+                    const rates = data.map(d => Math.round((d[ticketType].men / max) * 100));
+                    datasets.push({
+                        label: `Taux d'occupation (${ticketType === 'entry' ? "Tickets d'entrée" : 'Tickets vestiaire'} - Homme) (%)`,
+                        data: rates,
+                        borderColor: '#1E90FF',
+                        backgroundColor: 'rgba(30, 144, 255, 0.2)',
+                        fill: true,
+                    });
+                }
+                if (genderWomen) {
+                    const rates = data.map(d => Math.round((d[ticketType].women / max) * 100));
+                    datasets.push({
+                        label: `Taux d'occupation (${ticketType === 'entry' ? "Tickets d'entrée" : 'Tickets vestiaire'} - Femme) (%)`,
+                        data: rates,
+                        borderColor: '#FF69B4',
+                        backgroundColor: 'rgba(255, 105, 180, 0.2)',
+                        fill: true,
+                    });
+                }
+            }
+            return datasets;
+        }
+
+        function exportToPDF(tabId) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const table = document.querySelector(`#${tabId}Table table`);
+            const chartCanvas = document.querySelector(`#${tabId} .chart-container canvas`);
+            const filters = document.querySelector(`#${tabId} .filters`);
+
+            doc.setFontSize(16);
+            doc.text(document.querySelector(`#${tabId} h2`).textContent, 10, 10);
+
+            let filterText = 'Filtres appliqués : ';
+            filters.querySelectorAll('select, input:checked').forEach(el => {
+                if (el.tagName === 'SELECT') {
+                    filterText += `${el.previousElementSibling?.textContent || ''}${el.options[el.selectedIndex].text}, `;
+                } else if (el.type === 'checkbox' || el.type === 'radio') {
+                    filterText += `${el.nextElementSibling.textContent}, `;
+                }
+            });
+            doc.setFontSize(12);
+            doc.text(filterText, 10, 20);
+
+            if (chartCanvas) {
+                const chartImage = chartCanvas.toDataURL('image/png');
+                doc.addImage(chartImage, 'PNG', 10, 30, 190, 100);
+            }
+
+            doc.autoTable({
+                html: table,
+                startY: chartCanvas ? 140 : 30,
+                styles: { fontSize: 10 },
+                headStyles: { fillColor: [151, 51, 238] },
+                bodyStyles: { textColor: [51, 51, 51] }
+            });
+
+            doc.save(`${tabId}-report.pdf`);
+        }
+
+        // === Fonctions de données ===
+        async function fetchOccupancyData(month) {
+            const loader = document.getElementById('occupancyLoader');
+            loader.style.display = 'flex';
+            try {
+                return new Promise(resolve => {
+                    setTimeout(() => resolve(occupancyData[month] || []), 500);
+                });
+            } finally {
+                loader.style.display = 'none';
+            }
+        }
+
+        async function fetchTicketsData(period, month, week, day, entryType) {
+            const loader = document.getElementById('ticketsLoader');
+            loader.style.display = 'flex';
+            try {
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                        let filteredData = ticketsData[month] || [];
+                        let result = {
+                            entry: {
+                                noDrink: { men: 0, women: 0, total: 0 },
+                                withAlcohol: { men: 0, women: 0, total: 0 },
+                                withBottle: { men: 0, women: 0, total: 0 },
+                                offPeak: { men: 0, women: 0, total: 0 },
+                                withSoft: { men: 0, women: 0, total: 0 },
+                                total: { men: 0, women: 0, total: 0 }
+                            },
+                            vestiaire: { men: 0, women: 0, total: 0 },
+                            avgOccupancy: 0
+                        };
+
+                        if (period === 'day' && day) {
+                            const dayData = filteredData.find(d => d.date === day);
+                            if (dayData) result = dayData;
+                        } else if (period === 'week' && week) {
+                            const weekDays = filteredData.filter(d => {
+                                const dayNum = parseInt(d.date.split('-')[2]);
+                                const weekNum = Math.ceil(dayNum / 7);
+                                return weekNum === parseInt(week);
+                            });
+                            if (weekDays.length > 0) {
+                                result.entry.noDrink.men = Math.round(weekDays.reduce((sum, d) => sum + d.entry.noDrink.men, 0) / weekDays.length);
+                                result.entry.noDrink.women = Math.round(weekDays.reduce((sum, d) => sum + d.entry.noDrink.women, 0) / weekDays.length);
+                                result.entry.noDrink.total = result.entry.noDrink.men + result.entry.noDrink.women;
+
+                                result.entry.withAlcohol.men = Math.round(weekDays.reduce((sum, d) => sum + d.entry.withAlcohol.men, 0) / weekDays.length);
+                                result.entry.withAlcohol.women = Math.round(weekDays.reduce((sum, d) => sum + d.entry.withAlcohol.women, 0) / weekDays.length);
+                                result.entry.withAlcohol.total = result.entry.withAlcohol.men + result.entry.withAlcohol.women;
+
+                                result.entry.withBottle.men = Math.round(weekDays.reduce((sum, d) => sum + d.entry.withBottle.men, 0) / weekDays.length);
+                                result.entry.withBottle.women = Math.round(weekDays.reduce((sum, d) => sum + d.entry.withBottle.women, 0) / weekDays.length);
+                                result.entry.withBottle.total = result.entry.withBottle.men + result.entry.withBottle.women;
+
+                                result.entry.offPeak.men = Math.round(weekDays.reduce((sum, d) => sum + d.entry.offPeak.men, 0) / weekDays.length);
+                                result.entry.offPeak.women = Math.round(weekDays.reduce((sum, d) => sum + d.entry.offPeak.women, 0) / weekDays.length);
+                                result.entry.offPeak.total = result.entry.offPeak.men + result.entry.offPeak.women;
+
+                                result.entry.withSoft.men = Math.round(weekDays.reduce((sum, d) => sum + d.entry.withSoft.men, 0) / weekDays.length);
+                                result.entry.withSoft.women = Math.round(weekDays.reduce((sum, d) => sum + d.entry.withSoft.women, 0) / weekDays.length);
+                                result.entry.withSoft.total = result.entry.withSoft.men + result.entry.withSoft.women;
+
+                                result.entry.total.men = result.entry.noDrink.men + result.entry.withAlcohol.men + result.entry.withBottle.men + result.entry.offPeak.men + result.entry.withSoft.men;
+                                result.entry.total.women = result.entry.noDrink.women + result.entry.withAlcohol.women + result.entry.withBottle.women + result.entry.offPeak.women + result.entry.withSoft.women;
+                                result.entry.total.total = result.entry.total.men + result.entry.total.women;
+
+                                result.vestiaire.men = Math.round(weekDays.reduce((sum, d) => sum + d.vestiaire.men, 0) / weekDays.length);
+                                result.vestiaire.women = Math.round(weekDays.reduce((sum, d) => sum + d.vestiaire.women, 0) / weekDays.length);
+                                result.vestiaire.total = result.vestiaire.men + result.vestiaire.women;
+
+                                result.avgOccupancy = Math.round(weekDays.reduce((sum, d) => sum + d.avgOccupancy, 0) / weekDays.length);
+                            }
+                        } else if (period === 'month') {
+                            if (filteredData.length > 0) {
+                                result.entry.noDrink.men = Math.round(filteredData.reduce((sum, d) => sum + d.entry.noDrink.men, 0) / filteredData.length);
+                                result.entry.noDrink.women = Math.round(filteredData.reduce((sum, d) => sum + d.entry.noDrink.women, 0) / filteredData.length);
+                                result.entry.noDrink.total = result.entry.noDrink.men + result.entry.noDrink.women;
+
+                                result.entry.withAlcohol.men = Math.round(filteredData.reduce((sum, d) => sum + d.entry.withAlcohol.men, 0) / filteredData.length);
+                                result.entry.withAlcohol.women = Math.round(filteredData.reduce((sum, d) => sum + d.entry.withAlcohol.women, 0) / filteredData.length);
+                                result.entry.withAlcohol.total = result.entry.withAlcohol.men + result.entry.withAlcohol.women;
+
+                                result.entry.withBottle.men = Math.round(filteredData.reduce((sum, d) => sum + d.entry.withBottle.men, 0) / filteredData.length);
+                                result.entry.withBottle.women = Math.round(filteredData.reduce((sum, d) => sum + d.entry.withBottle.women, 0) / filteredData.length);
+                                result.entry.withBottle.total = result.entry.withBottle.men + result.entry.withBottle.women;
+
+                                result.entry.offPeak.men = Math.round(filteredData.reduce((sum, d) => sum + d.entry.offPeak.men, 0) / filteredData.length);
+                                result.entry.offPeak.women = Math.round(filteredData.reduce((sum, d) => sum + d.entry.offPeak.women, 0) / filteredData.length);
+                                result.entry.offPeak.total = result.entry.offPeak.men + result.entry.offPeak.women;
+
+                                result.entry.withSoft.men = Math.round(filteredData.reduce((sum, d) => sum + d.entry.withSoft.men, 0) / filteredData.length);
+                                result.entry.withSoft.women = Math.round(filteredData.reduce((sum, d) => sum + d.entry.withSoft.women, 0) / filteredData.length);
+                                result.entry.withSoft.total = result.entry.withSoft.men + result.entry.withSoft.women;
+
+                                result.entry.total.men = result.entry.noDrink.men + result.entry.withAlcohol.men + result.entry.withBottle.men + result.entry.offPeak.men + result.entry.withSoft.men;
+                                result.entry.total.women = result.entry.noDrink.women + result.entry.withAlcohol.women + result.entry.withBottle.women + result.entry.offPeak.women + result.entry.withSoft.women;
+                                result.entry.total.total = result.entry.total.men + result.entry.total.women;
+
+                                result.vestiaire.men = Math.round(filteredData.reduce((sum, d) => sum + d.vestiaire.men, 0) / filteredData.length);
+                                result.vestiaire.women = Math.round(filteredData.reduce((sum, d) => sum + d.vestiaire.women, 0) / filteredData.length);
+                                result.vestiaire.total = result.vestiaire.men + result.vestiaire.women;
+
+                                result.avgOccupancy = Math.round(filteredData.reduce((sum, d) => sum + d.avgOccupancy, 0) / filteredData.length);
+                            }
+                        }
+                        resolve(result);
+                    }, 500);
+                });
+            } finally {
+                loader.style.display = 'none';
+            }
+        }
+
+        async function fetchRevenueData(year, mode, fromMonth, toMonth, singleMonth) {
+            const loader = document.getElementById('revenueLoader');
+            loader.style.display = 'flex';
+            try {
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                        // Vérifie que l'année existe dans revenueData
+                        if (!revenueData[year]) {
+                            throw new Error(`Aucune donnée disponible pour l'année ${year}`);
+                        }
+
+                        let filteredData = revenueData[year] || [];
+                        if (mode === 'range') {
+                            if (!fromMonth || !toMonth) {
+                                throw new Error('Les mois de début et de fin doivent être définis pour le mode "range"');
+                            }
+                            filteredData = filteredData.filter(d => {
+                                const monthDate = new Date(d.month);
+                                const fromDate = new Date(fromMonth);
+                                const toDate = new Date(toMonth);
+                                return monthDate >= fromDate && monthDate <= toDate;
+                            });
+                        } else if (mode === 'single') {
+                            if (!singleMonth) {
+                                throw new Error('Un mois doit être défini pour le mode "single"');
+                            }
+                            filteredData = filteredData.filter(d => d.month === singleMonth);
+                        }
+
+                        // Validation des données filtrées
+                        filteredData = filteredData.map(item => ({
+                            month: item.month || '',
+                            noDrink: Number(item.noDrink) || 0,
+                            withAlcoholBottle: Number(item.withAlcoholBottle) || 0,
+                            offPeak: Number(item.offPeak) || 0,
+                            withSoft: Number(item.withSoft) || 0,
+                            vestiaire: Number(item.vestiaire) || 0
+                        }));
+
+                        resolve(filteredData);
+                    }, 500);
+                });
+            } catch (error) {
+                console.error('Erreur dans fetchRevenueData :', error);
+                throw error;
+            } finally {
+                loader.style.display = 'none';
+            }
+        }
+
+        // === Fonctions de l'interface utilisateur ===
+function openTab(tabId) {
+    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    document.querySelector(`button[onclick="openTab('${tabId}')"]`).classList.add('active');
+    if (tabId === 'occupancy') updateOccupancyChart();
+    else if (tabId === 'tickets') updateTicketsReport();
+    else if (tabId === 'history') updateHistory();
+    else if (tabId === 'revenue') updateRevenueReport();
+    else if (tabId === 'treasury') filterTreasury();
+}
+
+        function updateCapacity() {
+            const capacityMaxInput = document.getElementById('capacityMax');
+            let max = parseInt(capacityMaxInput.value);
+            if (isNaN(max) || max < 1) {
+                alert('Veuillez entrer une capacité maximale valide (minimum 1).');
+                capacityMaxInput.value = localStorage.getItem('capacityMax') || 500;
+                return;
+            }
+            localStorage.setItem('capacityMax', max);
+            updateOccupancyChart();
+            updateTicketsReport();
+        }
+
+        function updateGenderSelection() {
+            const genderTotal = document.getElementById('genderTotal');
+            const genderMen = document.getElementById('genderMen');
+            const genderWomen = document.getElementById('genderWomen');
+            const target = event.target;
+
+            if (target.id === 'genderTotal' && genderTotal.checked) {
+                genderMen.checked = false;
+                genderWomen.checked = false;
+            } else if (target.id === 'genderMen' || target.id === 'genderWomen') {
+                if (genderMen.checked || genderWomen.checked) genderTotal.checked = false;
+                if (!genderMen.checked && !genderWomen.checked) genderTotalA.checked = true;
+            }
+            updateOccupancyChart();
+        }
+
+        function backToMonthView() {
+            currentView = 'month';
+            selectedDayData = null;
+            document.getElementById('backBtn').style.display = 'none';
+            document.getElementById('periodSelect').value = 'month';
+            updateOccupancyChart();
+        }
+
+        function saveInfo() {
+            if (currentSelectedData) {
+                const newText = document.getElementById('detailInfo').value || '-';
+                if (currentSelectedData.type === 'day') {
+                    currentSelectedData.data.info = newText;
+                    savedInfo[currentSelectedData.data.date] = newText;
+                } else if (currentSelectedData.type === 'month') {
+                    currentSelectedData.data.info = newText;
+                    savedInfo[currentSelectedData.data.month] = newText;
+                }
+                localStorage.setItem('occupancyInfo', JSON.stringify(savedInfo));
+                updateOccupancyChart();
+            }
+        }
+
+        function showCancelModal() {
+            document.getElementById('cancelModal').style.display = 'flex';
+        }
+
+        function closeCancelModal() {
+            document.getElementById('cancelModal').style.display = 'none';
+            document.getElementById('cancelReason').value = '';
+        }
+
+        function confirmCancel() {
+            const reason = document.getElementById('cancelReason').value;
+            if (reason) {
+                const table = document.querySelector('#historyTable tbody');
+                const row = table.querySelector('tr');
+                if (row) row.cells[4].textContent = `Annulé (Raison : ${reason})`;
+                closeCancelModal();
+            } else {
+                alert('Veuillez entrer une raison pour l\'annulation.');
+            }
+        }
+
+        function updateTicketDays() {
+            const month = document.getElementById('ticketMonth').value;
+            const daysInMonth = new Date(month.split('-')[0], month.split('-')[1], 0).getDate();
+            const daySelect = document.getElementById('ticketDay');
+            const weekSelect = document.getElementById('ticketWeek');
+            daySelect.innerHTML = '<option value="">Sélectionner un jour</option>';
+            weekSelect.innerHTML = '<option value="">Sélectionner une semaine</option>';
+
+            for (let i = 1; i <= daysInMonth; i++) {
+                const dayStr = `${month}-${String(i).padStart(2, '0')}`;
+                const option = document.createElement('option');
+                option.value = dayStr;
+                option.textContent = `${i} ${new Date(month).toLocaleString('fr-FR', { month: 'long', year: 'numeric' })}`;
+                daySelect.appendChild(option);
+            }
+
+            const weeks = Math.ceil(daysInMonth / 7);
+            for (let i = 1; i <= weeks; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = `Semaine ${i}`;
+                weekSelect.appendChild(option);
+            }
+
+            const period = document.getElementById('ticketPeriod').value;
+            daySelect.disabled = period !== 'day';
+            weekSelect.disabled = period !== 'week';
+        }
+
+        function updateVestiaireGauge() {
+            const vestiaireMaxInput = document.getElementById('vestiaireMax');
+            let max = parseInt(vestiaireMaxInput.value);
+            if (isNaN(max) || max < 1) {
+                alert('Veuillez entrer une jauge maximale valide (minimum 1).');
+                vestiaireMaxInput.value = localStorage.getItem('vestiaireMax') || 100;
+                max = parseInt(vestiaireMaxInput.value);
+            }
+            localStorage.setItem('vestiaireMax', max);
+
+            const data = ticketsData['2025-03'][24];
+            const vestiaireProgress = document.getElementById('vestiaireProgress');
+            vestiaireProgress.max = max;
+            vestiaireProgress.value = data.vestiaire.total;
+
+            const percentage = (data.vestiaire.total / max) * 100;
+            vestiaireProgress.className = '';
+            if (percentage >= 90) vestiaireProgress.classList.add('danger');
+            else if (percentage >= 75) vestiaireProgress.classList.add('warning');
+            document.getElementById('vestiaireText').textContent = `${data.vestiaire.total}/${max} cintres utilisés (maximum recommandé : ${max})`;
+            document.getElementById('vestiaireUsage').textContent = `${data.vestiaire.total}/${max}`;
+        }
+
+        // === Fonctions principales ===
+async function updateTicketsReport() {
+    const period = document.getElementById('ticketPeriod').value;
+    const month = document.getElementById('ticketMonth').value;
+    const week = document.getElementById('ticketWeek').value;
+    const day = document.getElementById('ticketDay').value;
+    const entryType = document.getElementById('entryTypeSelect').value;
+
+    updateTicketDays();
+    const data = await fetchTicketsData(period, month, week, day, entryType);
+
+    // Affichage du contexte de la sélection
+    let contextText = '';
+    if (period === 'day' && day) {
+        const selectedDate = new Date(day);
+        contextText = `Jour sélectionné : ${selectedDate.toLocaleString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}`;
+    } else if (period === 'week' && week) {
+        const year = month.split('-')[0];
+        const startOfYear = new Date(year, 0, 1);
+        const firstDayOfYear = startOfYear.getDay() || 7;
+        let weekStart = new Date(startOfYear);
+        if (firstDayOfYear !== 1) {
+            weekStart.setDate(weekStart.getDate() + (8 - firstDayOfYear));
+        }
+        weekStart.setDate(weekStart.getDate() + (week - 1) * 7);
+        const weekEnd = new Date(weekStart);
+        weekEnd.setDate(weekEnd.getDate() + 6);
+        contextText = `Semaine sélectionnée : Semaine ${week} (${weekStart.toLocaleString('fr-FR', { day: 'numeric', month: 'short' })} - ${weekEnd.toLocaleString('fr-FR', { day: 'numeric', month: 'short' })})`;
+    } else if (period === 'month') {
+        contextText = `Mois sélectionné : ${new Date(month).toLocaleString('fr-FR', { month: 'long', year: 'numeric' })}`;
+    }
+    document.getElementById('occupancyImpact').textContent = `${contextText} - Taux d'occupation moyen : ${data.avgOccupancy}%`;
+
+    updateVestiaireGauge();
+
+    const tableBody = document.querySelector('#ticketsTable tbody');
+    tableBody.innerHTML = '';
+
+    const capacityMax = parseInt(document.getElementById('capacityMax').value) || 500;
+    const types = entryType === 'all' ? ['noDrink', 'withAlcohol', 'withBottle', 'offPeak', 'withSoft', 'total'] : [entryType];
+
+    types.forEach(type => {
+        if (type !== 'vestiaire') {
+            const row = document.createElement('tr');
+            const typeLabel = {
+                noDrink: 'Entrée sans Boisson',
+                withAlcohol: 'Entrée + Alcool',
+                withBottle: 'Entrée avec Bouteille',
+                offPeak: 'Heure Creuse',
+                withSoft: 'Entrée + Soft',
+                total: 'Total Entrées'
+            }[type];
+            const impact = Math.round((data.entry[type].total / capacityMax) * 100);
+            row.innerHTML = `
+                <td>${typeLabel}</td>
+                <td>${data.entry[type].men}</td>
+                <td>${data.entry[type].women}</td>
+                <td>${data.entry[type].total}</td>
+                <td>${impact}%</td>
+            `;
+            tableBody.appendChild(row);
+        }
+    });
+
+    const vestiaireRow = document.createElement('tr');
+    const vestiaireImpact = Math.round((data.vestiaire.total / capacityMax) * 100);
+    vestiaireRow.innerHTML = `
+        <td>Vestiaire</td>
+        <td>${data.vestiaire.men}</td>
+        <td>${data.vestiaire.women}</td>
+        <td>${data.vestiaire.total}</td>
+        <td>${vestiaireImpact}%</td>
+    `;
+    tableBody.appendChild(vestiaireRow);
+}
+        async function updateOccupancyChart() {
+            const month = document.getElementById('monthSelect').value;
+            const period = document.getElementById('periodSelect').value;
+            const ticketType = document.getElementById('ticketTypeSelect').value;
+            const genderTotal = document.getElementById('genderTotal').checked;
+            const genderMen = document.getElementById('genderMen').checked;
+            const genderWomen = document.getElementById('genderWomen').checked;
+            const capacityMax = parseInt(document.getElementById('capacityMax').value) || 500;
+
+            let data, labels, datasets;
+
+            if (period === 'month') {
+                data = await fetchOccupancyData(month);
+                labels = data.map(d => `${getDayInitial(d.date)} ${d.date.split('-')[2]}`);
+                datasets = calculateOccupancyRates(data, ticketType, genderTotal, genderMen, genderWomen, capacityMax);
+            } else if (period === 'hour' && selectedDayData) {
+                data = selectedDayData.hourlyData;
+                labels = data.map(d => d.hour);
+                datasets = calculateOccupancyRates(data, ticketType, genderTotal, genderMen, genderWomen, capacityMax);
+            } else if (period === 'year') {
+                data = yearlyData;
+                labels = data.map(d => new Date(d.month).toLocaleString('fr-FR', { month: 'short' }));
+                datasets = calculateOccupancyRates(data, ticketType, genderTotal, genderMen, genderWomen, capacityMax);
+            }
+
+const ctx = document.getElementById('occupancyChart').getContext('2d');
+            if (occupancyChart) occupancyChart.destroy();
+            occupancyChart = new Chart(ctx, {
+                type: 'line',
+                data: { labels, datasets },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: { display: true, text: 'Taux d\'occupation (%)' }
+                        },
+                        x: {
+                            title: { display: true, text: period === 'hour' ? 'Heure' : 'Date' }
+                        }
+                    },
+                    plugins: {
+                        legend: { position: 'top' },
+                        tooltip: {
+                            callbacks: {
+                                label: context => `${context.dataset.label}: ${context.raw}%`
+                            }
+                        }
+                    },
+                    onClick: (event, elements) => {
+                        if (elements.length > 0) {
+                            const index = elements[0].index;
+                            if (period === 'month') {
+                                currentView = 'hour';
+                                selectedDayData = data[index];
+                                document.getElementById('periodSelect').value = 'hour';
+                                document.getElementById('backBtn').style.display = 'block';
+                                updateOccupancyChart();
+                            } else {
+                                const chartDetails = document.getElementById('chartDetails');
+                                chartDetails.style.display = 'block';
+                                if (period === 'hour') {
+                                    document.getElementById('detailDate').textContent = `${selectedDayData.date} à ${data[index].hour}`;
+                                    document.getElementById('detailRate').textContent = `${Math.round((data[index][ticketType].total / capacityMax) * 100)}%`;
+                                    document.getElementById('detailInfo').value = selectedDayData.info || '-';
+                                    currentSelectedData = { type: 'day', data: selectedDayData };
+                                } else if (period === 'year') {
+                                    document.getElementById('detailDate').textContent = data[index].month;
+                                    document.getElementById('detailRate').textContent = `${Math.round((data[index][ticketType].total / capacityMax) * 100)}%`;
+                                    document.getElementById('detailInfo').value = data[index].info || '-';
+                                    currentSelectedData = { type: 'month', data: data[index] };
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+const tableBody = document.getElementById('occupancyTableBody');
+const tableHead = document.querySelector('#occupancyTable thead tr');
+tableBody.innerHTML = '';
+
+// Variables pour suivre l'état du tri
+let sortDirection = { date: 'asc', rate: 'asc' };
+
+// Fonction pour afficher le tableau avec les données triées
+function renderTable(sortedData) {
+    tableBody.innerHTML = '';
+    if (period === 'month') {
+        sortedData.forEach(d => {
+            const rate = Math.round((d[ticketType].total / capacityMax) * 100);
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${d.date}</td>
+                <td>${rate}%</td>
+                <td class="editable">${d.info}</td>
+            `;
+            row.querySelector('.editable').addEventListener('click', () => {
+                document.getElementById('chartDetails').style.display = 'block';
+                document.getElementById('detailDate').textContent = d.date;
+                document.getElementById('detailRate').textContent = `${rate}%`;
+                document.getElementById('detailInfo').value = d.info || '-';
+                currentSelectedData = { type: 'day', data: d };
+            });
+            tableBody.appendChild(row);
+        });
+    } else if (period === 'hour' && selectedDayData) {
+        sortedData.forEach(d => {
+            const rate = Math.round((d[ticketType].total / capacityMax) * 100);
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${selectedDayData.date} ${d.hour}</td>
+                <td>${rate}%</td>
+                <td>${selectedDayData.info}</td>
+            `;
+            tableBody.appendChild(row);
+        });
+    } else if (period === 'year') {
+        sortedData.forEach(d => {
+            const rate = Math.round((d[ticketType].total / capacityMax) * 100);
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${d.month}</td>
+                <td>${rate}%</td>
+                <td class="editable">${d.info}</td>
+            `;
+            row.querySelector('.editable').addEventListener('click', () => {
+                document.getElementById('chartDetails').style.display = 'block';
+                document.getElementById('detailDate').textContent = d.month;
+                document.getElementById('detailRate').textContent = `${rate}%`;
+                document.getElementById('detailInfo').value = d.info || '-';
+                currentSelectedData = { type: 'month', data: d };
+            });
+            tableBody.appendChild(row);
+        });
+    }
+}
+
+// Ajouter des styles et gestionnaires de clics pour le tri
+tableHead.children[0].style.cursor = 'pointer'; // "Date"
+tableHead.children[1].style.cursor = 'pointer'; // "Taux d'occupation"
+
+// Tri par "Date"
+tableHead.children[0].onclick = () => {
+    sortDirection.date = sortDirection.date === 'asc' ? 'desc' : 'asc';
+    const sortedData = [...data].sort((a, b) => {
+        let aDate, bDate;
+        if (period === 'month') {
+            aDate = new Date(a.date);
+            bDate = new Date(b.date);
+        } else if (period === 'year') {
+            aDate = new Date(a.month);
+            bDate = new Date(b.month);
+        } else if (period === 'hour' && selectedDayData) {
+            aDate = a.hour;
+            bDate = b.hour;
+        }
+        return sortDirection.date === 'asc' ? aDate - bDate : bDate - aDate;
+    });
+    renderTable(sortedData);
+};
+
+// Tri par "Taux d'occupation"
+tableHead.children[1].onclick = () => {
+    sortDirection.rate = sortDirection.rate === 'asc' ? 'desc' : 'asc';
+    const sortedData = [...data].sort((a, b) => {
+        const aRate = Math.round((a[ticketType].total / capacityMax) * 100);
+        const bRate = Math.round((b[ticketType].total / capacityMax) * 100);
+        return sortDirection.rate === 'asc' ? aRate - bRate : bRate - aRate;
+    });
+    renderTable(sortedData);
+};
+
+// Affichage initial du tableau
+renderTable(data);
+        }
+
+        function toggleRevenueFilters() {
+            const mode = document.getElementById('revenueMode').value;
+            document.getElementById('rangeFilters').style.display = mode === 'range' ? 'flex' : 'none';
+            document.getElementById('singleMonthFilter').style.display = mode === 'single' ? 'flex' : 'none';
+            updateRevenueReport();
+        }
+
+        function updateRevenueFilters() {
+            const year = document.getElementById('revenueYear').value;
+            const fromMonthSelect = document.getElementById('revenueFromMonth');
+            const toMonthSelect = document.getElementById('revenueToMonth');
+            const singleMonthSelect = document.getElementById('revenueSingleMonth');
+
+            fromMonthSelect.innerHTML = '';
+            toMonthSelect.innerHTML = '';
+            singleMonthSelect.innerHTML = '';
+
+            const months = revenueData[year] ? revenueData[year].map(d => d.month) : [];
+            months.forEach(month => {
+                const option1 = document.createElement('option');
+                option1.value = month;
+                option1.textContent = new Date(month).toLocaleString('fr-FR', { month: 'long', year: 'numeric' });
+                fromMonthSelect.appendChild(option1);
+
+                const option2 = document.createElement('option');
+                option2.value = month;
+                option2.textContent = new Date(month).toLocaleString('fr-FR', { month: 'long', year: 'numeric' });
+                toMonthSelect.appendChild(option2);
+
+                const option3 = document.createElement('option');
+                option3.value = month;
+                option3.textContent = new Date(month).toLocaleString('fr-FR', { month: 'long', year: 'numeric' });
+                singleMonthSelect.appendChild(option3);
+            });
+
+            if (months.length > 0) {
+                toMonthSelect.value = months[months.length - 1];
+            }
+            updateRevenueReport();
+        }
+async function updateRevenueReport() {
+    const year = document.getElementById('revenueYear').value;
+    const mode = document.getElementById('revenueMode').value;
+    const fromMonth = document.getElementById('revenueFromMonth').value;
+    const toMonth = document.getElementById('revenueToMonth').value;
+    const singleMonth = document.getElementById('revenueSingleMonth').value;
+
+    // Récupérer les données filtrées
+    let data = await fetchRevenueData(year, mode, fromMonth, toMonth, singleMonth);
+
+    // === Création du graphique avec deux colonnes par mois ===
+    // Les labels sont les mois (ex. "janv", "févr", "mars")
+    const labels = data.map(d => new Date(d.month).toLocaleString('fr-FR', { month: 'short' }));
+
+    // Calculer les données pour "Total entrée" (cumul des entrées) et "Vestiaire"
+    const totalEntryData = data.map(d => (d.noDrink || 0) + (d.withAlcoholBottle || 0) + (d.offPeak || 0) + (d.withSoft || 0));
+    const vestiaireData = data.map(d => d.vestiaire || 0);
+
+    // Définir les datasets pour le graphique : une colonne pour "Total entrée" et une pour "Vestiaire"
+    const datasets = [
+        {
+            label: 'Entrées (€)', // Label pour la colonne "Total entrée"
+            data: totalEntryData, // Données cumulées des entrées
+            backgroundColor: 'rgba(151, 51, 238, 0.5)', // Violet clair (comme dans l'image)
+            borderColor: '#9733EE', // Bordure violette
+            borderWidth: 1
+        },
+        {
+            label: 'Vestiaire (€)', // Label pour la colonne "Vestiaire"
+            data: vestiaireData, // Données du vestiaire
+            backgroundColor: 'rgba(255, 99, 132, 0.5)', // Rose clair (comme dans l'image)
+            borderColor: '#FF6384', // Bordure rose
+            borderWidth: 1
+        }
+    ];
+
+    // Créer le graphique avec Chart.js
+    const ctx = document.getElementById('revenueChart').getContext('2d');
+    if (revenueChart) revenueChart.destroy();
+    revenueChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: datasets
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    stacked: false, // Pas d'empilement, les colonnes doivent être côte à côte
+                    title: { display: true, text: 'Mois' }
+                },
+                y: {
+                    stacked: false, // Pas d'empilement sur l'axe Y
+                    beginAtZero: true,
+                    title: { display: true, text: 'Montant (€)' }
+                }
+            },
+            plugins: {
+                legend: { position: 'top' }, // Légende en haut
+                tooltip: {
+                    callbacks: {
+                        label: context => `${context.dataset.label}: ${context.raw}€` // Afficher les montants dans les tooltips
+                    }
+                }
+            }
+        }
+    });
+
+    // === Création du tableau avec tri des mois en ordre décroissant ===
+    const tableBody = document.getElementById('revenueTableBody');
+    tableBody.innerHTML = '';
+
+    // Calcul du total global pour la période sélectionnée
+    let grandTotalTTC = 0;
+
+    // Créer une copie des données pour le tri décroissant (pour le tableau)
+    const sortedData = [...data].sort((a, b) => new Date(b.month) - new Date(a.month));
+
+    // Stocker les totaux TTC par mois pour calculer les comparaisons
+    const monthlyTotalsTTC = {};
+    sortedData.forEach(d => {
+        const monthKey = d.month;
+        const totalTTC = (d.noDrink || 0) + (d.withAlcoholBottle || 0) + (d.offPeak || 0) + (d.withSoft || 0) + (d.vestiaire || 0);
+        monthlyTotalsTTC[monthKey] = totalTTC;
+    });
+
+    // Parcourir les données triées pour remplir le tableau
+    sortedData.forEach((d, index) => {
+        const monthLabel = new Date(d.month).toLocaleString('fr-FR', { month: 'long', year: 'numeric' });
+
+        // Calcul des montants HT, TVA et TTC pour chaque catégorie
+        const categories = [
+            { name: 'Entrée sans Boisson', ttc: d.noDrink, vatRate: 0.20 },
+            { name: 'Entrée + Alcool/Bouteille', ttc: d.withAlcoholBottle, vatRate: 0.20 },
+            { name: 'Heure Creuse', ttc: d.offPeak, vatRate: 0.10 },
+            { name: 'Entrée + Soft', ttc: d.withSoft, vatRate: 0.10 },
+            { name: 'Vestiaire', ttc: d.vestiaire, vatRate: 0.20 }
+        ];
+
+        // Calcul du total HT, TVA et TTC pour le mois
+        let totalHT = 0;
+        let totalTVA = 0;
+        let totalTTC = 0;
+
+        categories.forEach(cat => {
+            const ht = cat.ttc / (1 + cat.vatRate); // Calcul du HT à partir du TTC
+            const tva = cat.ttc - ht; // Calcul de la TVA
+            totalHT += ht;
+            totalTVA += tva;
+            totalTTC += cat.ttc;
+        });
+
+        // Calcul de la comparaison avec le mois précédent (si applicable)
+        let comparison = '-';
+        let comparisonClass = '';
+        if (index < sortedData.length - 1) { // S'il y a un mois précédent
+            const previousMonth = sortedData[index + 1].month;
+            const previousTotalTTC = monthlyTotalsTTC[previousMonth];
+            const diff = totalTTC - previousTotalTTC;
+            comparison = diff >= 0 ? `+${diff.toFixed(2)}` : diff.toFixed(2);
+            comparisonClass = diff >= 0 ? 'positive' : 'negative';
+        }
+
+        // Ajouter la ligne "Mois" (toggle-row) pour le mois
+        const toggleRow = document.createElement('tr');
+        toggleRow.classList.add('toggle-row');
+        toggleRow.innerHTML = `
+            <td>${monthLabel}</td>
+            <td>Total</td>
+            <td>${totalHT.toFixed(2)}</td>
+            <td>-</td> <!-- La colonne "Taux TVA" est vide pour la catégorie "Total" -->
+            <td>${totalTVA.toFixed(2)}</td>
+            <td>${totalTTC.toFixed(2)}</td>
+            <td class="${comparisonClass}">${comparison}</td>
+        `;
+        tableBody.appendChild(toggleRow);
+
+        // Ajouter les sous-lignes pour chaque catégorie
+        categories.forEach(cat => {
+            const ht = (cat.ttc / (1 + cat.vatRate)).toFixed(2);
+            const tva = (cat.ttc - (cat.ttc / (1 + cat.vatRate))).toFixed(2);
+
+            // Calcul de la comparaison pour chaque catégorie (si applicable)
+            let catComparison = '-';
+            let catComparisonClass = '';
+            if (index < sortedData.length - 1) { // S'il y a un mois précédent
+                const previousData = sortedData[index + 1];
+                const previousTTC = previousData[Object.keys(previousData).find(key => {
+                    if (cat.name === 'Entrée sans Boisson') return key === 'noDrink';
+                    if (cat.name === 'Entrée + Alcool/Bouteille') return key === 'withAlcoholBottle';
+                    if (cat.name === 'Heure Creuse') return key === 'offPeak';
+                    if (cat.name === 'Entrée + Soft') return key === 'withSoft';
+                    if (cat.name === 'Vestiaire') return key === 'vestiaire';
+                    return false;
+                })];
+                const diff = cat.ttc - previousTTC;
+                catComparison = diff >= 0 ? `+${diff.toFixed(2)}` : diff.toFixed(2);
+                catComparisonClass = diff >= 0 ? 'positive' : 'negative';
+            }
+
+            const subRow = document.createElement('tr');
+            subRow.classList.add('sub-row');
+            subRow.innerHTML = `
+                <td></td>
+                <td>${cat.name}</td>
+                <td>${ht}</td>
+                <td>${(cat.vatRate * 100).toFixed(0)}%</td>
+                <td>${tva}</td>
+                <td>${cat.ttc.toFixed(2)}</td>
+                <td class="${catComparisonClass}">${catComparison}</td>
+            `;
+            tableBody.appendChild(subRow);
+        });
+
+        // Ajouter au total global
+        grandTotalTTC += totalTTC;
+
+        // Ajouter un événement pour déplier/replier les sous-lignes
+        toggleRow.addEventListener('click', () => {
+            const subRows = toggleRow.nextElementSibling;
+            let currentRow = subRows;
+            while (currentRow && currentRow.classList.contains('sub-row')) {
+                currentRow.classList.toggle('visible');
+                currentRow = currentRow.nextElementSibling;
+            }
+        });
+    });
+
+    // Mettre à jour le total global affiché
+    document.getElementById('revenueTotal').textContent = `Total : ${grandTotalTTC.toFixed(2)}€`;
+}
+      
+async function filterTreasury() {
+        const period = document.getElementById('treasuryPeriod').value;
+        const month = document.getElementById('treasuryMonth').value;
+        const week = document.getElementById('treasuryWeek').value;
+        const day = document.getElementById('treasuryDay').value;
+        const typeFilter = document.getElementById('treasuryType').value;
+        const loader = document.getElementById('treasuryLoader');
+        const tableBody = document.querySelector('#treasuryTable tbody');
+        const totalElement = document.querySelector('#treasury .total');
+
+        loader.style.display = 'flex';
+        tableBody.innerHTML = '';
+
+        try {
+            const data = ticketsData[month] || [];
+            if (!data.length) {
+                tableBody.innerHTML = '<tr><td colspan="6">Aucune donnée disponible pour ce mois.</td></tr>';
+                totalElement.textContent = `Total pour ${new Date(month).toLocaleString('fr-FR', { month: 'long', year: 'numeric' })} : 0€`;
+                return;
+            }
+
+            let filteredData = [];
+            let totalTTC = 0;
+
+            const prices = {
+                entryNoDrink: 10,
+                entryWithAlcohol: 10,
+                entryWithBottle: 20,
+                entryOffPeak: 8,
+                entryWithSoft: 12,
+                vestiaire: 5
+            };
+
+            const vatRates = {
+                entryNoDrink: 0.20,
+                entryWithAlcohol: 0.20,
+                entryWithBottle: 0.20,
+                entryOffPeak: 0.10,
+                entryWithSoft: 0.10,
+                vestiaire: 0.20
+            };
+
+            if (period === 'month') {
+                data.forEach(day => {
+                    const entryTotal = day.entry.total.total * 15;
+                    const vestiaireTotal = day.vestiaire.total * prices.vestiaire;
+
+                    if (typeFilter === '' || typeFilter === 'Type : Tous') {
+                        filteredData.push({ date: day.date, type: 'Entrée', ttc: entryTotal, vatRate: 0.20, status: 'Confirmé' });
+                        filteredData.push({ date: day.date, type: 'Vestiaire', ttc: vestiaireTotal, vatRate: vatRates.vestiaire, status: 'Confirmé' });
+                        totalTTC += entryTotal + vestiaireTotal;
+                    } else if (typeFilter === 'entry') {
+                        filteredData.push({ date: day.date, type: 'Entrée', ttc: entryTotal, vatRate: 0.20, status: 'Confirmé' });
+                        totalTTC += entryTotal;
+                    } else if (typeFilter === 'vestiaire') {
+                        filteredData.push({ date: day.date, type: 'Vestiaire', ttc: vestiaireTotal, vatRate: vatRates.vestiaire, status: 'Confirmé' });
+                        totalTTC += vestiaireTotal;
+                    } else {
+                        const entryTypes = {
+                            'entryNoDrink': { label: 'Entrée sans Boisson', total: day.entry.noDrink.total * prices.entryNoDrink, vatRate: vatRates.entryNoDrink },
+                            'entryWithAlcohol': { label: 'Entrée + Alcool', total: day.entry.withAlcohol.total * prices.entryWithAlcohol, vatRate: vatRates.entryWithAlcohol },
+                            'entryWithBottle': { label: 'Entrée avec Bouteille', total: day.entry.withBottle.total * prices.entryWithBottle, vatRate: vatRates.entryWithBottle },
+                            'entryOffPeak': { label: 'Heure Creuse', total: day.entry.offPeak.total * prices.entryOffPeak, vatRate: vatRates.entryOffPeak },
+                            'entryWithSoft': { label: 'Entrée + Soft', total: day.entry.withSoft.total * prices.entryWithSoft, vatRate: vatRates.entryWithSoft }
+                        };
+                        if (entryTypes[typeFilter]) {
+                            filteredData.push({ date: day.date, type: entryTypes[typeFilter].label, ttc: entryTypes[typeFilter].total, vatRate: entryTypes[typeFilter].vatRate, status: 'Confirmé' });
+                            totalTTC += entryTypes[typeFilter].total;
+                        }
+                    }
+                });
+            } else if (period === 'week' && week) {
+                const weekNum = parseInt(week);
+                const weekData = data.filter(d => Math.ceil(parseInt(d.date.split('-')[2]) / 7) === weekNum);
+                weekData.forEach(day => {
+                    const entryTotal = day.entry.total.total * 15;
+                    const vestiaireTotal = day.vestiaire.total * prices.vestiaire;
+
+                    if (typeFilter === '' || typeFilter === 'Type : Tous') {
+                        filteredData.push({ date: day.date, type: 'Entrée', ttc: entryTotal, vatRate: 0.20, status: 'Confirmé' });
+                        filteredData.push({ date: day.date, type: 'Vestiaire', ttc: vestiaireTotal, vatRate: vatRates.vestiaire, status: 'Confirmé' });
+                        totalTTC += entryTotal + vestiaireTotal;
+                    } else if (typeFilter === 'entry') {
+                        filteredData.push({ date: day.date, type: 'Entrée', ttc: entryTotal, vatRate: 0.20, status: 'Confirmé' });
+                        totalTTC += entryTotal;
+                    } else if (typeFilter === 'vestiaire') {
+                        filteredData.push({ date: day.date, type: 'Vestiaire', ttc: vestiaireTotal, vatRate: vatRates.vestiaire, status: 'Confirmé' });
+                        totalTTC += vestiaireTotal;
+                    } else {
+                        const entryTypes = {
+                            'entryNoDrink': { label: 'Entrée sans Boisson', total: day.entry.noDrink.total * prices.entryNoDrink, vatRate: vatRates.entryNoDrink },
+                            'entryWithAlcohol': { label: 'Entrée + Alcool', total: day.entry.withAlcohol.total * prices.entryWithAlcohol, vatRate: vatRates.entryWithAlcohol },
+                            'entryWithBottle': { label: 'Entrée avec Bouteille', total: day.entry.withBottle.total * prices.entryWithBottle, vatRate: vatRates.entryWithBottle },
+                            'entryOffPeak': { label: 'Heure Creuse', total: day.entry.offPeak.total * prices.entryOffPeak, vatRate: vatRates.entryOffPeak },
+                            'entryWithSoft': { label: 'Entrée + Soft', total: day.entry.withSoft.total * prices.entryWithSoft, vatRate: vatRates.entryWithSoft }
+                        };
+                        if (entryTypes[typeFilter]) {
+                            filteredData.push({ date: day.date, type: entryTypes[typeFilter].label, ttc: entryTypes[typeFilter].total, vatRate: entryTypes[typeFilter].vatRate, status: 'Confirmé' });
+                            totalTTC += entryTypes[typeFilter].total;
+                        }
+                    }
+                });
+            } else if (period === 'day' && day) {
+                const dayData = data.find(d => d.date === day);
+                if (dayData) {
+                    const entryTotal = dayData.entry.total.total * 10;
+                    const vestiaireTotal = dayData.vestiaire.total * prices.vestiaire;
+
+                    if (typeFilter === '' || typeFilter === 'Type : Tous') {
+                        filteredData.push({ date: dayData.date, type: 'Entrée', ttc: entryTotal, vatRate: 0.20, status: 'Confirmé' });
+                        filteredData.push({ date: dayData.date, type: 'Vestiaire', ttc: vestiaireTotal, vatRate: vatRates.vestiaire, status: 'Confirmé' });
+                        totalTTC += entryTotal + vestiaireTotal;
+                    } else if (typeFilter === 'entry') {
+                        filteredData.push({ date: dayData.date, type: 'Entrée', ttc: entryTotal, vatRate: 0.20, status: 'Confirmé' });
+                        totalTTC += entryTotal;
+                    } else if (typeFilter === 'vestiaire') {
+                        filteredData.push({ date: dayData.date, type: 'Vestiaire', ttc: vestiaireTotal, vatRate: vatRates.vestiaire, status: 'Confirmé' });
+                        totalTTC += vestiaireTotal;
+                    } else {
+                        const entryTypes = {
+                            'entryNoDrink': { label: 'Entrée sans Boisson', total: dayData.entry.noDrink.total * prices.entryNoDrink, vatRate: vatRates.entryNoDrink },
+                            'entryWithAlcohol': { label: 'Entrée + Alcool', total: dayData.entry.withAlcohol.total * prices.entryWithAlcohol, vatRate: vatRates.entryWithAlcohol },
+                            'entryWithBottle': { label: 'Entrée avec Bouteille', total: dayData.entry.withBottle.total * prices.entryWithBottle, vatRate: vatRates.entryWithBottle },
+                            'entryOffPeak': { label: 'Heure Creuse', total: dayData.entry.offPeak.total * prices.entryOffPeak, vatRate: vatRates.entryOffPeak },
+                            'entryWithSoft': { label: 'Entrée + Soft', total: dayData.entry.withSoft.total * prices.entryWithSoft, vatRate: vatRates.entryWithSoft }
+                        };
+                        if (entryTypes[typeFilter]) {
+                            filteredData.push({ date: dayData.date, type: entryTypes[typeFilter].label, ttc: entryTypes[typeFilter].total, vatRate: entryTypes[typeFilter].vatRate, status: 'Confirmé' });
+                            totalTTC += entryTypes[typeFilter].total;
+                        }
+                    }
+                }
+            }
+
+            filteredData.forEach(item => {
+                const ht = item.ttc / (1 + item.vatRate);
+                const tva = item.ttc - ht;
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.date}</td>
+                    <td>${item.type}</td>
+                    <td>${ht.toFixed(2)}</td>
+                    <td>${tva.toFixed(2)}</td>
+                    <td>${item.ttc.toFixed(2)}</td>
+                    <td>${item.status}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+            let periodLabel = '';
+            if (period === 'month') {
+                periodLabel = new Date(month).toLocaleString('fr-FR', { month: 'long', year: 'numeric' });
+            } else if (period === 'week' && week) {
+                periodLabel = `Semaine ${week} ${new Date(month).toLocaleString('fr-FR', { month: 'long', year: 'numeric' })}`;
+            } else if (period === 'day' && day) {
+                periodLabel = new Date(day).toLocaleString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+            }
+            totalElement.textContent = `Total pour ${periodLabel} : ${totalTTC.toFixed(2)}€`;
+        } catch (error) {
+            console.error('Erreur dans filterTreasury :', error);
+            tableBody.innerHTML = '<tr><td colspan="6">Une erreur est survenue lors du chargement des données.</td></tr>';
+            totalElement.textContent = `Total pour ${new Date(month).toLocaleString('fr-FR', { month: 'long', year: 'numeric' })} : 0€`;
+        } finally {
+            loader.style.display = 'none';
+        }
+    }
+
+    function updateTreasuryDays() {
+        const month = document.getElementById('treasuryMonth').value;
+        const daysInMonth = new Date(month.split('-')[0], month.split('-')[1], 0).getDate();
+        const daySelect = document.getElementById('treasuryDay');
+        const weekSelect = document.getElementById('treasuryWeek');
+        daySelect.innerHTML = '<option value="">Sélectionner un jour</option>';
+        weekSelect.innerHTML = '<option value="">Sélectionner une semaine</option>';
+
+        for (let i = 1; i <= daysInMonth; i++) {
+            const dayStr = `${month}-${String(i).padStart(2, '0')}`;
+            const date = new Date(dayStr);
+            const dayName = date.toLocaleString('fr-FR', { weekday: 'short' });
+            const option = document.createElement('option');
+            option.value = dayStr;
+            option.textContent = `${dayName} ${i} ${new Date(month).toLocaleString('fr-FR', { month: 'long', year: 'numeric' })}`;
+            daySelect.appendChild(option);
+        }
+
+        const weeks = Math.ceil(daysInMonth / 7);
+        for (let i = 1; i <= weeks; i++) {
+            const option = document.createElement('option');
+            option.value = i;
+            option.textContent = `Semaine ${i}`;
+            weekSelect.appendChild(option);
+        }
+
+        const period = document.getElementById('treasuryPeriod').value;
+        daySelect.disabled = period !== 'day';
+        weekSelect.disabled = period !== 'week';
+    }
+      
+// Données simulées pour l'historique (à adapter selon vos besoins réels)
+const historyData = [];
+function generateHistoryData() {
+    const prices = {
+        entryNoDrink: 10, entryWithAlcohol: 10, entryWithBottle: 20,
+        entryOffPeak: 8, entryWithSoft: 12, vestiaire: 5
+    };
+    Object.keys(ticketsData).forEach(month => {
+        ticketsData[month].forEach(day => {
+            const types = [
+                { key: 'entryNoDrink', label: 'Entrée sans Boisson', total: day.entry.noDrink.total },
+                { key: 'entryWithAlcohol', label: 'Entrée + Alcool', total: day.entry.withAlcohol.total },
+                { key: 'entryWithBottle', label: 'Entrée avec Bouteille', total: day.entry.withBottle.total },
+                { key: 'entryOffPeak', label: 'Heure Creuse', total: day.entry.offPeak.total },
+                { key: 'entryWithSoft', label: 'Entrée + Soft', total: day.entry.withSoft.total },
+                { key: 'vestiaire', label: 'Vestiaire', total: day.vestiaire.total }
+            ];
+            types.forEach(type => {
+                for (let i = 0; i < type.total; i++) {
+                    const id = `${day.date}-${type.key}-${String(i + 1).padStart(3, '0')}`;
+                    const date = new Date(`${day.date}T${String(20 + Math.floor(Math.random() * 8)).padStart(2, '0')}:${String(Math.floor(Math.random() * 60)).padStart(2, '0')}:00`);
+                    const status = Math.random() < 0.1 ? 'Annulé (Raison : Erreur)' : 'Confirmé';
+                    historyData.push({
+                        id, type: type.label, date: date.toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+                        amount: prices[type.key], status, rawDate: date
+                    });
+                }
+            });
+        });
+    });
+}
+generateHistoryData();
+
+// Fonction pour mettre à jour les jours/semaines
+function updateHistoryDays() {
+    const month = document.getElementById('historyMonth').value;
+    const daysInMonth = new Date(month.split('-')[0], month.split('-')[1], 0).getDate();
+    const daySelect = document.getElementById('historyDay');
+    const weekSelect = document.getElementById('historyWeek');
+    daySelect.innerHTML = '<option value="">Sélectionner un jour</option>';
+    weekSelect.innerHTML = '<option value="">Sélectionner une semaine</option>';
+
+    for (let i = 1; i <= daysInMonth; i++) {
+        const dayStr = `${month}-${String(i).padStart(2, '0')}`;
+        const option = document.createElement('option');
+        option.value = dayStr;
+        option.textContent = `${i} ${new Date(month).toLocaleString('fr-FR', { month: 'long', year: 'numeric' })}`;
+        daySelect.appendChild(option);
+    }
+
+    const weeks = Math.ceil(daysInMonth / 7);
+    for (let i = 1; i <= weeks; i++) {
+        const option = document.createElement('option');
+        option.value = i;
+        option.textContent = `Semaine ${i}`;
+        weekSelect.appendChild(option);
+    }
+
+    const period = document.getElementById('historyPeriod').value;
+    daySelect.disabled = period !== 'day';
+    weekSelect.disabled = period !== 'week';
+}
+
+// Fonction principale pour mettre à jour l'historique
+// Fonction principale pour mettre à jour l'historique
+async function updateHistory() {
+    const period = document.getElementById('historyPeriod').value;
+    const month = document.getElementById('historyMonth').value;
+    const week = document.getElementById('historyWeek').value;
+    const day = document.getElementById('historyDay').value;
+    const type = document.getElementById('historyType').value;
+    const status = document.getElementById('historyStatus').value;
+    const search = document.getElementById('historySearch').value.toLowerCase();
+    const loader = document.getElementById('historyLoader');
+    const tableBody = document.getElementById('historyTableBody');
+    const tableHead = document.querySelector('#historyTable thead tr');
+    const summary = document.getElementById('historySummary');
+
+    // Activer les sélecteurs "Semaine" et "Jour" en fonction de la période
+    document.getElementById('historyWeek').disabled = period !== 'week';
+    document.getElementById('historyDay').disabled = period !== 'day';
+
+    loader.style.display = 'flex';
+    tableBody.innerHTML = '';
+
+    let filteredData = [...historyData];
+    if (period === 'month') {
+        filteredData = filteredData.filter(d => d.id.startsWith(month));
+    } else if (period === 'week' && week) {
+        const weekNum = parseInt(week);
+        filteredData = filteredData.filter(d => {
+            const dayNum = parseInt(d.id.split('-')[2]);
+            return Math.ceil(dayNum / 7) === weekNum && d.id.startsWith(month);
+        });
+    } else if (period === 'day' && day) {
+        filteredData = filteredData.filter(d => d.id.startsWith(day));
+    }
+
+    // Filtrer strictement par type sélectionné uniquement
+    if (type) {
+        const typeMapping = {
+            'entryNoDrink': 'Entrée sans Boisson',
+            'entryWithAlcohol': 'Entrée + Alcool',
+            'entryWithBottle': 'Entrée avec Bouteille',
+            'entryOffPeak': 'Heure Creuse',
+            'entryWithSoft': 'Entrée + Soft',
+            'vestiaire': 'Vestiaire',
+            'entry': 'Entrée'
+        };
+        const selectedType = typeMapping[type];
+        filteredData = filteredData.filter(d => d.type === selectedType);
+    }
+
+    if (status) {
+        filteredData = filteredData.filter(d => status === 'confirmed' ? d.status === 'Confirmé' : d.status.startsWith('Annulé'));
+    }
+
+    if (search) {
+        filteredData = filteredData.filter(d => d.id.toLowerCase().includes(search) || d.date.toLowerCase().includes(search));
+    }
+
+    let totalTickets = filteredData.length;
+    let totalCanceled = filteredData.filter(d => d.status.startsWith('Annulé')).length;
+    let totalAmount = filteredData.reduce((sum, d) => sum + (d.status === 'Confirmé' ? d.amount : 0), 0);
+
+    summary.textContent = `Total tickets : ${totalTickets} | Annulés : ${totalCanceled} | Montant total : ${totalAmount.toFixed(2)}€`;
+
+    let sortDirection = { id: 'asc', date: 'asc', amount: 'asc' };
+    function renderTable(sortedData) {
+        tableBody.innerHTML = '';
+        sortedData.forEach(d => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${d.id}</td>
+                <td>${d.type}</td>
+                <td>${d.date}</td>
+                <td>${d.amount.toFixed(2)}</td>
+                <td>${d.status}</td>
+            `;
+            tableBody.appendChild(row);
+        });
+    }
+
+    tableHead.children[0].style.cursor = 'pointer'; // ID
+    tableHead.children[2].style.cursor = 'pointer'; // Date
+    tableHead.children[3].style.cursor = 'pointer'; // Montant
+
+    tableHead.children[0].onclick = () => {
+        sortDirection.id = sortDirection.id === 'asc' ? 'desc' : 'asc';
+        const sortedData = [...filteredData].sort((a, b) => sortDirection.id === 'asc' ? a.id.localeCompare(b.id) : b.id.localeCompare(a.id));
+        renderTable(sortedData);
+    };
+
+    tableHead.children[2].onclick = () => {
+        sortDirection.date = sortDirection.date === 'asc' ? 'desc' : 'asc';
+        const sortedData = [...filteredData].sort((a, b) => sortDirection.date === 'asc' ? a.rawDate - b.rawDate : b.rawDate - a.rawDate);
+        renderTable(sortedData);
+    };
+
+    tableHead.children[3].onclick = () => {
+        sortDirection.amount = sortDirection.amount === 'asc' ? 'desc' : 'asc';
+        const sortedData = [...filteredData].sort((a, b) => sortDirection.amount === 'asc' ? a.amount - b.amount : b.amount - a.amount);
+        renderTable(sortedData);
+    };
+
+    renderTable(filteredData);
+    loader.style.display = 'none';
+}
+      
+        // Initialisation
+updateOccupancyChart();
+updateTicketsReport();
+updateRevenueFilters();
+updateRevenueReport();
+updateTreasuryDays();
+filterTreasury();
+updateHistoryDays();
+updateHistory();
+    </script>
+</body>
+</html>
